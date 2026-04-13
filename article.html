@@ -803,6 +803,9 @@
 
                 // Render article
                 renderArticle(metadata, content, articleSlug);
+                
+                // 增加阅读量
+                incrementViews(articleSlug);
 
             } catch (error) {
                 console.error('Error loading article:', error);
@@ -814,6 +817,61 @@
                         <a href="index.html" class="btn btn-primary">返回首页</a>
                     </div>
                 `;
+            }
+        }
+        
+        // 增加阅读量函数
+        async function incrementViews(articleId) {
+            try {
+                // 这里需要替换为您的 Worker 地址
+                const workerUrl = 'https://your-worker-url.workers.dev';
+                
+                const response = await fetch(`${workerUrl}/api/views`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ articleId }),
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log(`文章 ${articleId} 阅读量已更新: ${data.views}`);
+                    
+                    // 可以在这里更新页面上的阅读量显示
+                    updateViewsDisplay(data.views);
+                }
+            } catch (error) {
+                console.error('增加阅读量失败:', error);
+            }
+        }
+        
+        // 更新阅读量显示
+        function updateViewsDisplay(views) {
+            // 查找或创建阅读量显示元素
+            let viewsElement = document.querySelector('.article-views');
+            
+            if (!viewsElement) {
+                // 在文章元信息中添加阅读量显示
+                const metaContainer = document.querySelector('.article-meta');
+                if (metaContainer) {
+                    viewsElement = document.createElement('span');
+                    viewsElement.className = 'article-meta-item article-views';
+                    viewsElement.innerHTML = `
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                        <span class="views-count">${views}</span> 次阅读
+                    `;
+                    metaContainer.appendChild(viewsElement);
+                }
+            } else {
+                // 更新已有的阅读量显示
+                const countElement = viewsElement.querySelector('.views-count');
+                if (countElement) {
+                    countElement.textContent = views;
+                }
             }
         }
 
