@@ -1,6 +1,28 @@
 {
   "articles": [
     {
+      "slug": "tailwind-v4-upgrade-guide",
+      "title": "Tailwind CSS v4 升级指南：配置文件消失，CSS 原生配置时代来临",
+      "date": "2026-04-13",
+      "category": "技术",
+      "tags": ["Tailwind CSS", "CSS", "前端开发", "样式系统", "升级指南"],
+      "excerpt": "Tailwind CSS v4 重大升级：配置文件消失，CSS 原生配置时代来临。Rust 编译器带来 5 倍构建速度提升，从 JS 配置迁移到 CSS 原生配置。",
+      "cover": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=400&fit=crop",
+      "readtime": 12,
+      "views": 0
+    },
+    {
+      "slug": "nextjs-large-scale-architecture",
+      "title": "Next.js 大型应用架构指南：从文件夹结构到最佳实践",
+      "date": "2026-04-13",
+      "category": "技术",
+      "tags": ["Next.js", "React", "前端架构", "项目结构", "最佳实践"],
+      "excerpt": "构建大型 Next.js 应用的完整指南：功能隔离架构、企业级文件夹结构、状态管理策略、性能优化和测试策略。",
+      "cover": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&h=400&fit=crop",
+      "readtime": 15,
+      "views": 0
+    },
+    {
       "slug": "ai-news-2026-04-13",
       "title": "AI 日报：2026年4月13日 | OpenAI CEO 遭二次袭击、软银布局物理AI、AI代码战争白热化",
       "date": "2026-04-13",
