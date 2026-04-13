@@ -8,6 +8,14 @@
 
 - `views-counter.js` - Worker 主程序，负责处理阅读量的增加和查询
 
+## 功能说明
+
+1. **阅读量统计**：记录文章阅读量，每次访问文章时自动 +1
+2. **IP 限制**：同一个 IP 对同一篇文章，一天只计算一次阅读量
+3. **批量查询**：支持批量获取多篇文章的阅读量
+4. **邮件订阅**：支持用户订阅博客更新
+5. **跨域支持**：已配置 CORS，支持跨域请求
+
 ## 部署信息
 
 | 项目 | 值 |
@@ -73,6 +81,43 @@ Content-Type: application/json
     "slug1": 42,
     "slug2": 128,
     "slug3": 7
+  }
+}
+```
+
+### 4. 订阅博客更新
+
+```
+POST /api/subscribe
+Content-Type: application/json
+
+{
+  "email": "user@example.com"
+}
+```
+
+**返回示例：**
+```json
+{
+  "success": true,
+  "message": "订阅成功！感谢您的关注"
+}
+```
+
+### 5. 获取统计信息
+
+```
+GET /api/stats
+```
+
+**返回示例：**
+```json
+{
+  "success": true,
+  "stats": {
+    "totalArticles": 10,
+    "totalViews": 1234,
+    "topArticles": []
   }
 }
 ```

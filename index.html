@@ -156,6 +156,53 @@
             text-shadow: 0 0 30px rgba(99, 102, 241, 0.5);
         }
 
+        .nav-search {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: 20px;
+        }
+
+        .search-input {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-full);
+            padding: 8px 16px;
+            color: var(--text);
+            font-size: 0.9rem;
+            width: 180px;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.1);
+            width: 220px;
+        }
+
+        .search-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .search-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .search-btn:hover {
+            background: rgba(99, 102, 241, 0.2);
+            color: var(--primary);
+        }
+
         .nav-links {
             display: flex;
             gap: 32px;
@@ -519,6 +566,110 @@
 
         .views-count {
             font-weight: 600;
+        }
+
+        .search-results {
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .search-results-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 20px;
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: var(--radius-lg);
+            color: var(--text);
+            font-size: 0.9rem;
+        }
+
+        .clear-search {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: var(--radius-full);
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .clear-search:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        /* Notification Styles */
+        .notification {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            z-index: 9999;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .notification-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 20px;
+            border-radius: var(--radius-lg);
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow-soft);
+            min-width: 300px;
+            max-width: 400px;
+        }
+
+        .notification-success {
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .notification-error {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .notification-info {
+            background: rgba(99, 102, 241, 0.2);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+        }
+
+        .notification-message {
+            flex: 1;
+            color: var(--text);
+            font-size: 0.95rem;
+        }
+
+        .notification-close {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .notification-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text);
         }
 
         /* About Section */
@@ -1021,6 +1172,15 @@
             <li><a href="#tags">标签</a></li>
             <li><a href="#subscribe">订阅</a></li>
         </ul>
+        <div class="nav-search">
+            <input type="text" id="searchInput" placeholder="搜索文章..." class="search-input">
+            <button id="searchBtn" class="search-btn" aria-label="搜索">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+            </button>
+        </div>
         <button class="menu-toggle" id="menuToggle" aria-label="菜单">
             <span></span>
             <span></span>
@@ -1091,12 +1251,12 @@
                         </svg>
                         2026年4月13日
                     </span>
-                    <span>
+                    <span class="article-views">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                             <circle cx="12" cy="12" r="3"></circle>
                         </svg>
-                        0 阅读
+                        <span class="views-count">0</span> 阅读
                     </span>
                 </div>
             </article>
@@ -1118,12 +1278,12 @@
                         </svg>
                         2026年4月13日
                     </span>
-                    <span>
+                    <span class="article-views">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                             <circle cx="12" cy="12" r="3"></circle>
                         </svg>
-                        0 阅读
+                        <span class="views-count">0</span> 阅读
                     </span>
                 </div>
             </article>
@@ -1145,12 +1305,12 @@
                         </svg>
                         2026年4月13日
                     </span>
-                    <span>
+                    <span class="article-views">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                             <circle cx="12" cy="12" r="3"></circle>
                         </svg>
-                        0 阅读
+                        <span class="views-count">0</span> 阅读
                     </span>
                 </div>
             </article>
@@ -1551,14 +1711,89 @@
         checkReveal();
 
         // Newsletter form handler
-        function handleSubscribe(event) {
+        async function handleSubscribe(event) {
             event.preventDefault();
-            const input = event.target.querySelector('input');
-            const email = input.value;
-
-            // Simulate subscription
-            alert(`感谢订阅！我们会将更新发送到 ${email}`);
-            input.value = '';
+            const form = event.target;
+            const input = form.querySelector('input');
+            const email = input.value.trim();
+            const submitBtn = form.querySelector('button');
+            
+            if (!email) {
+                showNotification('请输入邮箱地址', 'error');
+                return;
+            }
+            
+            // 验证邮箱格式
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showNotification('请输入有效的邮箱地址', 'error');
+                return;
+            }
+            
+            try {
+                // 禁用提交按钮
+                submitBtn.disabled = true;
+                submitBtn.textContent = '订阅中...';
+                
+                // 调用订阅 API
+                const response = await fetch('https://analytics.blog.xltz.qzz.io/api/subscribe', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email }),
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    showNotification('订阅成功！感谢您的关注', 'success');
+                    input.value = '';
+                } else {
+                    showNotification(data.error || '订阅失败，请稍后重试', 'error');
+                }
+            } catch (error) {
+                console.error('订阅错误:', error);
+                showNotification('网络错误，请检查网络连接', 'error');
+            } finally {
+                // 恢复提交按钮
+                submitBtn.disabled = false;
+                submitBtn.textContent = '订阅';
+            }
+        }
+        
+        // 显示通知
+        function showNotification(message, type = 'info') {
+            // 移除现有通知
+            const existingNotification = document.querySelector('.notification');
+            if (existingNotification) {
+                existingNotification.remove();
+            }
+            
+            // 创建通知元素
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <span class="notification-message">${message}</span>
+                    <button class="notification-close" onclick="this.parentElement.parentElement.remove()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+            `;
+            
+            // 添加到页面
+            document.body.appendChild(notification);
+            
+            // 自动消失
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 5000);
         }
 
         // Smooth scroll for anchor links
@@ -1573,6 +1808,99 @@
                     });
                 }
             });
+        });
+        
+        // 搜索功能
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        
+        // 模糊搜索函数
+        function fuzzySearch(query) {
+            const articles = document.querySelectorAll('.article-card');
+            const queryLower = query.toLowerCase();
+            
+            articles.forEach(article => {
+                const title = article.querySelector('.article-title').textContent.toLowerCase();
+                const excerpt = article.querySelector('.article-excerpt').textContent.toLowerCase();
+                const tags = article.getAttribute('data-tags') || '';
+                const category = article.querySelector('.article-category').textContent.toLowerCase();
+                
+                // 检查是否匹配
+                const matches = title.includes(queryLower) || 
+                               excerpt.includes(queryLower) || 
+                               tags.toLowerCase().includes(queryLower) ||
+                               category.includes(queryLower);
+                
+                // 显示或隐藏文章卡片
+                if (query === '' || matches) {
+                    article.style.display = 'block';
+                    article.style.opacity = '1';
+                    article.style.transform = 'translateY(0)';
+                } else {
+                    article.style.display = 'none';
+                    article.style.opacity = '0';
+                    article.style.transform = 'translateY(20px)';
+                }
+            });
+            
+            // 显示搜索结果数量
+            const visibleArticles = document.querySelectorAll('.article-card[style*="display: block"]').length;
+            const totalArticles = articles.length;
+            
+            // 更新搜索结果提示
+            updateSearchResults(query, visibleArticles, totalArticles);
+        }
+        
+        // 更新搜索结果提示
+        function updateSearchResults(query, visible, total) {
+            let searchResults = document.querySelector('.search-results');
+            
+            if (!searchResults) {
+                searchResults = document.createElement('div');
+                searchResults.className = 'search-results';
+                const articlesGrid = document.getElementById('articlesGrid');
+                articlesGrid.parentNode.insertBefore(searchResults, articlesGrid);
+            }
+            
+            if (query === '') {
+                searchResults.innerHTML = '';
+                searchResults.style.display = 'none';
+            } else {
+                searchResults.innerHTML = `
+                    <div class="search-results-info">
+                        <span>搜索 "${query}" 找到 ${visible} 篇文章（共 ${total} 篇）</span>
+                        <button class="clear-search" onclick="clearSearch()">清除搜索</button>
+                    </div>
+                `;
+                searchResults.style.display = 'block';
+            }
+        }
+        
+        // 清除搜索
+        window.clearSearch = function() {
+            searchInput.value = '';
+            fuzzySearch('');
+            searchInput.focus();
+        };
+        
+        // 搜索输入事件
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.trim();
+            fuzzySearch(query);
+        });
+        
+        // 搜索按钮点击事件
+        searchBtn.addEventListener('click', () => {
+            const query = searchInput.value.trim();
+            fuzzySearch(query);
+        });
+        
+        // 回车键搜索
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const query = searchInput.value.trim();
+                fuzzySearch(query);
+            }
         });
 
         // Article card click handler
@@ -1629,25 +1957,10 @@
         
         // 更新文章卡片的阅读量显示
         function updateCardViews(card, views) {
-            // 查找或创建阅读量显示元素
-            let viewsElement = card.querySelector('.article-views');
+            // 查找现有的阅读量显示元素
+            const viewsElement = card.querySelector('.article-views');
             
-            if (!viewsElement) {
-                // 在文章元信息中添加阅读量显示
-                const metaContainer = card.querySelector('.article-meta');
-                if (metaContainer) {
-                    viewsElement = document.createElement('span');
-                    viewsElement.className = 'article-views';
-                    viewsElement.innerHTML = `
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                            <circle cx="12" cy="12" r="3"></circle>
-                        </svg>
-                        <span class="views-count">${views}</span> 阅读
-                    `;
-                    metaContainer.appendChild(viewsElement);
-                }
-            } else {
+            if (viewsElement) {
                 // 更新已有的阅读量显示
                 const countElement = viewsElement.querySelector('.views-count');
                 if (countElement) {
