@@ -1,6 +1,17 @@
 {
   "articles": [
     {
+      "slug": "nginx-commands-guide",
+      "title": "Nginx 常用命令大全：从入门到精通",
+      "date": "2026-04-13",
+      "category": "技术",
+      "tags": ["Nginx", "服务器", "运维", "Web服务器", "命令行"],
+      "excerpt": "Nginx 常用命令大全：服务管理、配置文件管理、虚拟主机、SSL配置、性能优化、反向代理、负载均衡、安全配置、日志管理、故障排查。",
+      "cover": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=600&h=400&fit=crop",
+      "readtime": 12,
+      "views": 0
+    },
+    {
       "slug": "tailwind-v4-upgrade-guide",
       "title": "Tailwind CSS v4 升级指南：配置文件消失，CSS 原生配置时代来临",
       "date": "2026-04-13",

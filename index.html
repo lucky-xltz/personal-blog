@@ -607,51 +607,88 @@
             top: 100px;
             right: 20px;
             z-index: 9999;
-            animation: slideIn 0.3s ease-out;
+            animation: slideIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            max-width: 90%;
+            width: 400px;
         }
 
         @keyframes slideIn {
             from {
-                transform: translateX(100%);
+                transform: translateX(100%) scale(0.8);
                 opacity: 0;
             }
             to {
-                transform: translateX(0);
+                transform: translateX(0) scale(1);
                 opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                transform: translateX(0) scale(1);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%) scale(0.8);
+                opacity: 0;
             }
         }
 
         .notification-content {
             display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px 24px;
+            border-radius: var(--radius-xl);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1);
+            background: rgba(30, 41, 59, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .notification-icon {
+            flex-shrink: 0;
+            width: 24px;
+            height: 24px;
+            display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 16px 20px;
-            border-radius: var(--radius-lg);
-            backdrop-filter: blur(10px);
-            box-shadow: var(--shadow-soft);
-            min-width: 300px;
-            max-width: 400px;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 14px;
+            font-weight: bold;
         }
 
-        .notification-success {
+        .notification-success .notification-icon {
             background: rgba(16, 185, 129, 0.2);
-            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #10b981;
         }
 
-        .notification-error {
+        .notification-error .notification-icon {
             background: rgba(239, 68, 68, 0.2);
-            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
         }
 
-        .notification-info {
+        .notification-info .notification-icon {
             background: rgba(99, 102, 241, 0.2);
-            border: 1px solid rgba(99, 102, 241, 0.3);
+            color: #6366f1;
+        }
+
+        .notification-body {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 4px;
+            font-size: 0.95rem;
         }
 
         .notification-message {
-            flex: 1;
-            color: var(--text);
-            font-size: 0.95rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.5;
         }
 
         .notification-close {
@@ -659,17 +696,62 @@
             border: none;
             color: var(--text-muted);
             cursor: pointer;
-            padding: 4px;
+            padding: 6px;
             border-radius: 50%;
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-shrink: 0;
+            margin-left: auto;
         }
 
         .notification-close:hover {
             background: rgba(255, 255, 255, 0.1);
             color: var(--text);
+            transform: rotate(90deg);
+        }
+
+        .notification-progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+            animation: progress 5s linear forwards;
+        }
+
+        @keyframes progress {
+            from {
+                width: 100%;
+            }
+            to {
+                width: 0%;
+            }
+        }
+
+        /* Notification variants */
+        .notification-success .notification-content {
+            border-left: 4px solid #10b981;
+        }
+
+        .notification-error .notification-content {
+            border-left: 4px solid #ef4444;
+        }
+
+        .notification-info .notification-content {
+            border-left: 4px solid #6366f1;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .notification {
+                right: 10px;
+                left: 10px;
+                width: auto;
+                top: 90px;
+            }
         }
 
         /* About Section */
@@ -1234,6 +1316,24 @@
             <p class="section-desc">分享我在技术、设计和生活中的思考与实践，每一个文字都经过精心打磨</p>
         </div>
         <div class="articles-grid" id="articlesGrid">
+            <article class="article-card reveal" data-slug="nginx-commands-guide">
+                <div class="article-image">
+                    <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=600&h=400&fit=crop" alt="Nginx">
+                </div>
+                <span class="article-category tech">技术</span>
+                <h3 class="article-title">Nginx 常用命令大全：从入门到精通</h3>
+                <p class="article-excerpt">Nginx 常用命令大全：服务管理、配置文件管理、虚拟主机、SSL配置、性能优化、反向代理、负载均衡、安全配置、日志管理、故障排查。</p>
+                <div class="article-meta">
+                    <span class="article-views">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                        <span class="views-count">0</span> 阅读
+                    </span>
+                </div>
+            </article>
+
             <article class="article-card reveal" data-slug="tailwind-v4-upgrade-guide">
                 <div class="article-image">
                     <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=400&fit=crop" alt="Tailwind CSS">
@@ -1767,7 +1867,30 @@
             // 移除现有通知
             const existingNotification = document.querySelector('.notification');
             if (existingNotification) {
-                existingNotification.remove();
+                existingNotification.style.animation = 'slideOut 0.3s ease-in forwards';
+                setTimeout(() => {
+                    if (existingNotification.parentElement) {
+                        existingNotification.remove();
+                    }
+                }, 300);
+            }
+            
+            // 设置图标和标题
+            let icon, title;
+            switch (type) {
+                case 'success':
+                    icon = '✓';
+                    title = '成功';
+                    break;
+                case 'error':
+                    icon = '✕';
+                    title = '错误';
+                    break;
+                case 'info':
+                default:
+                    icon = 'ℹ';
+                    title = '提示';
+                    break;
             }
             
             // 创建通知元素
@@ -1775,7 +1898,11 @@
             notification.className = `notification notification-${type}`;
             notification.innerHTML = `
                 <div class="notification-content">
-                    <span class="notification-message">${message}</span>
+                    <div class="notification-icon">${icon}</div>
+                    <div class="notification-body">
+                        <div class="notification-title">${title}</div>
+                        <div class="notification-message">${message}</div>
+                    </div>
                     <button class="notification-close" onclick="this.parentElement.parentElement.remove()">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -1783,6 +1910,7 @@
                         </svg>
                     </button>
                 </div>
+                <div class="notification-progress"></div>
             `;
             
             // 添加到页面
@@ -1791,7 +1919,12 @@
             // 自动消失
             setTimeout(() => {
                 if (notification.parentElement) {
-                    notification.remove();
+                    notification.style.animation = 'slideOut 0.3s ease-in forwards';
+                    setTimeout(() => {
+                        if (notification.parentElement) {
+                            notification.remove();
+                        }
+                    }, 300);
                 }
             }, 5000);
         }
