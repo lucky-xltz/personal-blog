@@ -1,0 +1,70 @@
+{
+  "articles": [
+    {
+      "slug": "vite-vue3-guide",
+      "title": "从零构建现代化前端工作流：Vite + Vue 3 实战指南",
+      "date": "2024-03-15",
+      "category": "技术",
+      "tags": ["Vue.js", "前端工程化", "Vite", "TypeScript"],
+      "excerpt": "深入探索如何使用 Vite 和 Vue 3 构建高效、现代的前端开发环境，涵盖项目初始化、性能优化、组件设计等核心话题。",
+      "cover": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&h=400&fit=crop",
+      "readtime": 12,
+      "views": 2400
+    },
+    {
+      "slug": "design-system-guide",
+      "title": "设计系统的本质：从原子设计到 Design Token 完整指南",
+      "date": "2024-03-08",
+      "category": "设计",
+      "tags": ["设计系统", "UI设计", "Design Token", "原子设计"],
+      "excerpt": "揭秘设计系统的构建逻辑，从原子设计理论到 Design Token 的实践应用，帮助你建立可扩展的设计规范。",
+      "cover": "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=600&h=400&fit=crop",
+      "readtime": 15,
+      "views": 1800
+    },
+    {
+      "slug": "typescript-advanced",
+      "title": "TypeScript 高级技巧：类型系统深度探索",
+      "date": "2024-03-01",
+      "category": "技术",
+      "tags": ["TypeScript", "类型系统", "JavaScript", "前端开发"],
+      "excerpt": "深入 TypeScript 类型系统，学习条件类型、映射类型、模板字面量类型等高级特性，提升代码的类型安全性。",
+      "cover": "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=600&h=400&fit=crop",
+      "readtime": 18,
+      "views": 3200
+    },
+    {
+      "slug": "tech-writing-guide",
+      "title": "程序员写作指南：如何用文字记录技术成长",
+      "date": "2024-02-22",
+      "category": "随笔",
+      "tags": ["写作", "个人成长", "知识管理", "技术博客"],
+      "excerpt": "分享我坚持写博客三年的心得体会，探讨技术写作的价值、方法和工具推荐。",
+      "cover": "https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=600&h=400&fit=crop",
+      "readtime": 10,
+      "views": 1500
+    },
+    {
+      "slug": "remote-collaboration",
+      "title": "远程协作设计：跨时区团队的创意工作流",
+      "date": "2024-02-15",
+      "category": "设计",
+      "tags": ["远程协作", "团队协作", "工作流", "设计团队"],
+      "excerpt": "探索如何在不同时区的团队中保持创意效率和协作默契，分享实用的工具和方法。",
+      "cover": "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=600&h=400&fit=crop",
+      "readtime": 8,
+      "views": 2100
+    },
+    {
+      "slug": "graph-theory",
+      "title": "算法工程师的数学基础：图论入门实战",
+      "date": "2024-02-08",
+      "category": "技术",
+      "tags": ["算法", "图论", "数据结构", "JavaScript"],
+      "excerpt": "从实际问题的角度出发，学习图论的核心概念和算法，包括最短路径、拓扑排序等经典问题。",
+      "cover": "https://images.unsplash.com/photo-1504639725590-34d0984388bd?w=600&h=400&fit=crop",
+      "readtime": 14,
+      "views": 2800
+    }
+  ]
+}

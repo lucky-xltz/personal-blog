@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文章详情 | 林小白的数字花园</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        :root {
+            --primary: #6366F1;
+            --secondary: #EC4899;
+            --accent: #14B8A6;
+            --background: #0F172A;
+            --surface: #1E293B;
+            --surface-light: rgba(255, 255, 255, 0.05);
+            --text: #F8FAFC;
+            --text-muted: #94A3B8;
+            --gradient-primary: linear-gradient(135deg, #6366F1 0%, #EC4899 100%);
+            --gradient-accent: linear-gradient(135deg, #14B8A6 0%, #6366F1 100%);
+            --gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.03) 100%);
+            --radius-sm: 8px;
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            --radius-xl: 32px;
+            --radius-full: 9999px;
+            --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --shadow-glow: 0 0 40px rgba(99, 102, 241, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--background);
+            color: var(--text);
+            line-height: 1.7;
+            min-height: 100vh;
+        }
+
+        /* Animated Background */
+        .bg-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            background: var(--background);
+        }
+
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.5;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .blob-1 {
+            width: 500px;
+            height: 500px;
+            background: var(--primary);
+            top: -150px;
+            left: -150px;
+        }
+
+        .blob-2 {
+            width: 400px;
+            height: 400px;
+            background: var(--secondary);
+            top: 60%;
+            right: -100px;
+            animation-delay: -5s;
+        }
+
+        .blob-3 {
+            width: 300px;
+            height: 300px;
+            background: var(--accent);
+            bottom: -80px;
+            left: 20%;
+            animation-delay: -10s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(30px, -30px) scale(1.05); }
+            50% { transform: translate(-20px, 20px) scale(0.95); }
+            75% { transform: translate(25px, 10px) scale(1.02); }
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 48px;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .nav.scrolled {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .nav-logo {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .nav-logo:hover {
+            filter: brightness(1.2);
+            text-shadow: 0 0 30px rgba(99, 102, 241, 0.5);
+        }
+
+        .nav-back {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            padding: 10px 20px;
+            border-radius: var(--radius-full);
+            background: var(--surface-light);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .nav-back:hover {
+            background: var(--gradient-primary);
+            color: white;
+            border-color: transparent;
+            transform: translateX(-4px);
+        }
+
+        .nav-back svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Article Container */
+        .article-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 140px 24px 80px;
+        }
+
+        /* Article Header */
+        .article-header {
+            text-align: center;
+            margin-bottom: 48px;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .article-category {
+            display: inline-block;
+            padding: 6px 16px;
+            background: rgba(99, 102, 241, 0.15);
+            color: var(--primary);
+            border-radius: var(--radius-full);
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .article-category.design { background: rgba(236, 72, 153, 0.15); color: var(--secondary); }
+        .article-category.tech { background: rgba(20, 184, 166, 0.15); color: var(--accent); }
+        .article-category.life { background: rgba(168, 85, 247, 0.15); color: #A855F7; }
+
+        .article-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 24px;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .article-meta {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            flex-wrap: wrap;
+        }
+
+        .article-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .article-meta-item svg {
+            width: 18px;
+            height: 18px;
+            opacity: 0.7;
+        }
+
+        .article-cover {
+            width: 100%;
+            height: 450px;
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            margin-bottom: 48px;
+            position: relative;
+            animation: fadeInUp 0.8s ease 0.1s backwards;
+        }
+
+        .article-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+        }
+
+        .article-cover:hover img {
+            transform: scale(1.05);
+        }
+
+        .article-cover::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, transparent 0%, rgba(15, 23, 42, 0.3) 100%);
+        }
+
+        /* Article Content */
+        .article-content {
+            background: var(--gradient-glass);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-xl);
+            padding: 48px;
+            backdrop-filter: blur(10px);
+            animation: fadeInUp 0.8s ease 0.2s backwards;
+        }
+
+        /* Markdown Styles */
+        .article-content h1,
+        .article-content h2,
+        .article-content h3,
+        .article-content h4,
+        .article-content h5,
+        .article-content h6 {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            margin-top: 2em;
+            margin-bottom: 0.8em;
+            line-height: 1.3;
+        }
+
+        .article-content h1 { font-size: 2.2rem; }
+        .article-content h2 { font-size: 1.8rem; }
+        .article-content h3 { font-size: 1.5rem; }
+        .article-content h4 { font-size: 1.25rem; }
+
+        .article-content h2::before {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 4px;
+            background: var(--gradient-primary);
+            border-radius: 2px;
+            margin-bottom: 16px;
+        }
+
+        .article-content p {
+            margin-bottom: 1.5em;
+            font-size: 1.05rem;
+            color: rgba(248, 250, 252, 0.9);
+        }
+
+        .article-content a {
+            color: var(--primary);
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .article-content a:hover {
+            border-bottom-color: var(--primary);
+        }
+
+        .article-content strong {
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .article-content em {
+            font-style: italic;
+            color: var(--text-muted);
+        }
+
+        .article-content ul,
+        .article-content ol {
+            margin-bottom: 1.5em;
+            padding-left: 1.5em;
+        }
+
+        .article-content li {
+            margin-bottom: 0.5em;
+            color: rgba(248, 250, 252, 0.9);
+        }
+
+        .article-content ul li::marker {
+            color: var(--primary);
+        }
+
+        .article-content ol li::marker {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* Code Blocks */
+        .article-content code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9em;
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--accent);
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        .article-content pre {
+            background: #0d1117;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            overflow-x: auto;
+            margin-bottom: 1.5em;
+            position: relative;
+        }
+
+        .article-content pre code {
+            background: transparent;
+            color: #c9d1d9;
+            padding: 0;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .article-content pre::before {
+            content: attr(data-language);
+            position: absolute;
+            top: 12px;
+            right: 16px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Blockquote */
+        .article-content blockquote {
+            background: rgba(99, 102, 241, 0.08);
+            border-left: 4px solid var(--primary);
+            padding: 20px 24px;
+            margin: 1.5em 0;
+            border-radius: 0 var(--radius-md) var(--radius-md) 0;
+            font-style: italic;
+            color: var(--text-muted);
+        }
+
+        .article-content blockquote p {
+            margin-bottom: 0;
+        }
+
+        /* Images */
+        .article-content img {
+            max-width: 100%;
+            border-radius: var(--radius-lg);
+            margin: 2em 0;
+            box-shadow: var(--shadow-soft);
+        }
+
+        /* Tables */
+        .article-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5em 0;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+        }
+
+        .article-content th,
+        .article-content td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .article-content th {
+            background: rgba(99, 102, 241, 0.1);
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .article-content tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        /* Horizontal Rule */
+        .article-content hr {
+            border: none;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            margin: 3em 0;
+        }
+
+        /* Article Tags */
+        .article-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 48px;
+            padding-top: 32px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .article-tag {
+            padding: 8px 16px;
+            background: var(--surface-light);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-full);
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .article-tag:hover {
+            background: var(--gradient-primary);
+            color: white;
+            border-color: transparent;
+            transform: translateY(-2px);
+        }
+
+        /* Article Navigation */
+        .article-nav {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-top: 48px;
+        }
+
+        .article-nav-link {
+            background: var(--gradient-glass);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .article-nav-link:hover {
+            border-color: rgba(99, 102, 241, 0.3);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .article-nav-link.prev {
+            text-align: left;
+        }
+
+        .article-nav-link.next {
+            text-align: right;
+            grid-column: 2;
+        }
+
+        .article-nav-link:only-child {
+            grid-column: 1 / -1;
+            text-align: center;
+        }
+
+        .article-nav-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .article-nav-link.next .article-nav-label {
+            justify-content: flex-end;
+        }
+
+        .article-nav-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text);
+            transition: color 0.3s ease;
+        }
+
+        .article-nav-link:hover .article-nav-title {
+            color: var(--primary);
+        }
+
+        /* Loading State */
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 60vh;
+            text-align: center;
+        }
+
+        .loading-spinner {
+            width: 48px;
+            height: 48px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 24px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        /* Error State */
+        .error {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 60vh;
+            text-align: center;
+        }
+
+        .error-icon {
+            font-size: 4rem;
+            margin-bottom: 24px;
+        }
+
+        .error-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .error-message {
+            color: var(--text-muted);
+            margin-bottom: 24px;
+        }
+
+        /* Footer */
+        .footer {
+            padding: 60px 48px 40px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            margin-top: 80px;
+        }
+
+        .footer-content {
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .footer-social {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .social-link {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--surface-light);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .social-link:hover {
+            background: var(--gradient-primary);
+            border-color: transparent;
+            color: white;
+            transform: translateY(-4px);
+        }
+
+        .social-link svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .footer-text {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav {
+                padding: 0 24px;
+            }
+
+            .article-container {
+                padding: 120px 16px 60px;
+            }
+
+            .article-content {
+                padding: 24px;
+            }
+
+            .article-cover {
+                height: 250px;
+                border-radius: var(--radius-lg);
+            }
+
+            .article-nav {
+                grid-template-columns: 1fr;
+            }
+
+            .article-nav-link.next {
+                grid-column: 1;
+                text-align: left;
+            }
+
+            .article-nav-link.next .article-nav-label {
+                justify-content: flex-start;
+            }
+
+            .footer {
+                padding: 40px 24px;
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--background);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--surface);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="bg-gradient">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="nav" id="nav">
+        <a href="index.html" class="nav-logo">林小白</a>
+        <a href="index.html" class="nav-back">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 12H5"></path>
+                <path d="M12 19l-7-7 7-7"></path>
+            </svg>
+            返回首页
+        </a>
+    </nav>
+
+    <!-- Article Container -->
+    <div class="article-container" id="articleContainer">
+        <div class="loading">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">正在加载文章...</div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-social">
+                <a href="#" class="social-link" aria-label="GitHub">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                </a>
+                <a href="#" class="social-link" aria-label="Twitter">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                    </svg>
+                </a>
+                <a href="#" class="social-link" aria-label="RSS">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 11a9 9 0 0 1 9 9"></path>
+                        <path d="M4 4a16 16 0 0 1 16 16"></path>
+                        <circle cx="5" cy="19" r="1"></circle>
+                    </svg>
+                </a>
+            </div>
+            <p class="footer-text">&copy; 2024 林小白. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Navigation scroll effect
+        const nav = document.getElementById('nav');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+        });
+
+        // Article loader
+        async function loadArticle() {
+            const container = document.getElementById('articleContainer');
+            const urlParams = new URLSearchParams(window.location.search);
+            const articleSlug = urlParams.get('slug');
+
+            if (!articleSlug) {
+                container.innerHTML = `
+                    <div class="error">
+                        <div class="error-icon">📄</div>
+                        <h2 class="error-title">文章不存在</h2>
+                        <p class="error-message">未指定要加载的文章</p>
+                        <a href="index.html" class="btn btn-primary">返回首页</a>
+                    </div>
+                `;
+                return;
+            }
+
+            try {
+                // Load article markdown file
+                const response = await fetch(`articles/${articleSlug}.md`);
+
+                if (!response.ok) {
+                    throw new Error('文章未找到');
+                }
+
+                const markdown = await response.text();
+
+                // Parse front matter
+                const { metadata, content } = parseFrontMatter(markdown);
+
+                // Render article
+                renderArticle(metadata, content, articleSlug);
+
+            } catch (error) {
+                console.error('Error loading article:', error);
+                container.innerHTML = `
+                    <div class="error">
+                        <div class="error-icon">😢</div>
+                        <h2 class="error-title">加载失败</h2>
+                        <p class="error-message">无法加载文章: ${error.message}</p>
+                        <a href="index.html" class="btn btn-primary">返回首页</a>
+                    </div>
+                `;
+            }
+        }
+
+        // Parse YAML-like front matter
+        function parseFrontMatter(markdown) {
+            const frontMatterRegex = /^---\s*\n([\s\S]*?)\n---\s*\n([\s\S]*)$/;
+            const match = markdown.match(frontMatterRegex);
+
+            if (!match) {
+                return { metadata: {}, content: markdown };
+            }
+
+            const frontMatter = match[1];
+            const content = match[2];
+
+            const metadata = {};
+            const lines = frontMatter.split('\n');
+
+            lines.forEach(line => {
+                const colonIndex = line.indexOf(':');
+                if (colonIndex > 0) {
+                    const key = line.substring(0, colonIndex).trim();
+                    let value = line.substring(colonIndex + 1).trim();
+
+                    // Remove quotes
+                    if ((value.startsWith('"') && value.endsWith('"')) ||
+                        (value.startsWith("'") && value.endsWith("'"))) {
+                        value = value.slice(1, -1);
+                    }
+
+                    metadata[key] = value;
+                }
+            });
+
+            return { metadata, content };
+        }
+
+        // Render article HTML
+        function renderArticle(metadata, content, slug) {
+            const container = document.getElementById('articleContainer');
+            const htmlContent = marked.parse(content);
+
+            // Update page title
+            document.title = `${metadata.title || '文章'} | 林小白的数字花园`;
+
+            // Get category class
+            const categoryClass = metadata.category ?
+                metadata.category.toLowerCase() : '';
+
+            // Get tags array
+            const tags = metadata.tags ?
+                metadata.tags.split(',').map(t => t.trim()) : [];
+
+            // Generate tags HTML
+            const tagsHtml = tags.length > 0 ? `
+                <div class="article-tags">
+                    ${tags.map(tag => `<a href="index.html?tag=${encodeURIComponent(tag)}" class="article-tag"># ${tag}</a>`).join('')}
+                </div>
+            ` : '';
+
+            container.innerHTML = `
+                <header class="article-header">
+                    <span class="article-category ${categoryClass}">${metadata.category || '未分类'}</span>
+                    <h1 class="article-title">${metadata.title || '无标题'}</h1>
+                    <div class="article-meta">
+                        ${metadata.date ? `
+                            <span class="article-meta-item">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                </svg>
+                                ${formatDate(metadata.date)}
+                            </span>
+                        ` : ''}
+                        ${metadata.author ? `
+                            <span class="article-meta-item">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
+                                ${metadata.author}
+                            </span>
+                        ` : ''}
+                        ${metadata.readtime ? `
+                            <span class="article-meta-item">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg>
+                                ${metadata.readtime} 分钟阅读
+                            </span>
+                        ` : ''}
+                    </div>
+                </header>
+
+                ${metadata.cover ? `
+                    <div class="article-cover">
+                        <img src="${metadata.cover}" alt="${metadata.title || '文章封面'}">
+                    </div>
+                ` : ''}
+
+                <article class="article-content">
+                    ${htmlContent}
+                </article>
+
+                ${tagsHtml}
+            `;
+
+            // Add syntax highlighting for code blocks
+            addCodeHighlighting();
+        }
+
+        // Format date
+        function formatDate(dateStr) {
+            try {
+                const date = new Date(dateStr);
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                return `${year}年${month}月${day}日`;
+            } catch {
+                return dateStr;
+            }
+        }
+
+        // Simple syntax highlighting
+        function addCodeHighlighting() {
+            const preElements = document.querySelectorAll('.article-content pre');
+
+            preElements.forEach(pre => {
+                const code = pre.querySelector('code');
+                if (code) {
+                    // Detect language from class
+                    const langClass = Array.from(code.classList).find(c => c.startsWith('language-'));
+                    if (langClass) {
+                        pre.setAttribute('data-language', langClass.replace('language-', ''));
+                    }
+
+                    // Simple highlighting
+                    const text = code.textContent;
+                    code.innerHTML = highlightCode(text);
+                }
+            });
+        }
+
+        // Basic code highlighting
+        function highlightCode(code) {
+            return code
+                // Escape HTML
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                // Comments
+                .replace(/(\/\/.*$)/gm, '<span style="color: #6a737d;">$1</span>')
+                .replace(/(\/\*[\s\S]*?\*\/)/g, '<span style="color: #6a737d;">$1</span>')
+                // Strings
+                .replace(/(['"`])(?:(?!\1)[^\\]|\\.)*\1/g, '<span style="color: #9ecbff;">$&</span>')
+                // Keywords
+                .replace(/\b(const|let|var|function|return|if|else|for|while|class|import|export|from|async|await|try|catch|throw|new|this|typeof|instanceof)\b/g,
+                    '<span style="color: #ff7b72;">$1</span>')
+                // Numbers
+                .replace(/\b(\d+\.?\d*)\b/g, '<span style="color: #79c0ff;">$1</span>')
+                // Functions
+                .replace(/\b([a-zA-Z_]\w*)\s*\(/g, '<span style="color: #d2a8ff;">$1</span>(');
+        }
+
+        // Initialize
+        loadArticle();
+    </script>
+</body>
+</html>
