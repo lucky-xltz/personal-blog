@@ -1,6 +1,17 @@
 {
   "articles": [
     {
+      "slug": "ai-news-2026-04-13",
+      "title": "AI 日报：2026年4月13日 | OpenAI CEO 遭二次袭击、软银布局物理AI、AI代码战争白热化",
+      "date": "2026-04-13",
+      "category": "技术",
+      "tags": ["AI新闻", "OpenAI", "软银", "物理AI", "代码战争", "安全"],
+      "excerpt": "今日AI领域热点不断：OpenAI CEO Sam Altman遭二次袭击，软银布局物理AI，AI代码战争白热化，深度伪造技术引发伦理讨论。",
+      "cover": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&h=400&fit=crop",
+      "readtime": 8,
+      "views": 0
+    },
+    {
       "slug": "vite-vue3-guide",
       "title": "从零构建现代化前端工作流：Vite + Vue 3 实战指南",
       "date": "2024-03-15",
