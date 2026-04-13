@@ -13,7 +13,7 @@
 1. **阅读量统计**：记录文章阅读量，每次访问文章时自动 +1
 2. **IP 限制**：同一个 IP 对同一篇文章，一天只计算一次阅读量
 3. **批量查询**：支持批量获取多篇文章的阅读量
-4. **邮件订阅**：支持用户订阅博客更新
+4. **邮件订阅**：支持用户订阅博客更新，并发送欢迎邮件
 5. **跨域支持**：已配置 CORS，支持跨域请求
 
 ## 部署信息
@@ -24,6 +24,34 @@
 | Worker 地址 | https://analytics.blog.xltz.qzz.io |
 | KV 命名空间 | BLOG_VIEWS |
 | KV 命名空间 ID | 6a0e44707a7445fa894b693c220263d6 |
+
+## 环境变量配置
+
+为了使用邮件发送功能，需要在 Cloudflare Worker 中配置以下环境变量：
+
+| 环境变量 | 说明 | 示例值 |
+|----------|------|--------|
+| `RESEND_API_KEY` | Resend 邮件服务的 API 密钥 | `re_123456789` |
+| `BLOG_URL` | 博客网站地址（可选） | `https://lucky-xltz.github.io/personal-blog/` |
+| `BLOG_NAME` | 博客名称（可选） | `林小白的数字花园` |
+
+### 获取 Resend API 密钥
+
+1. 访问 [Resend](https://resend.com) 并注册账号
+2. 在控制台中创建 API 密钥
+3. 复制 API 密钥
+
+### 配置环境变量
+
+在 Cloudflare Dashboard 中配置环境变量：
+
+1. 进入 Worker 页面：`personal-blog-analytics`
+2. 点击 "Settings" -> "Variables"
+3. 在 "Environment Variables" 部分添加：
+   - 变量名：`RESEND_API_KEY`
+   - 值：您的 Resend API 密钥
+   - 类型：选择 "Secret"
+4. 点击 "Save and Deploy"
 
 ## API 接口
 

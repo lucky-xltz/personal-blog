@@ -6,13 +6,18 @@
  * 2. 提供 API 接口获取单篇文章或批量文章的阅读量
  * 3. 数据存储在 Cloudflare KV 中，全球分布式，低延迟
  * 4. IP 限制：同一个 IP 对同一篇文章，一天只计算一次阅读量
- * 5. 邮件订阅：支持用户订阅博客更新
+ * 5. 邮件订阅：支持用户订阅博客更新，并发送欢迎邮件
  * 
  * 部署信息：
  * - Worker 名称：personal-blog-analytics
  * - Worker 地址：https://analytics.blog.xltz.qzz.io
  * - KV 命名空间：BLOG_VIEWS
  * - KV 命名空间 ID：6a0e44707a7445fa894b693c220263d6
+ * 
+ * 环境变量：
+ * - RESEND_API_KEY: Resend 邮件服务的 API 密钥
+ * - BLOG_URL: 博客网站地址
+ * - BLOG_NAME: 博客名称
  * 
  * API 接口：
  * 1. POST /api/views - 增加阅读量
@@ -36,7 +41,7 @@
  * 使用场景：
  * - article.html：用户访问文章时调用 POST /api/views 增加阅读量
  * - index.html：页面加载时调用 POST /api/views/batch 批量获取所有文章阅读量
- * - index.html：用户订阅时调用 POST /api/subscribe 保存邮箱
+ * - index.html：用户订阅时调用 POST /api/subscribe 保存邮箱并发送欢迎邮件
  * 
  * 修改说明：
  * 1. 修改此文件后，需要手动复制到 Cloudflare Worker 编辑器中
@@ -267,9 +272,13 @@ export default {
         subscribers.push(email);
         await env.BLOG_VIEWS.put('subscribers', JSON.stringify(subscribers));
         
+        // 发送欢迎邮件
+        const emailSent = await sendWelcomeEmail(email, env);
+        
         return new Response(JSON.stringify({ 
           success: true, 
-          message: '订阅成功！感谢您的关注' 
+          message: '订阅成功！感谢您的关注',
+          emailSent: emailSent
         }), {
           headers: {
             'Content-Type': 'application/json',
@@ -336,3 +345,156 @@ export default {
     });
   }
 };
+
+// 发送欢迎邮件函数
+async function sendWelcomeEmail(email, env) {
+  try {
+    // 从环境变量获取配置
+    const resendApiKey = env.RESEND_API_KEY;
+    const blogUrl = env.BLOG_URL || 'https://lucky-xltz.github.io/personal-blog/';
+    const blogName = env.BLOG_NAME || '林小白的数字花园';
+    
+    if (!resendApiKey) {
+      console.error('RESEND_API_KEY 环境变量未设置');
+      return false;
+    }
+    
+    // 创建欢迎邮件内容
+    const emailHtml = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>欢迎订阅 ${blogName}</title>
+        <style>
+          body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+          }
+          .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #6366f1;
+          }
+          .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #6366f1;
+            margin-bottom: 10px;
+          }
+          .content {
+            background: #f8fafc;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+          }
+          .button {
+            display: inline-block;
+            background: linear-gradient(135deg, #6366f1 0%, #ec4899 100%);
+            color: white;
+            padding: 12px 30px;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 600;
+            margin: 20px 0;
+          }
+          .footer {
+            text-align: center;
+            color: #64748b;
+            font-size: 14px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+          }
+          .social-links {
+            margin: 20px 0;
+          }
+          .social-links a {
+            display: inline-block;
+            margin: 0 10px;
+            color: #6366f1;
+            text-decoration: none;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <div class="logo">🎉 欢迎订阅</div>
+          <h1>${blogName}</h1>
+        </div>
+        
+        <div class="content">
+          <h2>感谢您的订阅！</h2>
+          <p>您已成功订阅 <strong>${blogName}</strong> 的更新通知。</p>
+          
+          <p>您将收到：</p>
+          <ul>
+            <li>每周精选技术文章</li>
+            <li>AI 领域最新动态</li>
+            <li>前端开发最佳实践</li>
+            <li>个人成长与思考</li>
+          </ul>
+          
+          <p>我们承诺：</p>
+          <ul>
+            <li>绝不发送垃圾邮件</li>
+            <li>每周最多 1-2 封邮件</li>
+            <li>随时可以取消订阅</li>
+          </ul>
+          
+          <div style="text-align: center;">
+            <a href="${blogUrl}" class="button">访问博客</a>
+          </div>
+        </div>
+        
+        <div class="social-links" style="text-align: center;">
+          <p>关注我们：</p>
+          <a href="https://github.com/lucky-xltz">GitHub</a>
+          <a href="https://twitter.com/lucky_xltz">Twitter</a>
+        </div>
+        
+        <div class="footer">
+          <p>此邮件由 ${blogName} 自动发送</p>
+          <p>如果您不想收到此类邮件，可以随时取消订阅</p>
+          <p>© ${new Date().getFullYear()} ${blogName}. All rights reserved.</p>
+        </div>
+      </body>
+      </html>
+    `;
+    
+    // 使用 Resend API 发送邮件
+    const response = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${resendApiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: `${blogName} <onboarding@resend.dev>`,
+        to: [email],
+        subject: `🎉 欢迎订阅 ${blogName}！`,
+        html: emailHtml,
+      }),
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('发送邮件失败:', errorData);
+      return false;
+    }
+    
+    const result = await response.json();
+    console.log('邮件发送成功:', result);
+    return true;
+    
+  } catch (error) {
+    console.error('发送邮件时出错:', error);
+    return false;
+  }
+}
