@@ -1,6 +1,23 @@
 {
   "articles": [
     {
+      "slug": "wordpress-supply-chain-attack-2026",
+      "title": "WordPress 供应链攻击深度分析：当 30 个插件同时变成后门",
+      "date": "2026-04-14",
+      "category": "技术",
+      "tags": [
+        "安全",
+        "WordPress",
+        "供应链攻击",
+        "PHP",
+        "区块链"
+      ],
+      "excerpt": "攻击者以六位数收购 WordPress 插件公司，在 30+ 个插件中植入 PHP 反序列化后门，潜伏 8 个月后激活。C2 通过以太坊智能合约解析，传统封锁手段完全失效。深度解析攻击技术细节与防御策略。",
+      "cover": "https://images.unsplash.com/photo-1563986768609-322da13575f2?w=600&h=400&fit=crop",
+      "readtime": 15,
+      "views": 0
+    },
+    {
       "slug": "github-stacked-prs-guide",
       "title": "GitHub Stacked PRs 完全指南：告别大型 PR，拥抱分层代码审查",
       "date": "2026-04-14",
