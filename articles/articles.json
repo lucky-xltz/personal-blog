@@ -1,6 +1,17 @@
 {
   "articles": [
     {
+      "slug": "ai-news-2026-04-14",
+      "title": "AI 日报：2026年4月14日 | OpenAI 收购金融AI、巨头暗战升级、物理AI新纪元",
+      "date": "2026-04-14",
+      "category": "技术",
+      "tags": ["AI新闻", "OpenAI", "Anthropic", "物理AI", "软银", "Meta", "AI金融"],
+      "excerpt": "OpenAI 收购 Hiro Finance 剑指个人金融 AI，内部备忘录流出暴露对 Anthropic 的宣战意图，斯坦福报告揭示公众认知鸿沟扩大，软银联手日本工业巨头押注物理 AI。",
+      "cover": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&h=400&fit=crop",
+      "readtime": 10,
+      "views": 0
+    },
+    {
       "slug": "nginx-commands-guide",
       "title": "Nginx 常用命令大全：从入门到精通",
       "date": "2026-04-13",
