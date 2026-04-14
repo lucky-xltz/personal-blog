@@ -1,11 +1,36 @@
 {
   "articles": [
     {
+      "slug": "github-stacked-prs-guide",
+      "title": "GitHub Stacked PRs 完全指南：告别大型 PR，拥抱分层代码审查",
+      "date": "2026-04-14",
+      "category": "技术",
+      "tags": [
+        "GitHub",
+        "Git",
+        "代码审查",
+        "工作流",
+        "DevOps"
+      ],
+      "excerpt": "GitHub 推出 Stacked PRs 功能，将大型代码变更拆分为一系列小型、有序的 PR。本文深入解析核心概念、gh stack CLI 工具使用、实战案例和最佳实践。",
+      "cover": "https://images.unsplash.com/photo-1556075798-4825dfaaf498?w=600&h=400&fit=crop",
+      "readtime": 12,
+      "views": 0
+    },
+    {
       "slug": "ai-news-2026-04-14",
       "title": "AI 日报：2026年4月14日 | OpenAI 收购金融AI、巨头暗战升级、物理AI新纪元",
       "date": "2026-04-14",
       "category": "技术",
-      "tags": ["AI新闻", "OpenAI", "Anthropic", "物理AI", "软银", "Meta", "AI金融"],
+      "tags": [
+        "AI新闻",
+        "OpenAI",
+        "Anthropic",
+        "物理AI",
+        "软银",
+        "Meta",
+        "AI金融"
+      ],
       "excerpt": "OpenAI 收购 Hiro Finance 剑指个人金融 AI，内部备忘录流出暴露对 Anthropic 的宣战意图，斯坦福报告揭示公众认知鸿沟扩大，软银联手日本工业巨头押注物理 AI。",
       "cover": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&h=400&fit=crop",
       "readtime": 10,
@@ -16,7 +41,13 @@
       "title": "Nginx 常用命令大全：从入门到精通",
       "date": "2026-04-13",
       "category": "技术",
-      "tags": ["Nginx", "服务器", "运维", "Web服务器", "命令行"],
+      "tags": [
+        "Nginx",
+        "服务器",
+        "运维",
+        "Web服务器",
+        "命令行"
+      ],
       "excerpt": "Nginx 常用命令大全：服务管理、配置文件管理、虚拟主机、SSL配置、性能优化、反向代理、负载均衡、安全配置、日志管理、故障排查。",
       "cover": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=600&h=400&fit=crop",
       "readtime": 12,
@@ -27,7 +58,13 @@
       "title": "Tailwind CSS v4 升级指南：配置文件消失，CSS 原生配置时代来临",
       "date": "2026-04-13",
       "category": "技术",
-      "tags": ["Tailwind CSS", "CSS", "前端开发", "样式系统", "升级指南"],
+      "tags": [
+        "Tailwind CSS",
+        "CSS",
+        "前端开发",
+        "样式系统",
+        "升级指南"
+      ],
       "excerpt": "Tailwind CSS v4 重大升级：配置文件消失，CSS 原生配置时代来临。Rust 编译器带来 5 倍构建速度提升，从 JS 配置迁移到 CSS 原生配置。",
       "cover": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=400&fit=crop",
       "readtime": 12,
@@ -38,7 +75,13 @@
       "title": "Next.js 大型应用架构指南：从文件夹结构到最佳实践",
       "date": "2026-04-13",
       "category": "技术",
-      "tags": ["Next.js", "React", "前端架构", "项目结构", "最佳实践"],
+      "tags": [
+        "Next.js",
+        "React",
+        "前端架构",
+        "项目结构",
+        "最佳实践"
+      ],
       "excerpt": "构建大型 Next.js 应用的完整指南：功能隔离架构、企业级文件夹结构、状态管理策略、性能优化和测试策略。",
       "cover": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&h=400&fit=crop",
       "readtime": 15,
@@ -49,7 +92,14 @@
       "title": "AI 日报：2026年4月13日 | OpenAI CEO 遭二次袭击、软银布局物理AI、AI代码战争白热化",
       "date": "2026-04-13",
       "category": "技术",
-      "tags": ["AI新闻", "OpenAI", "软银", "物理AI", "代码战争", "安全"],
+      "tags": [
+        "AI新闻",
+        "OpenAI",
+        "软银",
+        "物理AI",
+        "代码战争",
+        "安全"
+      ],
       "excerpt": "今日AI领域热点不断：OpenAI CEO Sam Altman遭二次袭击，软银布局物理AI，AI代码战争白热化，深度伪造技术引发伦理讨论。",
       "cover": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&h=400&fit=crop",
       "readtime": 8,
@@ -60,7 +110,12 @@
       "title": "从零构建现代化前端工作流：Vite + Vue 3 实战指南",
       "date": "2024-03-15",
       "category": "技术",
-      "tags": ["Vue.js", "前端工程化", "Vite", "TypeScript"],
+      "tags": [
+        "Vue.js",
+        "前端工程化",
+        "Vite",
+        "TypeScript"
+      ],
       "excerpt": "深入探索如何使用 Vite 和 Vue 3 构建高效、现代的前端开发环境，涵盖项目初始化、性能优化、组件设计等核心话题。",
       "cover": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&h=400&fit=crop",
       "readtime": 12,
@@ -71,7 +126,12 @@
       "title": "设计系统的本质：从原子设计到 Design Token 完整指南",
       "date": "2024-03-08",
       "category": "设计",
-      "tags": ["设计系统", "UI设计", "Design Token", "原子设计"],
+      "tags": [
+        "设计系统",
+        "UI设计",
+        "Design Token",
+        "原子设计"
+      ],
       "excerpt": "揭秘设计系统的构建逻辑，从原子设计理论到 Design Token 的实践应用，帮助你建立可扩展的设计规范。",
       "cover": "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=600&h=400&fit=crop",
       "readtime": 15,
@@ -82,7 +142,12 @@
       "title": "TypeScript 高级技巧：类型系统深度探索",
       "date": "2024-03-01",
       "category": "技术",
-      "tags": ["TypeScript", "类型系统", "JavaScript", "前端开发"],
+      "tags": [
+        "TypeScript",
+        "类型系统",
+        "JavaScript",
+        "前端开发"
+      ],
       "excerpt": "深入 TypeScript 类型系统，学习条件类型、映射类型、模板字面量类型等高级特性，提升代码的类型安全性。",
       "cover": "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=600&h=400&fit=crop",
       "readtime": 18,
@@ -93,7 +158,12 @@
       "title": "程序员写作指南：如何用文字记录技术成长",
       "date": "2024-02-22",
       "category": "随笔",
-      "tags": ["写作", "个人成长", "知识管理", "技术博客"],
+      "tags": [
+        "写作",
+        "个人成长",
+        "知识管理",
+        "技术博客"
+      ],
       "excerpt": "分享我坚持写博客三年的心得体会，探讨技术写作的价值、方法和工具推荐。",
       "cover": "https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=600&h=400&fit=crop",
       "readtime": 10,
@@ -104,7 +174,12 @@
       "title": "远程协作设计：跨时区团队的创意工作流",
       "date": "2024-02-15",
       "category": "设计",
-      "tags": ["远程协作", "团队协作", "工作流", "设计团队"],
+      "tags": [
+        "远程协作",
+        "团队协作",
+        "工作流",
+        "设计团队"
+      ],
       "excerpt": "探索如何在不同时区的团队中保持创意效率和协作默契，分享实用的工具和方法。",
       "cover": "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=600&h=400&fit=crop",
       "readtime": 8,
@@ -115,7 +190,12 @@
       "title": "算法工程师的数学基础：图论入门实战",
       "date": "2024-02-08",
       "category": "技术",
-      "tags": ["算法", "图论", "数据结构", "JavaScript"],
+      "tags": [
+        "算法",
+        "图论",
+        "数据结构",
+        "JavaScript"
+      ],
       "excerpt": "从实际问题的角度出发，学习图论的核心概念和算法，包括最短路径、拓扑排序等经典问题。",
       "cover": "https://images.unsplash.com/photo-1504639725590-34d0984388bd?w=600&h=400&fit=crop",
       "readtime": 14,
