@@ -1,6 +1,23 @@
 {
   "articles": [
     {
+      "slug": "claude-code-routines-deep-dive",
+      "title": "Claude Code Routines 深度解析：AI 编程代理的自动化新纪元",
+      "date": "2026-04-15",
+      "category": "技术",
+      "tags": [
+        "Claude Code",
+        "AI代理",
+        "自动化",
+        "DevOps",
+        "Anthropic"
+      ],
+      "excerpt": "Anthropic 发布 Claude Code Routines，让 AI 编程代理从交互式助手进化为自动化工作引擎。支持定时、API、GitHub 事件三种触发器，在云端持续运行。深度解析架构设计、实战案例和最佳实践。",
+      "cover": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&h=400&fit=crop",
+      "readtime": 15,
+      "views": 0
+    },
+    {
       "slug": "ai-news-2026-04-15",
       "title": "AI 日报：2026年04月15日 | 巨头竞速升级，AI从工具走向自主代理",
       "date": "2026-04-15",
