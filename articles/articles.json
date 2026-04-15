@@ -1,6 +1,23 @@
 {
   "articles": [
     {
+      "slug": "wasm-component-model-deep-dive",
+      "title": "WebAssembly 组件模型深度解析：从浏览器沙箱到通用计算平台",
+      "date": "2026-04-15",
+      "category": "技术",
+      "tags": [
+        "WebAssembly",
+        "WASI",
+        "组件模型",
+        "系统编程",
+        "运行时"
+      ],
+      "excerpt": "WebAssembly 已从浏览器沙箱蜕变为通用计算平台。深入解析 WASI Preview 2 的核心架构、组件模型的设计哲学、多语言组合实践，以及在边缘计算、插件系统和 AI 推理中的真实落地案例。",
+      "cover": "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=600&h=400&fit=crop",
+      "readtime": 15,
+      "views": 0
+    },
+    {
       "slug": "claude-code-routines-deep-dive",
       "title": "Claude Code Routines 深度解析：AI 编程代理的自动化新纪元",
       "date": "2026-04-15",
