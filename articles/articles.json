@@ -1,6 +1,24 @@
 {
   "articles": [
     {
+      "slug": "ai-news-2026-04-15",
+      "title": "AI 日报：2026年04月15日 | 巨头竞速升级，AI从工具走向自主代理",
+      "date": "2026-04-15",
+      "category": "技术",
+      "tags": [
+        "AI日报",
+        "Claude Code",
+        "Google Chrome",
+        "Anthropic",
+        "Meta",
+        "AI安全"
+      ],
+      "excerpt": "Anthropic发布Claude Code Routines让AI代理实现自动化工作流，Google将Gemini提示词变成可复用的“技能”，Meta开始打造CEO的AI数字替身。英国政府测试显示Mythos成为首个完成32步网络渗透挑战的AI系统。",
+      "cover": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&h=400&fit=crop",
+      "readtime": 10,
+      "views": 0
+    },
+    {
       "slug": "wordpress-supply-chain-attack-2026",
       "title": "WordPress 供应链攻击深度分析：当 30 个插件同时变成后门",
       "date": "2026-04-14",
