@@ -1,6 +1,24 @@
 {
   "articles": [
     {
+      "slug": "ai-news-2026-04-16",
+      "title": "AI 日报：2026年04月16日 | 机器狗学会读表、时尚品牌转型算力、Adobe押注创意代理",
+      "date": "2026-04-16",
+      "category": "技术",
+      "tags": [
+        "AI日报",
+        "Boston Dynamics",
+        "Google DeepMind",
+        "Adobe",
+        "AI安全",
+        "Anthropic"
+      ],
+      "excerpt": "Boston Dynamics机器狗搭载Gemini AI实现工业仪表自主读取，Adobe推出跨应用创意AI助手Firefly，时尚品牌Allbirds宣布转型AI算力公司股价暴涨400%，英国政府首次独立评估Anthropic Mythos的网络攻击能力。",
+      "cover": "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=600&h=400&fit=crop",
+      "readtime": 12,
+      "views": 0
+    },
+    {
       "slug": "wasm-component-model-deep-dive",
       "title": "WebAssembly 组件模型深度解析：从浏览器沙箱到通用计算平台",
       "date": "2026-04-15",
