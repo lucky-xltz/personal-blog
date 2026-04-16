@@ -1,6 +1,23 @@
 {
   "articles": [
     {
+      "slug": "ipv6-traffic-milestone-developer-guide",
+      "title": "IPv6 流量首超 50%：互联网协议演进的里程碑与开发者实战指南",
+      "date": "2026-04-16",
+      "category": "技术",
+      "tags": [
+        "IPv6",
+        "网络协议",
+        "基础设施",
+        "运维",
+        "性能优化"
+      ],
+      "excerpt": "2026 年 4 月，Google 全球 IPv6 使用率正式跨越 50% 门槛。从 1998 年 RFC 2460 至今历经 28 年，IPv6 终于在流量占比上超越 IPv4。深入解析 IPv6 技术原理、双栈/464XLAT/NAT64 过渡机制、Node.js/Python/Go 代码实战，以及性能对比和安全最佳实践。",
+      "cover": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=600&h=400&fit=crop",
+      "readtime": 14,
+      "views": 0
+    },
+    {
       "slug": "ai-cybersecurity-proof-of-work",
       "title": "AI 重塑网络安全：从“智能防御”到“算力证明”的新范式",
       "date": "2026-04-16",
