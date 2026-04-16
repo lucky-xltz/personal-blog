@@ -1,6 +1,23 @@
 {
   "articles": [
     {
+      "slug": "ai-cybersecurity-proof-of-work",
+      "title": "AI 重塑网络安全：从“智能防御”到“算力证明”的新范式",
+      "date": "2026-04-16",
+      "category": "技术",
+      "tags": [
+        "网络安全",
+        "AI安全",
+        "Mythos",
+        "攻防对抗",
+        "算力经济"
+      ],
+      "excerpt": "Anthropic Mythos 在 32 步企业网络攻击模拟中首次完成全面接管，揭示网络安全正从“知识问题”演变为“算力问题”。深入解析 AISI 评估结果、Proof of Work 安全模型、三阶段开发流程，以及对开源安全和开发者策略的深远影响。",
+      "cover": "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=600&h=400&fit=crop",
+      "readtime": 12,
+      "views": 0
+    },
+    {
       "slug": "ai-news-2026-04-16",
       "title": "AI 日报：2026年04月16日 | 机器狗学会读表、时尚品牌转型算力、Adobe押注创意代理",
       "date": "2026-04-16",
