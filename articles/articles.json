@@ -1,6 +1,23 @@
 {
   "articles": [
     {
+      "slug": "mcp-llm-tool-integration-deep-dive",
+      "title": "Model Context Protocol 深度解析：LLM 工具集成的开放标准革命",
+      "date": "2026-04-17",
+      "category": "技术",
+      "tags": [
+        "MCP",
+        "LLM",
+        "工具集成",
+        "API",
+        "标准协议"
+      ],
+      "excerpt": "当你的 AI 助手需要同时读取 Slack 消息、查询数据库、操作 GitHub 仓库时，集成碎片化是最大的痛点。Anthropic 发布的 Model Context Protocol（MCP）正在终结这种混乱。深入解析 MCP 三层架构、核心概念、实战 TypeScript 开发、性能优化和安全最佳实践。",
+      "cover": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&h=400&fit=crop",
+      "readtime": 13,
+      "views": 0
+    },
+    {
       "slug": "private-ai-inference-2026",
       "title": "Private AI 推理的崛起：从本地部署到分布式网络，终结云端 AI 隐私焦虑",
       "date": "2026-04-17",
