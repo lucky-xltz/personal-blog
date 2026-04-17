@@ -1,6 +1,24 @@
 {
   "articles": [
     {
+      "slug": "ai-news-2026-04-17",
+      "title": "AI 日报：2026年4月17日 | 巨头混战升级，Anthropic、OpenAI、Google同日放大招",
+      "date": "2026-04-17",
+      "category": "技术",
+      "tags": [
+        "AI日报",
+        "Claude Opus 4.7",
+        "OpenAI",
+        "Google DeepMind",
+        "Mozilla",
+        "机器人AI"
+      ],
+      "excerpt": "今天AI领域堪称'神仙打架日'——Anthropic发布Claude Opus 4.7编程Agent能力飞跃，OpenAI推出Codex大更新和生物学专用大模型GPT-Rosalind，Google DeepMind让机器人狗学会读仪表盘，Mozilla带着Thunderbolt AI客户端杀入自托管AI战场。五大热点事件深度解析。",
+      "cover": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&h=400&fit=crop",
+      "readtime": 12,
+      "views": 0
+    },
+    {
       "slug": "ipv6-traffic-milestone-developer-guide",
       "title": "IPv6 流量首超 50%：互联网协议演进的里程碑与开发者实战指南",
       "date": "2026-04-16",
