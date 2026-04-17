@@ -1,6 +1,23 @@
 {
   "articles": [
     {
+      "slug": "private-ai-inference-2026",
+      "title": "Private AI 推理的崛起：从本地部署到分布式网络，终结云端 AI 隐私焦虑",
+      "date": "2026-04-17",
+      "category": "技术",
+      "tags": [
+        "AI推理",
+        "隐私计算",
+        "本地部署",
+        "Apple Silicon",
+        "分布式系统"
+      ],
+      "excerpt": "云端AI的信任困境催生了Private AI推理的崛起。从Ollama本地部署到Darkbloom分布式隐私网络，深入解析三层架构、实战代码、性能优化和成本对比，帮助你在数据安全与AI能力之间找到最佳平衡。",
+      "cover": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=600&h=400&fit=crop",
+      "readtime": 14,
+      "views": 0
+    },
+    {
       "slug": "ai-news-2026-04-17",
       "title": "AI 日报：2026年4月17日 | 巨头混战升级，Anthropic、OpenAI、Google同日放大招",
       "date": "2026-04-17",
