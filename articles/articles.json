@@ -1,6 +1,23 @@
 {
   "articles": [
     {
+      "slug": "fil-c-memory-safety-deep-dive",
+      "title": "Fil-C 深度解析：C/C++ 内存安全的新路径与工程实践",
+      "date": "2026-04-18",
+      "category": "技术",
+      "tags": [
+        "Fil-C",
+        "内存安全",
+        "C/C++",
+        "系统编程",
+        "安全"
+      ],
+      "excerpt": "Hacker News 热门话题 Fil-C 声称是 C/C++ 的内存安全实现。深入解析其三大核心变换：指针附加 AllocationRecord、操作重写、解引用边界检查。对比 Rust 的编译时保证，探讨 Fil-C 在遗留代码加固、安全关键系统验证中的工程实践与性能权衡。",
+      "cover": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=600&h=400&fit=crop",
+      "readtime": 14,
+      "views": 0
+    },
+    {
       "slug": "ai-news-2026-04-18",
       "title": "AI 日报：2026年4月18日 | Anthropic、Google、OpenAI三巨头同日变阵，AI编码赛道狂飙突进",
       "date": "2026-04-18",
