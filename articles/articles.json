@@ -1,6 +1,23 @@
 {
   "articles": [
     {
+      "slug": "post-quantum-cryptography-pqc-deep-dive",
+      "title": "后量子密码学深度解析：Q-Day 倒计时与开发者实战指南",
+      "date": "2026-04-18",
+      "category": "技术",
+      "tags": [
+        "密码学",
+        "量子计算",
+        "PQC",
+        "安全",
+        "OpenSSL"
+      ],
+      "excerpt": "Google和Cloudflare将PQC内部就绪截止日期提前至2029年，比原计划提前五年。深入解析Shor算法威胁、NIST三大标准（ML-KEM/ML-DSA/SLH-DSA）的数学原理、Go和Python实战代码、各大厂商迁移时间表，以及先收割后解密攻击的现实威胁。",
+      "cover": "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&h=400&fit=crop",
+      "readtime": 16,
+      "views": 0
+    },
+    {
       "slug": "fil-c-memory-safety-deep-dive",
       "title": "Fil-C 深度解析：C/C++ 内存安全的新路径与工程实践",
       "date": "2026-04-18",
