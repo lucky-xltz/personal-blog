@@ -1,6 +1,23 @@
 {
   "articles": [
     {
+      "slug": "ai-news-2026-04-19",
+      "title": "AI 日报：2026年04月19日 | 生物AI破局、数据中心困局与AI客户端新浪潮",
+      "date": "2026-04-19",
+      "category": "技术",
+      "tags": [
+        "AI日报",
+        "GPT-Rosalind",
+        "数据中心",
+        "Codex",
+        "Mozilla"
+      ],
+      "excerpt": "OpenAI推出生物学专用大模型GPT-Rosalind，美国AI数据中心建设面临40%项目延误危机，Codex新增后台电脑操控能力，Mozilla发布Thunderbolt自托管AI客户端——今日AI行业从狂热扩张走向理性深耕。",
+      "cover": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&h=400&fit=crop",
+      "readtime": 10,
+      "views": 0
+    },
+    {
       "slug": "post-quantum-cryptography-pqc-deep-dive",
       "title": "后量子密码学深度解析：Q-Day 倒计时与开发者实战指南",
       "date": "2026-04-18",
