@@ -1,6 +1,23 @@
 {
   "articles": [
     {
+      "slug": "zero-downtime-cloud-migration-guide",
+      "title": "生产环境零停机迁移实战：从云服务器到独立服务器的完整指南",
+      "date": "2026-04-19",
+      "category": "技术",
+      "tags": [
+        "DevOps",
+        "云迁移",
+        "数据库复制",
+        "Nginx",
+        "运维"
+      ],
+      "excerpt": "从每月$1,432到$233的云成本优化不是梦，但如何在零停机的前提下完成生产环境的完整迁移？六阶段模型涵盖环境搭建、rsync文件同步、MySQL主从复制、DNS TTL预降、反向代理切换与一键回滚方案，附完整脚本和避坑指南。",
+      "cover": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=600&h=400&fit=crop",
+      "readtime": 15,
+      "views": 0
+    },
+    {
       "slug": "ai-news-2026-04-19",
       "title": "AI 日报：2026年04月19日 | 生物AI破局、数据中心困局与AI客户端新浪潮",
       "date": "2026-04-19",
