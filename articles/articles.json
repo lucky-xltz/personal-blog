@@ -1,6 +1,23 @@
 {
   "articles": [
     {
+      "slug": "skiplists-practical-guide",
+      "title": "Skip List 深度解析：从理论到 Skiptree 的工程实践",
+      "date": "2026-04-19",
+      "category": "技术",
+      "tags": [
+        "数据结构",
+        "Skip List",
+        "算法",
+        "数据库",
+        "系统设计"
+      ],
+      "excerpt": "在数据结构的版图中，Skip List 拥有一群忠实的拥趸——Redis 用它实现有序集合，LevelDB 用它组织 MemTable，Antithesis 团队更将其推广为 Skiptree 解决分析数据库中的树遍历难题。从 Python 和 Go 的完整实现到并发安全的 CAS 插入，从与红黑树的工程对比到 Skiptree 的 SQL 实现，全面理解这个被低估的数据结构。",
+      "cover": "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=600&h=400&fit=crop",
+      "readtime": 14,
+      "views": 0
+    },
+    {
       "slug": "zero-downtime-cloud-migration-guide",
       "title": "生产环境零停机迁移实战：从云服务器到独立服务器的完整指南",
       "date": "2026-04-19",
