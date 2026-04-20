@@ -1,6 +1,23 @@
 {
   "articles": [
     {
+      "slug": "vercel-security-incident-2026-deep-dive",
+      "title": "Vercel 数据泄露事件深度解析：从 AI 工具到全平台沦陷的攻击链分析与防御指南",
+      "date": "2026-04-20",
+      "category": "技术",
+      "tags": [
+        "安全",
+        "供应链攻击",
+        "Vercel",
+        "AI工具",
+        "DevSecOps"
+      ],
+      "excerpt": "2026年4月19日，Vercel确认遭受安全攻击，攻击者通过第三方AI工具Context.ai入侵，最终获取了Vercel内部系统访问权限并窃取了大量客户环境变量。深度解析从AI工具到全平台沦陷的攻击链，包含OAuth过度授权、环境变量存储架构隐患、开发者实战防御指南和AI工具安全管控策略。",
+      "cover": "https://images.unsplash.com/photo-1563986768609-322da13575f2?w=600&h=400&fit=crop",
+      "readtime": 15,
+      "views": 0
+    },
+    {
       "slug": "trellis-2-mac-silicon-3d-generation",
       "title": "TRELLIS.2 让 Mac 跑起图片转 3D：无需 NVIDIA GPU 的 AI 3D 生成实战",
       "date": "2026-04-20",
