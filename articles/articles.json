@@ -1,6 +1,23 @@
 {
   "articles": [
     {
+      "slug": "trellis-2-mac-silicon-3d-generation",
+      "title": "TRELLIS.2 让 Mac 跑起图片转 3D：无需 NVIDIA GPU 的 AI 3D 生成实战",
+      "date": "2026-04-20",
+      "category": "技术",
+      "tags": [
+        "3D生成",
+        "Apple Silicon",
+        "PyTorch",
+        "MPS",
+        "TRELLIS"
+      ],
+      "excerpt": "微软研究院最先进的图片转 3D 模型 TRELLIS.2 被成功移植到 Apple Silicon——五个 CUDA-only 组件被替换为纯 PyTorch 实现，M4 Pro 上 3.5 分钟即可从单张照片生成 400K+ 顶点的高质量 3D 网格。深度解析稀疏 3D 卷积的 Gather-Scatter 策略、性能瓶颈和快速上手指南。",
+      "cover": "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=600&h=400&fit=crop",
+      "readtime": 15,
+      "views": 0
+    },
+    {
       "slug": "ai-news-2026-04-20",
       "title": "AI 日报：2026年4月20日 | 算力瓶颈、工具革命与生态博弈",
       "date": "2026-04-20",
