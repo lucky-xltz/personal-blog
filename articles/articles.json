@@ -1,6 +1,23 @@
 {
   "articles": [
     {
+      "slug": "ai-news-2026-04-20",
+      "title": "AI 日报：2026年4月20日 | 算力瓶颈、工具革命与生态博弈",
+      "date": "2026-04-20",
+      "category": "技术",
+      "tags": [
+        "AI日报",
+        "Claude",
+        "内存危机",
+        "3D生成",
+        "创意软件"
+      ],
+      "excerpt": "Uber 的 AI 预算爆仓揭示企业级 AI 部署的真实成本困境；Claude Opus 4.7 系统提示词变化曝光大厂产品精细化打磨；全球内存短缺向消费电子全面蔓延；TRELLIS.2 用开源证明 AI 创新不必被 GPU 垄断；创意软件行业集体向 Adobe 发起价格战。",
+      "cover": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&h=400&fit=crop",
+      "readtime": 12,
+      "views": 0
+    },
+    {
       "slug": "skiplists-practical-guide",
       "title": "Skip List 深度解析：从理论到 Skiptree 的工程实践",
       "date": "2026-04-19",
