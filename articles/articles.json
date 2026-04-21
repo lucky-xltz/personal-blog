@@ -1,6 +1,24 @@
 {
   "articles": [
     {
+      "slug": "ai-news-2026-04-21",
+      "title": "AI 日报：2026年04月21日 | 开源模型激战正酣，AI商业化加速落地",
+      "date": "2026-04-21",
+      "category": "技术",
+      "tags": [
+        "AI日报",
+        "开源模型",
+        "Kimi",
+        "Qwen",
+        "AI商业化",
+        "企业数据隐私"
+      ],
+      "excerpt": "Moonshot AI发布Kimi K2.6开源编程模型，以长时执行和agent能力震撼社区；阿里通义千问推出Qwen3.6-Max-Preview在多项编程基准登顶。同时，Atlassian宣布默认收集用户数据训练AI、Deezer揭示44%新歌由AI生成、OpenAI广告合作伙伴曝光ChatGPT投放方案——AI商业化脚步全面提速。",
+      "cover": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&h=400&fit=crop",
+      "readtime": 12,
+      "views": 0
+    },
+    {
       "slug": "vercel-security-incident-2026-deep-dive",
       "title": "Vercel 数据泄露事件深度解析：从 AI 工具到全平台沦陷的攻击链分析与防御指南",
       "date": "2026-04-20",
