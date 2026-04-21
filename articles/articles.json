@@ -1,11 +1,34 @@
 {
   "articles": [
     {
+      "slug": "dynamic-language-interpreter-optimization",
+      "title": "动态语言解释器优化：从 AST 慢跑者到性能怪兽的 16x 加速之旅",
+      "date": "2026-04-21",
+      "category": "技术",
+      "tags": [
+        "解释器",
+        "编程语言",
+        "性能优化",
+        "编译器",
+        "值表示"
+      ],
+      "excerpt": "Filip Pizlo——WebKit JavaScriptCore 引擎前负责人——证明了一个惊人事实：在不引入 JIT、GC、字节码的前提下，仅靠值内联、内联缓存和 Watchpoints 等工程优化，一个 AST-walking 解释器可以获得 16.6 倍的加速，逼近 QuickJS 和 Lua 的水平。深度拆解 11 个优化步骤，从 NaN-boxing 值表示到 Shape+IC 对象模型。",
+      "cover": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&h=400&fit=crop",
+      "readtime": 16,
+      "views": 0
+    },
+    {
       "slug": "jujutsu-vcs-git-alternative",
       "title": "Jujutsu (jj)：Git 的现代替代品，版本控制的工作流革命",
       "date": "2026-04-21",
       "category": "技术",
-      "tags": ["Jujutsu", "Git", "版本控制", "开发工具", "工作流"],
+      "tags": [
+        "Jujutsu",
+        "Git",
+        "版本控制",
+        "开发工具",
+        "工作流"
+      ],
       "excerpt": "Git 统治版本控制 20 年，但 CLI 设计哲学一直是痛点。Jujutsu（jj）重新想象了 Git 的底层能力——Working Copy 是普通 commit、Conflict 是一等公民、操作日志支持无限撤销，同时完全兼容 Git 仓库。深度解析核心设计哲学、Megamerge 工作流和从 Git 迁移的实战指南。",
       "cover": "https://images.unsplash.com/photo-1556075798-4825dfaaf498?w=600&h=400&fit=crop",
       "readtime": 15,
