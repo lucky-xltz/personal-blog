@@ -1,6 +1,17 @@
 {
   "articles": [
     {
+      "slug": "jujutsu-vcs-git-alternative",
+      "title": "Jujutsu (jj)：Git 的现代替代品，版本控制的工作流革命",
+      "date": "2026-04-21",
+      "category": "技术",
+      "tags": ["Jujutsu", "Git", "版本控制", "开发工具", "工作流"],
+      "excerpt": "Git 统治版本控制 20 年，但 CLI 设计哲学一直是痛点。Jujutsu（jj）重新想象了 Git 的底层能力——Working Copy 是普通 commit、Conflict 是一等公民、操作日志支持无限撤销，同时完全兼容 Git 仓库。深度解析核心设计哲学、Megamerge 工作流和从 Git 迁移的实战指南。",
+      "cover": "https://images.unsplash.com/photo-1556075798-4825dfaaf498?w=600&h=400&fit=crop",
+      "readtime": 15,
+      "views": 0
+    },
+    {
       "slug": "ai-news-2026-04-21",
       "title": "AI 日报：2026年04月21日 | 开源模型激战正酣，AI商业化加速落地",
       "date": "2026-04-21",
