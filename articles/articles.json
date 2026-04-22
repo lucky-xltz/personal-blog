@@ -1,6 +1,23 @@
 {
   "articles": [
     {
+      "slug": "ai-news-2026-04-22",
+      "title": "AI 日报：2026年4月22日 | 巨头竞逐AI芯片与Agent时代全面来临",
+      "date": "2026-04-22",
+      "category": "技术",
+      "tags": [
+        "AI日报",
+        "ChatGPT",
+        "Anthropic",
+        "人形机器人",
+        "AI安全"
+      ],
+      "excerpt": "OpenAI发布ChatGPT Images 2.0搅动图像生成市场，亚马逊向Anthropic追加50亿美元投资巩固算力版图，AI安全模型Mythos发现Firefox 271个安全漏洞，Meta追踪员工操作训练AI Agent，人形机器人半马破纪录超越人类。",
+      "cover": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&h=400&fit=crop",
+      "readtime": 10,
+      "views": 0
+    },
+    {
       "slug": "dynamic-language-interpreter-optimization",
       "title": "动态语言解释器优化：从 AST 慢跑者到性能怪兽的 16x 加速之旅",
       "date": "2026-04-21",
