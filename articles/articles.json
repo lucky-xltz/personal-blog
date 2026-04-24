@@ -1,6 +1,23 @@
 {
   "articles": [
     {
+      "slug": "nodejs-supply-chain-security-practices",
+      "title": "软件供应链安全实战：从 Bitwarden CLI 被攻击事件看 Node.js 项目防护体系",
+      "date": "2026-04-24",
+      "category": "技术",
+      "tags": [
+        "供应链安全",
+        "Node.js",
+        "DevSecOps",
+        "GitHub Actions",
+        "依赖管理"
+      ],
+      "excerpt": "Bitwarden CLI 2026.4.0 遭遇严重供应链攻击，影响超千万用户。本文以该事件为切入点，系统性拆解 Node.js 项目面临的五大供应链攻击向量，并提供完整可落地的多层防护方案：依赖锁定与作用域隔离、CI/CD 管道安全加固、Sigstore 签名验证、SBOM 追踪，以及预提交依赖审查脚本。",
+      "cover": "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=600&h=400&fit=crop",
+      "readtime": 18,
+      "views": 0
+    },
+    {
       "slug": "ai-news-2026-04-24",
       "title": "AI 日报：2026年4月24日 | GPT-5.5登场、TPU双芯破局与Agent商业化阵痛",
       "date": "2026-04-24",
