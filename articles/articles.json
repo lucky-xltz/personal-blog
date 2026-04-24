@@ -1,6 +1,24 @@
 {
   "articles": [
     {
+      "slug": "ai-news-2026-04-24",
+      "title": "AI 日报：2026年4月24日 | GPT-5.5登场、TPU双芯破局与Agent商业化阵痛",
+      "date": "2026-04-24",
+      "category": "技术",
+      "tags": [
+        "AI日报",
+        "GPT-5.5",
+        "Google TPU",
+        "Anthropic",
+        "AI地缘政治",
+        "Meta"
+      ],
+      "excerpt": "OpenAI发布GPT-5.5向超级应用迈进，Google推出TPU 8t/8i双芯架构专为Agent时代设计，Anthropic因需求爆发测试削减Pro用户Claude Code权限，美国首次指控中国工业规模AI盗窃，Meta监控员工操作训练AI Agent引发隐私争议。",
+      "cover": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&h=400&fit=crop",
+      "readtime": 12,
+      "views": 0
+    },
+    {
       "slug": "ai-news-2026-04-22",
       "title": "AI 日报：2026年4月22日 | 巨头竞逐AI芯片与Agent时代全面来临",
       "date": "2026-04-22",
