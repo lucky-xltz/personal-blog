@@ -1,6 +1,24 @@
 {
   "articles": [
     {
+      "slug": "pgrx-rust-postgres-extensions",
+      "title": "用 Rust 重写 PostgreSQL 扩展：pgrx 框架深度实战与性能剖析",
+      "date": "2026-04-28",
+      "category": "技术",
+      "tags": [
+        "Rust",
+        "PostgreSQL",
+        "pgrx",
+        "数据库扩展",
+        "系统编程",
+        "性能优化"
+      ],
+      "excerpt": "PostgreSQL 的可扩展性是其核心竞争力，但传统 C 扩展的内存管理噩梦让开发者望而却步。pgrx 用 Rust 重写了这个故事：通过过程宏自动生成 FFI 胶水代码，Drop 语义自动管理 MemoryContext，panic 安全转换为 PG ERROR。本文手把手构建一个中文全文搜索引擎扩展，深入解析 SPI 接口、触发器、聚合函数和 Hook 系统，并附上与 C 扩展的完整性能基准对比。",
+      "cover": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&h=400&fit=crop",
+      "readtime": 18,
+      "views": 0
+    },
+    {
       "slug": "local-llm-deployment-guide",
       "title": "本地大模型实战指南：从量化部署到生产级优化",
       "date": "2026-04-28",
