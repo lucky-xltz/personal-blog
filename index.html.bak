@@ -9,32 +9,24 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #818CF8;
-            --primary-dim: rgba(129, 140, 248, 0.15);
-            --secondary: #F472B6;
-            --accent: #2DD4BF;
-            --accent-dim: rgba(45, 212, 191, 0.15);
-            --background: #0B1120;
-            --surface: #151D2E;
-            --surface-elevated: #1A2540;
-            --surface-light: rgba(255, 255, 255, 0.04);
-            --text: #F1F5F9;
-            --text-muted: #7B8BA5;
-            --border-subtle: rgba(255, 255, 255, 0.06);
-            --border-glow: rgba(129, 140, 248, 0.25);
-            --gradient-primary: linear-gradient(135deg, #818CF8 0%, #F472B6 100%);
-            --gradient-accent: linear-gradient(135deg, #2DD4BF 0%, #818CF8 100%);
-            --gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%);
+            --primary: #6366F1;
+            --secondary: #EC4899;
+            --accent: #14B8A6;
+            --background: #0F172A;
+            --surface: #1E293B;
+            --surface-light: rgba(255, 255, 255, 0.05);
+            --text: #F8FAFC;
+            --text-muted: #94A3B8;
+            --gradient-primary: linear-gradient(135deg, #6366F1 0%, #EC4899 100%);
+            --gradient-accent: linear-gradient(135deg, #14B8A6 0%, #6366F1 100%);
+            --gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.05) 100%);
             --radius-sm: 8px;
-            --radius-md: 14px;
-            --radius-lg: 20px;
-            --radius-xl: 28px;
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            --radius-xl: 32px;
             --radius-full: 9999px;
-            --shadow-soft: 0 4px 24px rgba(0, 0, 0, 0.4);
-            --shadow-glow: 0 0 30px rgba(129, 140, 248, 0.2);
-            --shadow-card: 0 2px 12px rgba(0,0,0,0.3), 0 0 0 1px var(--border-subtle);
-            --transition-fast: 0.2s ease;
-            --transition-smooth: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --shadow-glow: 0 0 40px rgba(99, 102, 241, 0.3);
         }
 
         * {
@@ -76,43 +68,39 @@
         }
 
         .blob-1 {
-            width: 500px;
-            height: 500px;
+            width: 600px;
+            height: 600px;
             background: var(--primary);
             top: -200px;
             left: -200px;
             animation-delay: 0s;
-            opacity: 0.35;
         }
 
         .blob-2 {
-            width: 400px;
-            height: 400px;
+            width: 500px;
+            height: 500px;
             background: var(--secondary);
             top: 50%;
             right: -150px;
             animation-delay: -5s;
-            opacity: 0.25;
         }
 
         .blob-3 {
-            width: 350px;
-            height: 350px;
+            width: 400px;
+            height: 400px;
             background: var(--accent);
             bottom: -100px;
             left: 30%;
             animation-delay: -10s;
-            opacity: 0.2;
         }
 
         .blob-4 {
-            width: 300px;
-            height: 300px;
+            width: 350px;
+            height: 350px;
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             top: 40%;
             left: 10%;
             animation-delay: -15s;
-            opacity: 0.2;
         }
 
         @keyframes float {
@@ -146,9 +134,9 @@
         }
 
         .nav.scrolled {
-            background: rgba(11, 17, 32, 0.85);
+            background: rgba(15, 23, 42, 0.8);
             backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border-subtle);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .nav-logo {
@@ -165,7 +153,7 @@
 
         .nav-logo:hover {
             filter: brightness(1.2);
-            text-shadow: 0 0 24px rgba(129, 140, 248, 0.4);
+            text-shadow: 0 0 30px rgba(99, 102, 241, 0.5);
         }
 
         .nav-search {
@@ -176,22 +164,21 @@
         }
 
         .search-input {
-            background: var(--surface-light);
-            border: 1px solid var(--border-subtle);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: var(--radius-full);
             padding: 8px 16px;
             color: var(--text);
             font-size: 0.9rem;
             width: 180px;
-            transition: all var(--transition-smooth);
+            transition: all 0.3s ease;
         }
 
         .search-input:focus {
             outline: none;
             border-color: var(--primary);
-            background: var(--surface);
+            background: rgba(255, 255, 255, 0.1);
             width: 220px;
-            box-shadow: 0 0 12px rgba(129, 140, 248, 0.15);
         }
 
         .search-input::placeholder {
@@ -212,7 +199,7 @@
         }
 
         .search-btn:hover {
-            background: var(--primary-dim);
+            background: rgba(99, 102, 241, 0.2);
             color: var(--primary);
         }
 
@@ -267,8 +254,8 @@
             align-items: center;
             gap: 8px;
             padding: 8px 20px;
-            background: var(--surface);
-            border: 1px solid var(--border-subtle);
+            background: var(--gradient-glass);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: var(--radius-full);
             font-size: 0.875rem;
             color: var(--text-muted);
@@ -361,12 +348,12 @@
         .btn-primary {
             background: var(--gradient-primary);
             color: white;
-            box-shadow: 0 4px 20px rgba(129, 140, 248, 0.35);
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
         }
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 28px rgba(129, 140, 248, 0.45);
+            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.5);
         }
 
         .btn-secondary {
@@ -452,12 +439,12 @@
         }
 
         .article-card {
-            background: var(--surface);
-            border: 1px solid var(--border-subtle);
+            background: var(--gradient-glass);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: var(--radius-xl);
-            padding: 28px;
+            padding: 32px;
             backdrop-filter: blur(10px);
-            transition: all var(--transition-smooth);
+            transition: all 0.4s ease;
             cursor: pointer;
             position: relative;
             overflow: hidden;
@@ -469,22 +456,37 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 3px;
+            height: 4px;
             background: var(--gradient-primary);
             transform: scaleX(0);
             transform-origin: left;
-            transition: transform var(--transition-smooth);
+            transition: transform 0.4s ease;
         }
 
         .article-card:hover {
-            transform: translateY(-6px);
-            border-color: var(--border-glow);
-            box-shadow: var(--shadow-glow), var(--shadow-card);
-            background: var(--surface-elevated);
+            transform: translateY(-8px);
+            border-color: rgba(99, 102, 241, 0.3);
+            box-shadow: var(--shadow-glow);
         }
 
         .article-card:hover::before {
             transform: scaleX(1);
+        }
+
+        .article-card:nth-child(2) {
+            transform: translateY(40px);
+        }
+
+        .article-card:nth-child(2):hover {
+            transform: translateY(32px);
+        }
+
+        .article-card:nth-child(5) {
+            transform: translateY(40px);
+        }
+
+        .article-card:nth-child(5):hover {
+            transform: translateY(32px);
         }
 
         .article-image {
@@ -492,19 +494,8 @@
             height: 200px;
             border-radius: var(--radius-lg);
             overflow: hidden;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
             position: relative;
-        }
-
-        .article-image::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 50%;
-            background: linear-gradient(to top, rgba(11, 17, 32, 0.6), transparent);
-            pointer-events: none;
         }
 
         .article-image img {
@@ -521,18 +512,16 @@
         .article-category {
             display: inline-block;
             padding: 4px 12px;
-            background: var(--primary-dim);
+            background: rgba(99, 102, 241, 0.2);
             color: var(--primary);
             border-radius: var(--radius-full);
             font-size: 0.75rem;
             font-weight: 600;
-            margin-bottom: 14px;
-            letter-spacing: 0.5px;
+            margin-bottom: 16px;
         }
 
-        .article-category.design { background: rgba(244, 114, 182, 0.15); color: var(--secondary); }
-        .article-category.tech { background: var(--accent-dim); color: var(--accent); }
-        .article-category.life { background: rgba(251, 191, 36, 0.15); color: #FBBF24; }
+        .article-category.design { background: rgba(236, 72, 153, 0.2); color: var(--secondary); }
+        .article-category.tech { background: rgba(20, 184, 166, 0.2); color: var(--accent); }
 
         .article-title {
             font-family: 'Outfit', sans-serif;
@@ -589,8 +578,8 @@
             justify-content: space-between;
             align-items: center;
             padding: 12px 20px;
-            background: var(--primary-dim);
-            border: 1px solid var(--border-glow);
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.2);
             border-radius: var(--radius-lg);
             color: var(--text);
             font-size: 0.9rem;
@@ -600,11 +589,11 @@
             background: var(--primary);
             color: white;
             border: none;
-            padding: 6px 14px;
+            padding: 6px 12px;
             border-radius: var(--radius-full);
             font-size: 0.8rem;
             cursor: pointer;
-            transition: all var(--transition-smooth);
+            transition: all 0.3s ease;
         }
 
         .clear-search:hover {
@@ -653,8 +642,8 @@
             border-radius: var(--radius-xl);
             backdrop-filter: blur(20px);
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1);
-            background: var(--surface-elevated);
-            border: 1px solid var(--border-subtle);
+            background: rgba(30, 41, 59, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .notification-icon {
@@ -670,18 +659,18 @@
         }
 
         .notification-success .notification-icon {
-            background: rgba(52, 211, 153, 0.2);
-            color: #34D399;
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
         }
 
         .notification-error .notification-icon {
-            background: rgba(248, 113, 113, 0.2);
-            color: #F87171;
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
         }
 
         .notification-info .notification-icon {
-            background: var(--primary-dim);
-            color: var(--primary);
+            background: rgba(99, 102, 241, 0.2);
+            color: #6366f1;
         }
 
         .notification-body {
@@ -744,15 +733,15 @@
 
         /* Notification variants */
         .notification-success .notification-content {
-            border-left: 4px solid #34D399;
+            border-left: 4px solid #10b981;
         }
 
         .notification-error .notification-content {
-            border-left: 4px solid #F87171;
+            border-left: 4px solid #ef4444;
         }
 
         .notification-info .notification-content {
-            border-left: 4px solid var(--primary);
+            border-left: 4px solid #6366f1;
         }
 
         /* Responsive */
@@ -782,7 +771,7 @@
             background: var(--primary);
             border-radius: 50%;
             filter: blur(200px);
-            opacity: 0.06;
+            opacity: 0.1;
         }
 
         .about-content {
@@ -909,29 +898,33 @@
         }
 
         .tag {
-            padding: 8px 20px;
-            background: var(--surface);
-            border: 1px solid var(--border-subtle);
+            padding: 10px 24px;
+            background: var(--surface-light);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: var(--radius-full);
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             color: var(--text-muted);
             text-decoration: none;
-            transition: all var(--transition-smooth);
+            transition: all 0.3s ease;
             cursor: pointer;
         }
 
+        .tag:nth-child(odd) { transform: rotate(-2deg); }
+        .tag:nth-child(even) { transform: rotate(2deg); }
+        .tag:nth-child(3n) { transform: rotate(-1deg); }
+        .tag:nth-child(4n) { transform: rotate(3deg); }
+
         .tag:hover {
-            background: var(--primary-dim);
-            color: var(--primary);
-            border-color: var(--border-glow);
-            box-shadow: 0 0 16px rgba(129, 140, 248, 0.15);
-            transform: translateY(-2px);
+            background: var(--gradient-primary);
+            color: white;
+            transform: scale(1.1) rotate(0deg);
+            border-color: transparent;
         }
 
         /* Newsletter */
         .newsletter {
-            background: var(--surface);
-            border: 1px solid var(--border-subtle);
+            background: var(--gradient-glass);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: var(--radius-xl);
             padding: 64px;
             text-align: center;
@@ -950,8 +943,8 @@
             height: 300px;
             background: var(--primary);
             border-radius: 50%;
-            filter: blur(120px);
-            opacity: 0.12;
+            filter: blur(100px);
+            opacity: 0.2;
         }
 
         .newsletter h2 {
@@ -976,13 +969,13 @@
         .newsletter-input {
             flex: 1;
             padding: 16px 24px;
-            background: var(--surface-light);
-            border: 1px solid var(--border-subtle);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: var(--radius-full);
             color: var(--text);
             font-size: 1rem;
             outline: none;
-            transition: all var(--transition-smooth);
+            transition: all 0.3s ease;
         }
 
         .newsletter-input::placeholder {
@@ -991,14 +984,13 @@
 
         .newsletter-input:focus {
             border-color: var(--primary);
-            box-shadow: 0 0 16px rgba(129, 140, 248, 0.2);
-            background: var(--surface);
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
         }
 
         /* Footer */
         .footer {
             padding: 80px 48px 40px;
-            border-top: 1px solid var(--border-subtle);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .footer-content {
@@ -1063,7 +1055,7 @@
             height: 44px;
             border-radius: 50%;
             background: var(--surface-light);
-            border: 1px solid var(--border-subtle);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -1083,7 +1075,7 @@
             max-width: 1200px;
             margin: 48px auto 0;
             padding-top: 24px;
-            border-top: 1px solid var(--border-subtle);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -1152,7 +1144,7 @@
                 top: 80px;
                 left: 0;
                 right: 0;
-                background: rgba(11, 17, 32, 0.95);
+                background: rgba(15, 23, 42, 0.95);
                 backdrop-filter: blur(20px);
                 flex-direction: column;
                 padding: 24px;
@@ -1179,6 +1171,16 @@
 
             .articles-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .article-card:nth-child(2),
+            .article-card:nth-child(5) {
+                transform: none;
+            }
+
+            .article-card:nth-child(2):hover,
+            .article-card:nth-child(5):hover {
+                transform: translateY(-8px);
             }
 
             .newsletter {
@@ -1224,314 +1226,16 @@
         }
 
         ::-webkit-scrollbar-thumb {
-            background: var(--surface-elevated);
+            background: var(--surface);
             border-radius: 5px;
         }
 
         ::-webkit-scrollbar-thumb:hover {
             background: var(--primary);
         }
-
-        /* Scroll Progress Bar */
-        .scroll-progress {
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 3px;
-            background: var(--gradient-primary);
-            z-index: 10001;
-            transition: width 0.1s linear;
-            border-radius: 0 2px 2px 0;
-        }
-
-        /* Back to Top Button */
-        .back-to-top {
-            position: fixed;
-            bottom: 32px;
-            right: 32px;
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: var(--surface-elevated);
-            border: 1px solid var(--border-subtle);
-            color: var(--text-muted);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 999;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all var(--transition-smooth);
-            pointer-events: none;
-            box-shadow: var(--shadow-soft);
-        }
-
-        .back-to-top.visible {
-            opacity: 1;
-            transform: translateY(0);
-            pointer-events: auto;
-        }
-
-        .back-to-top:hover {
-            background: var(--primary);
-            color: white;
-            border-color: transparent;
-            box-shadow: var(--shadow-glow);
-            transform: translateY(-3px);
-        }
-
-        /* Category Filter Buttons */
-        .category-filters {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            margin-bottom: 40px;
-            flex-wrap: wrap;
-        }
-
-        .filter-btn {
-            padding: 8px 22px;
-            border-radius: var(--radius-full);
-            border: 1px solid var(--border-subtle);
-            background: var(--surface);
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all var(--transition-smooth);
-            font-family: inherit;
-        }
-
-        .filter-btn:hover {
-            border-color: var(--border-glow);
-            color: var(--text);
-            background: var(--surface-elevated);
-        }
-
-        .filter-btn.active {
-            background: var(--gradient-primary);
-            color: white;
-            border-color: transparent;
-            box-shadow: 0 4px 16px rgba(129, 140, 248, 0.3);
-        }
-
-        /* Featured Article Card */
-        .featured-card {
-            display: grid;
-            grid-template-columns: 1.2fr 1fr;
-            gap: 0;
-            background: var(--surface);
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius-xl);
-            overflow: hidden;
-            margin-bottom: 40px;
-            cursor: pointer;
-            transition: all var(--transition-smooth);
-            position: relative;
-        }
-
-        .featured-card:hover {
-            border-color: var(--border-glow);
-            box-shadow: var(--shadow-glow), var(--shadow-card);
-            transform: translateY(-4px);
-        }
-
-        .featured-card-image {
-            height: 100%;
-            min-height: 320px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .featured-card-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.6s ease;
-        }
-
-        .featured-card:hover .featured-card-image img {
-            transform: scale(1.05);
-        }
-
-        .featured-card-image::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(to right, transparent 60%, var(--surface));
-        }
-
-        .featured-card-content {
-            padding: 48px 40px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .featured-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 5px 14px;
-            background: var(--gradient-primary);
-            border-radius: var(--radius-full);
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: white;
-            margin-bottom: 16px;
-            width: fit-content;
-            letter-spacing: 0.5px;
-        }
-
-        .featured-card-title {
-            font-family: 'Outfit', sans-serif;
-            font-size: 1.8rem;
-            font-weight: 700;
-            line-height: 1.3;
-            margin-bottom: 16px;
-            color: var(--text);
-        }
-
-        .featured-card-excerpt {
-            color: var(--text-muted);
-            font-size: 1rem;
-            line-height: 1.7;
-            margin-bottom: 24px;
-        }
-
-        .featured-card-meta {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            font-size: 0.875rem;
-            color: var(--text-muted);
-        }
-
-        .featured-card-meta span {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        /* Article Tags Pills */
-        .article-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            margin-bottom: 14px;
-        }
-
-        .article-tag-pill {
-            padding: 2px 10px;
-            background: var(--surface-light);
-            border-radius: var(--radius-full);
-            font-size: 0.7rem;
-            color: var(--text-muted);
-            border: 1px solid var(--border-subtle);
-        }
-
-        /* Reading Time Badge */
-        .reading-time {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            font-size: 0.8rem;
-            color: var(--text-muted);
-        }
-
-        /* Article Count Header */
-        .article-count {
-            display: inline-block;
-            margin-top: 8px;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            background: var(--surface);
-            padding: 4px 14px;
-            border-radius: var(--radius-full);
-            border: 1px solid var(--border-subtle);
-        }
-
-        /* Load More Button */
-        .load-more-wrap {
-            text-align: center;
-            margin-top: 48px;
-        }
-
-        .load-more-btn {
-            padding: 14px 40px;
-            border-radius: var(--radius-full);
-            border: 1px solid var(--border-subtle);
-            background: var(--surface);
-            color: var(--text-muted);
-            font-size: 0.95rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all var(--transition-smooth);
-            font-family: inherit;
-        }
-
-        .load-more-btn:hover {
-            border-color: var(--border-glow);
-            color: var(--text);
-            background: var(--surface-elevated);
-            box-shadow: var(--shadow-glow);
-        }
-
-        /* Stat counter animation */
-        .stat-number {
-            font-variant-numeric: tabular-nums;
-        }
-
-        /* Responsive overrides for new features */
-        @media (max-width: 768px) {
-            .featured-card {
-                grid-template-columns: 1fr;
-            }
-            .featured-card-image {
-                min-height: 200px;
-            }
-            .featured-card-image::after {
-                background: linear-gradient(to top, var(--surface) 10%, transparent 60%);
-            }
-            .featured-card-content {
-                padding: 28px 24px;
-            }
-            .featured-card-title {
-                font-size: 1.4rem;
-            }
-            .back-to-top {
-                bottom: 20px;
-                right: 20px;
-                width: 42px;
-                height: 42px;
-            }
-            .article-card:nth-child(2),
-            .article-card:nth-child(5) {
-                transform: none;
-            }
-            .article-card:nth-child(2):hover,
-            .article-card:nth-child(5):hover {
-                transform: translateY(-6px);
-            }
-        }
     </style>
 </head>
 <body>
-    <!-- Scroll Progress Bar -->
-    <div class="scroll-progress" id="scrollProgress"></div>
-
-    <!-- Back to Top Button -->
-    <button class="back-to-top" id="backToTop" aria-label="回到顶部">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12 19V5"></path>
-            <path d="M5 12l7-7 7 7"></path>
-        </svg>
-    </button>
-
     <!-- Animated Background -->
     <div class="bg-gradient">
         <div class="blob blob-1"></div>
@@ -1610,41 +1314,9 @@
             <span class="section-label">精选文章</span>
             <h2 class="section-title">探索知识的边界</h2>
             <p class="section-desc">分享我在技术、设计和生活中的思考与实践，每一个文字都经过精心打磨</p>
-            <span class="article-count" id="articleCount"></span>
         </div>
-
-        <!-- Featured Article -->
-        <div class="featured-card reveal" data-slug="nodejs-supply-chain-security-practices" onclick="window.location.href='article.html?slug=nodejs-supply-chain-security-practices'">
-            <div class="featured-card-image">
-                <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&h=500&fit=crop" alt="软件供应链安全" loading="lazy">
-            </div>
-            <div class="featured-card-content">
-                <span class="featured-badge">精选推荐</span>
-                <h3 class="featured-card-title">软件供应链安全实战：从 Bitwarden CLI 被攻击事件看 Node.js 项目防护体系</h3>
-                <p class="featured-card-excerpt">Bitwarden CLI 2026.4.0 遭遇严重供应链攻击，影响超千万用户。本文以该事件为切入点，系统性拆解 Node.js 项目面临的五大供应链攻击向量，并提供完整可落地的多层防护方案。</p>
-                <div class="featured-card-meta">
-                    <span>
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                        2026年04月24日
-                    </span>
-                    <span class="reading-time">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>
-                        18 分钟阅读
-                    </span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Category Filters -->
-        <div class="category-filters reveal">
-            <button class="filter-btn active" data-category="all">全部</button>
-            <button class="filter-btn" data-category="tech">技术</button>
-            <button class="filter-btn" data-category="design">设计</button>
-            <button class="filter-btn" data-category="life">随笔</button>
-        </div>
-
         <div class="articles-grid" id="articlesGrid">
-<article class="article-card" data-slug="nodejs-supply-chain-security-practices" style="display:none;">
+<article class="article-card reveal" data-slug="nodejs-supply-chain-security-practices">
     <div class="article-image">
         <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=600&h=400&fit=crop" alt="软件供应链安全">
     </div>
@@ -2607,9 +2279,6 @@
                 </div>
             </article>
         </div>
-        <div class="load-more-wrap" id="loadMoreWrap">
-            <button class="load-more-btn" id="loadMoreBtn">加载更多文章</button>
-        </div>
     </section>
 
     <!-- About Section -->
@@ -2756,40 +2425,20 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <span>&copy; 2026 林小白. All rights reserved.</span>
-            <span>Made with code and coffee</span>
+            <span>&copy; 2024 林小白. All rights reserved.</span>
+            <span>Made with ❤️ and ☕</span>
         </div>
     </footer>
 
     <script>
         // Navigation scroll effect
         const nav = document.getElementById('nav');
-        const scrollProgress = document.getElementById('scrollProgress');
-        const backToTop = document.getElementById('backToTop');
-
         window.addEventListener('scroll', () => {
-            const scrollY = window.scrollY;
-            // Nav background
-            if (scrollY > 50) {
+            if (window.scrollY > 50) {
                 nav.classList.add('scrolled');
             } else {
                 nav.classList.remove('scrolled');
             }
-            // Scroll progress bar
-            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-            const progress = docHeight > 0 ? (scrollY / docHeight) * 100 : 0;
-            scrollProgress.style.width = progress + '%';
-            // Back to top button
-            if (scrollY > 400) {
-                backToTop.classList.add('visible');
-            } else {
-                backToTop.classList.remove('visible');
-            }
-        });
-
-        // Back to top click
-        backToTop.addEventListener('click', () => {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
         });
 
         // Mobile menu toggle
@@ -2932,16 +2581,16 @@
             let icon, title;
             switch (type) {
                 case 'success':
-                    icon = '\u2713';
+                    icon = '✓';
                     title = '成功';
                     break;
                 case 'error':
-                    icon = '\u2717';
+                    icon = '✕';
                     title = '错误';
                     break;
                 case 'info':
                 default:
-                    icon = '\u2139';
+                    icon = 'ℹ';
                     title = '提示';
                     break;
             }
@@ -3107,13 +2756,16 @@
         // 获取文章阅读量
         async function loadArticleViews() {
             try {
+                // 这里需要替换为您的 Worker 地址
                 const workerUrl = 'https://analytics.blog.xltz.qzz.io';
                 
+                // 获取所有文章卡片的 slug
                 const articleCards = document.querySelectorAll('.article-card');
                 const articleIds = Array.from(articleCards).map(card => card.dataset.slug).filter(Boolean);
                 
                 if (articleIds.length === 0) return;
                 
+                // 批量获取阅读量
                 const response = await fetch(`${workerUrl}/api/views/batch`, {
                     method: 'POST',
                     headers: {
@@ -3125,6 +2777,7 @@
                 if (response.ok) {
                     const data = await response.json();
                     
+                    // 更新每个文章卡片的阅读量显示
                     articleCards.forEach(card => {
                         const slug = card.dataset.slug;
                         if (slug && data.views[slug] !== undefined) {
@@ -3139,121 +2792,21 @@
         
         // 更新文章卡片的阅读量显示
         function updateCardViews(card, views) {
+            // 查找现有的阅读量显示元素
             const viewsElement = card.querySelector('.article-views');
             
             if (viewsElement) {
+                // 更新已有的阅读量显示
                 const countElement = viewsElement.querySelector('.views-count');
                 if (countElement) {
                     countElement.textContent = views;
                 }
             }
         }
-
-        // ========== NEW FEATURES ==========
-
-        // Category Filter
-        const filterBtns = document.querySelectorAll('.filter-btn');
-        const allArticleCards = document.querySelectorAll('.article-card[data-slug]');
-        const INITIAL_SHOW = 8;
-        let currentCategory = 'all';
-        let visibleCount = INITIAL_SHOW;
-
-        function getFilteredCards() {
-            return Array.from(allArticleCards).filter(card => {
-                if (card.style.display === 'none' && card.dataset.slug === 'nodejs-supply-chain-security-practices') return false;
-                if (currentCategory === 'all') return true;
-                const cat = card.querySelector('.article-category');
-                if (!cat) return false;
-                const catClass = Array.from(cat.classList).find(c => ['tech', 'design', 'life'].includes(c));
-                return catClass === currentCategory;
-            });
-        }
-
-        function applyFilterAndPagination() {
-            const filtered = getFilteredCards();
-            filtered.forEach((card, i) => {
-                if (i < visibleCount) {
-                    card.style.display = '';
-                    card.style.opacity = '1';
-                    card.style.transform = '';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-            // Hide non-matching cards
-            allArticleCards.forEach(card => {
-                if (card.dataset.slug === 'nodejs-supply-chain-security-practices') return;
-                if (!filtered.includes(card)) {
-                    card.style.display = 'none';
-                }
-            });
-            // Update load more button
-            const loadMoreWrap = document.getElementById('loadMoreWrap');
-            if (filtered.length <= visibleCount) {
-                loadMoreWrap.style.display = 'none';
-            } else {
-                loadMoreWrap.style.display = 'block';
-            }
-            // Update article count
-            const countEl = document.getElementById('articleCount');
-            if (countEl) {
-                countEl.textContent = `共 ${filtered.length} 篇文章`;
-            }
-        }
-
-        filterBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                filterBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                currentCategory = btn.dataset.category;
-                visibleCount = INITIAL_SHOW;
-                applyFilterAndPagination();
-            });
-        });
-
-        // Load More
-        const loadMoreBtn = document.getElementById('loadMoreBtn');
-        if (loadMoreBtn) {
-            loadMoreBtn.addEventListener('click', () => {
-                visibleCount += 8;
-                applyFilterAndPagination();
-            });
-        }
-
-        // Stat counter animation
-        function animateStatNumbers() {
-            const stats = document.querySelectorAll('.stat-number');
-            stats.forEach(stat => {
-                if (stat.dataset.animated) return;
-                const rect = stat.getBoundingClientRect();
-                if (rect.top < window.innerHeight && rect.bottom > 0) {
-                    stat.dataset.animated = 'true';
-                    const text = stat.textContent;
-                    const match = text.match(/(\d+)/);
-                    if (match) {
-                        const target = parseInt(match[1]);
-                        const suffix = text.replace(match[1], '');
-                        let current = 0;
-                        const step = Math.max(1, Math.floor(target / 30));
-                        const timer = setInterval(() => {
-                            current += step;
-                            if (current >= target) {
-                                current = target;
-                                clearInterval(timer);
-                            }
-                            stat.textContent = current + suffix;
-                        }, 30);
-                    }
-                }
-            });
-        }
-        window.addEventListener('scroll', animateStatNumbers);
-
-        // 页面加载完成后初始化
+        
+        // 页面加载完成后获取阅读量
         document.addEventListener('DOMContentLoaded', () => {
             loadArticleViews();
-            applyFilterAndPagination();
-            animateStatNumbers();
         });
     </script>
 </body>
