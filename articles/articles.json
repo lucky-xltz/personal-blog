@@ -1,6 +1,25 @@
 {
   "articles": [
     {
+      "slug": "local-llm-deployment-guide",
+      "title": "本地大模型实战指南：从量化部署到生产级优化",
+      "date": "2026-04-28",
+      "category": "技术",
+      "tags": [
+        "AI",
+        "LLM",
+        "本地部署",
+        "量化",
+        "llama.cpp",
+        "Ollama",
+        "MLX"
+      ],
+      "excerpt": "本地部署大模型已从极客实验走向生产实践。本文系统介绍完整技术栈：GGUF量化原理与决策树、三大框架对比（Ollama极简起步、llama.cpp极致性能、MLX原生Apple Silicon优化）、五大生产级优化策略（KV Cache量化、连续批处理、投机解码、前缀缓存、上下文管理），以及RAG场景实战和硬件选型基准。",
+      "cover": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&h=400&fit=crop",
+      "readtime": 15,
+      "views": 0
+    },
+    {
       "slug": "nodejs-supply-chain-security-practices",
       "title": "软件供应链安全实战：从 Bitwarden CLI 被攻击事件看 Node.js 项目防护体系",
       "date": "2026-04-24",
