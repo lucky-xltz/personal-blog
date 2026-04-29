@@ -1,6 +1,25 @@
 {
   "articles": [
     {
+      "slug": "ai-news-2026-04-29",
+      "title": "AI 日报：2026年4月29日 | 苹果洽购Perplexity、OpenAI估值三千亿、AI伪造检测告急",
+      "date": "2026-04-29",
+      "category": "技术",
+      "tags": [
+        "AI日报",
+        "苹果",
+        "OpenAI",
+        "Perplexity",
+        "深度伪造",
+        "Meta",
+        "Microsoft"
+      ],
+      "excerpt": "苹果正在洽谈140-180亿美元收购Perplexity AI，OpenAI以3000亿美元估值完成400亿融资，微软Teams引入AI代理替你开会，Meta斥资百亿美元在路易斯安那建AI超级数据中心，斯坦福研究警告深度伪造检测准确率已骤降至67%。",
+      "cover": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&h=400&fit=crop",
+      "readtime": 10,
+      "views": 0
+    },
+    {
       "slug": "pgrx-rust-postgres-extensions",
       "title": "用 Rust 重写 PostgreSQL 扩展：pgrx 框架深度实战与性能剖析",
       "date": "2026-04-28",
