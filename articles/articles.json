@@ -1,6 +1,24 @@
 {
   "articles": [
     {
+      "slug": "ai-news-2026-04-30",
+      "title": "AI 日报：2026年04月30日 | 推理模型竞赛升温，美国AI部署警钟敲响",
+      "date": "2026-04-30",
+      "category": "技术",
+      "tags": [
+        "AI日报",
+        "Mistral",
+        "推理模型",
+        "AI政策",
+        "深度研究",
+        "开源AI"
+      ],
+      "excerpt": "今天AI领域两大主线交织：Mistral发布首个推理模型Magistral以完全开源姿态叫板OpenAI和DeepSeek；美国国会两党委员会报告警告美国AI部署落后中国构成国家安全问题；一项五大模型深度研究能力评测显示Claude领跑，DeepSeek性价比惊人。",
+      "cover": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&h=400&fit=crop",
+      "readtime": 10,
+      "views": 0
+    },
+    {
       "slug": "cloudflare-observability-platform-deep-dive",
       "title": "深入解析 Cloudflare 可观测性平台：ClickHouse、Kafka 与 AI 驱动的错误分析",
       "date": "2026-04-29",
