@@ -1,6 +1,23 @@
 {
   "articles": [
     {
+      "slug": "ebpf-linux-kernel-programmability-2026",
+      "title": "eBPF 深度实战：Linux 内核可编程革命的原理、工具与生产实践",
+      "date": "2026-04-30",
+      "category": "技术",
+      "tags": [
+        "eBPF",
+        "Linux",
+        "可观测性",
+        "内核编程",
+        "性能优化"
+      ],
+      "excerpt": "eBPF 正在重新定义 Linux 内核的可编程性。本文深入剖析 eBPF 的技术原理——从验证器、JIT 编译到 CO-RE 可移植性，详解 BCC、libbpf、Aya 三大开发框架，覆盖可观测性、网络编程和安全三大应用场景，并以 Netflix、Google 的生产实践为案例，展示 eBPF 相比传统方案数十倍的性能优势。",
+      "cover": "https://images.unsplash.com/photo-1629654297299-c8506221ca97?w=600&h=400&fit=crop",
+      "readtime": 18,
+      "views": 0
+    },
+    {
       "slug": "wasmgc-deep-dive-2026",
       "title": "WebAssembly GC 深度解析：告别自带垃圾回收器的时代",
       "date": "2026-04-30",
