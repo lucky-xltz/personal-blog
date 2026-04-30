@@ -1,6 +1,23 @@
 {
   "articles": [
     {
+      "slug": "wasmgc-deep-dive-2026",
+      "title": "WebAssembly GC 深度解析：告别自带垃圾回收器的时代",
+      "date": "2026-04-30",
+      "category": "技术",
+      "tags": [
+        "WebAssembly",
+        "WasmGC",
+        "前端",
+        "性能优化",
+        "编译器"
+      ],
+      "excerpt": "WebAssembly GC（WasmGC）是 Wasm 自 MVP 以来最重要的特性升级。它为 Wasm 引入了原生的垃圾回收类型系统——struct、array 和引用类型，让 Kotlin、Dart、Java 等托管语言无需自带 GC 运行时即可编译到 Wasm，二进制体积缩小 75-80%，冷启动提速 70%，与浏览器 GC 统一协调。",
+      "cover": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&h=400&fit=crop",
+      "readtime": 15,
+      "views": 0
+    },
+    {
       "slug": "ai-news-2026-04-30",
       "title": "AI 日报：2026年04月30日 | 推理模型竞赛升温，美国AI部署警钟敲响",
       "date": "2026-04-30",
