@@ -1,6 +1,23 @@
 {
   "articles": [
     {
+      "slug": "ai-news-2026-05-01",
+      "title": "AI日报：2026年5月1日 | Musk庭审翻车、Gemini隐私争议与AI供应链安全警钟",
+      "date": "2026-05-01",
+      "category": "技术",
+      "tags": [
+        "AI日报",
+        "OpenAI",
+        "Google Gemini",
+        "供应链安全",
+        "数据中心"
+      ],
+      "excerpt": "今日AI领域新闻密集：Musk在OpenAI庭审中多次与自身证据矛盾，法官质疑其动机；Google Gemini隐私控制被指暗黑模式，欧洲监管介入；PyTorch Lightning遭供应链攻击，恶意包窃取模型权重；中东数据中心因地缘冲突暂停，AI基建投资格局生变；OpenAI Codex系统提示词被曝要求永远不谈哥布林。",
+      "cover": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&h=400&fit=crop",
+      "readtime": 8,
+      "views": 0
+    },
+    {
       "slug": "ebpf-linux-kernel-programmability-2026",
       "title": "eBPF 深度实战：Linux 内核可编程革命的原理、工具与生产实践",
       "date": "2026-04-30",
