@@ -1,6 +1,23 @@
 {
   "articles": [
     {
+      "slug": "sqlite-as-message-broker-honker",
+      "title": "SQLite 即消息队列：用 Honker 在单文件数据库中实现持久化任务调度",
+      "date": "2026-05-01",
+      "category": "技术",
+      "tags": [
+        "SQLite",
+        "消息队列",
+        "后端架构",
+        "任务调度",
+        "数据库"
+      ],
+      "excerpt": "如果你的应用已经在用 SQLite 做主数据库，你还需要 Redis 来跑任务队列吗？Honker 是一个 SQLite 扩展，在单文件数据库中实现了持久化任务队列、事件流、Pub/Sub 通知和 Cron 调度器。本文深入剖析其架构设计、内部实现原理、性能特征，并与传统方案做全面对比。",
+      "cover": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=600&h=400&fit=crop",
+      "readtime": 15,
+      "views": 0
+    },
+    {
       "slug": "ai-news-2026-05-01",
       "title": "AI日报：2026年5月1日 | Musk庭审翻车、Gemini隐私争议与AI供应链安全警钟",
       "date": "2026-05-01",
