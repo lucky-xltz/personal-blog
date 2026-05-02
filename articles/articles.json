@@ -1,6 +1,23 @@
 {
   "articles": [
     {
+      "slug": "ai-news-2026-05-02",
+      "title": "AI日报：2026年5月2日 | GPT-5.5叫板Mythos、暖AI更易犯错、明尼苏达封杀脱衣AI",
+      "date": "2026-05-02",
+      "category": "技术",
+      "tags": [
+        "GPT-5.5",
+        "AI安全",
+        "AI隐私",
+        "OpenAI",
+        "大模型"
+      ],
+      "excerpt": "GPT-5.5在网络安全测试中追平Mythos Preview，牛津研究揭示温暖AI模型出错率高60%，明尼苏达全票封杀AI脱衣应用，Google Gemini隐私暗模式曝光，OpenAI Codex系统提示词惊现'哥布林禁令'。",
+      "cover": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&h=400&fit=crop",
+      "readtime": 12,
+      "views": 0
+    },
+    {
       "slug": "mcp-deep-dive-ai-tool-protocol",
       "title": "深入理解 Model Context Protocol：AI 工具调用的统一标准",
       "date": "2026-05-01",
