@@ -1,6 +1,24 @@
 {
   "articles": [
     {
+      "slug": "k3k-kubernetes-in-kubernetes-deep-dive",
+      "title": "K3k 深度实践：在 Kubernetes 中运行 Kubernetes，实现真正的多租户隔离",
+      "date": "2026-05-02",
+      "category": "技术",
+      "tags": [
+        "Kubernetes",
+        "K3k",
+        "多租户",
+        "DevOps",
+        "容器编排",
+        "云原生"
+      ],
+      "excerpt": "多租户是 Kubernetes 落地中最具挑战性的问题之一。K3k 由 Rancher 团队开源，让你在现有集群中运行多个完全隔离的 K3s 集群，比 Namespace 隔离更强，比独立集群更轻量。本文深入剖析 K3k 的 Shared/Virtual 两种模式、与 vcluster 的对比，以及完整的生产部署实践。",
+      "cover": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=600&h=400&fit=crop",
+      "readtime": 14,
+      "views": 0
+    },
+    {
       "slug": "webtransport-realtime-revolution-2026",
       "title": "WebTransport 深度实战：WebSocket 之后的下一代实时通信协议",
       "date": "2026-05-02",
