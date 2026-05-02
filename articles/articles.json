@@ -1,6 +1,23 @@
 {
   "articles": [
     {
+      "slug": "webtransport-realtime-revolution-2026",
+      "title": "WebTransport 深度实战：WebSocket 之后的下一代实时通信协议",
+      "date": "2026-05-02",
+      "category": "技术",
+      "tags": [
+        "WebTransport",
+        "HTTP/3",
+        "QUIC",
+        "实时通信",
+        "WebSocket"
+      ],
+      "excerpt": "WebTransport 正式进入 Baseline 2026，四大浏览器全部支持。基于 HTTP/3 和 QUIC 构建，同时支持可靠流和不可靠数据报，彻底解决 TCP 队头阻塞。本文从原理到实战，教你构建实时协作编辑器，掌握三种传输模式的选择策略。",
+      "cover": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=600&h=400&fit=crop",
+      "readtime": 14,
+      "views": 0
+    },
+    {
       "slug": "ai-news-2026-05-02",
       "title": "AI日报：2026年5月2日 | GPT-5.5叫板Mythos、暖AI更易犯错、明尼苏达封杀脱衣AI",
       "date": "2026-05-02",
