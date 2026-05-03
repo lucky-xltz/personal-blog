@@ -1,6 +1,23 @@
 {
   "articles": [
     {
+      "slug": "ladybird-browser-engine-deep-dive-2026",
+      "title": "Ladybird 深度解析：从零构建独立浏览器引擎的技术挑战与突破",
+      "date": "2026-05-03",
+      "category": "技术",
+      "tags": [
+        "浏览器",
+        "Ladybird",
+        "Rust",
+        "开源",
+        "Web引擎"
+      ],
+      "excerpt": "在 Chromium 内核几乎统治所有主流浏览器的今天，Ladybird 从零开始构建完整浏览器引擎。本文深度解析其技术架构——从 C++ 到 Rust 的战略迁移、增量式 HTML 解析、推测性预加载、离线程 JS 编译等核心突破，以及为什么浏览器引擎多样性对 Web 的未来至关重要。",
+      "cover": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=400&fit=crop",
+      "readtime": 12,
+      "views": 0
+    },
+    {
       "slug": "durable-execution-workflows-ai-agents",
       "title": "Durable Execution 深度解析：构建可靠的长时间运行工作流与 AI Agent",
       "date": "2026-05-03",
