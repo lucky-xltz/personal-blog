@@ -1,6 +1,24 @@
 {
   "articles": [
     {
+      "slug": "ai-news-2026-05-03",
+      "title": "AI 日报：2026年5月3日 | Anthropic估值冲击万亿、五角大楼拥抱AI、奥斯卡对AI说不",
+      "date": "2026-05-03",
+      "category": "技术",
+      "tags": [
+        "AI日报",
+        "Anthropic",
+        "五角大楼",
+        "奥斯卡",
+        "AI监管",
+        "网络安全"
+      ],
+      "excerpt": "今天的AI领域呈现冰火两重天的态势：资本市场上Anthropic估值飙升至近万亿美元，军方加速AI部署，而文化与立法领域则对AI应用划定了更清晰的边界。五角大楼与Nvidia、Microsoft、AWS签署AI部署协议，明尼苏达州成为美国首个禁止AI裸体生成应用的州，奥斯卡宣布AI生成的演员和剧本无资格参评。",
+      "cover": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&h=400&fit=crop",
+      "readtime": 8,
+      "views": 0
+    },
+    {
       "slug": "k3k-kubernetes-in-kubernetes-deep-dive",
       "title": "K3k 深度实践：在 Kubernetes 中运行 Kubernetes，实现真正的多租户隔离",
       "date": "2026-05-02",
