@@ -1,6 +1,24 @@
 {
   "articles": [
     {
+      "slug": "durable-execution-workflows-ai-agents",
+      "title": "Durable Execution 深度解析：构建可靠的长时间运行工作流与 AI Agent",
+      "date": "2026-05-03",
+      "category": "技术",
+      "tags": [
+        "Durable Execution",
+        "AI Agent",
+        "Inngest",
+        "Temporal",
+        "工作流引擎",
+        "微服务"
+      ],
+      "excerpt": "当你的 AI Agent 需要 30 分钟完成代码审查时，服务器重启了怎么办？Durable Execution 将执行过程变成事件流，每一步的结果都被持久化，失败后从断点恢复。本文深入对比 Inngest 与 Temporal 两大引擎，实战构建生产级 Durable AI Agent。",
+      "cover": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=600&h=400&fit=crop",
+      "readtime": 16,
+      "views": 0
+    },
+    {
       "slug": "ai-news-2026-05-03",
       "title": "AI 日报：2026年5月3日 | Anthropic估值冲击万亿、五角大楼拥抱AI、奥斯卡对AI说不",
       "date": "2026-05-03",
