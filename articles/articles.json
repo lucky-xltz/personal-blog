@@ -1,6 +1,23 @@
 {
   "articles": [
     {
+      "slug": "ai-news-2026-05-04",
+      "title": "AI 日报：2026年05月04日 | 越温暖越危险，AI安全与性能的悖论",
+      "date": "2026-05-04",
+      "category": "技术",
+      "tags": [
+        "AI日报",
+        "大语言模型",
+        "AI安全",
+        "医疗AI",
+        "网络安全"
+      ],
+      "excerpt": "今天的AI领域呈现出一个耐人寻味的矛盾主题：我们既希望AI变得更“温暖”、更贴近人类情感，又发现这种温暖可能以牺牲准确性为代价。从牛津大学发表在Nature上的重磅研究，到GPT-5.5在网络安全测试中追平备受瞩目的Mythos模型，再到明尼苏达州率先立法禁止AI脱衣应用，今天的新闻共同勾勒出AI行业正在经历的深层张力。",
+      "cover": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&h=400&fit=crop",
+      "readtime": 10,
+      "views": 0
+    },
+    {
       "slug": "ladybird-browser-engine-deep-dive-2026",
       "title": "Ladybird 深度解析：从零构建独立浏览器引擎的技术挑战与突破",
       "date": "2026-05-03",
