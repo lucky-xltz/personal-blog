@@ -1,6 +1,24 @@
 {
   "articles": [
     {
+      "slug": "webgpu-next-gen-web-graphics-compute-2026",
+      "title": "WebGPU 深度实战：浏览器中的下一代图形与计算引擎",
+      "date": "2026-05-04",
+      "category": "技术",
+      "tags": [
+        "WebGPU",
+        "WGSL",
+        "前端",
+        "GPU计算",
+        "性能优化",
+        "浏览器"
+      ],
+      "excerpt": "WebGPU 已在主流浏览器全面落地，成为 WebGL 的正式继任者。它基于 Vulkan/Metal/DX12 的设计理念，从即时模式渲染转向显式 GPU 资源管理，从纯图形 API 拓展到通用 GPU 计算（GPGPU）。本文深度解析 WebGPU 核心架构、WGSL 着色器语言、Compute Shader 实战、ML 推理应用及性能优化策略。",
+      "cover": "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=600&h=400&fit=crop",
+      "readtime": 15,
+      "views": 0
+    },
+    {
       "slug": "mcp-unified-tool-integration-for-ai",
       "title": "MCP：统一 AI 工具集成的开放协议，让大模型连接万物",
       "date": "2026-05-04",
