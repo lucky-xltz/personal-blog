@@ -1,6 +1,23 @@
 {
   "articles": [
     {
+      "slug": "mcp-unified-tool-integration-for-ai",
+      "title": "MCP：统一 AI 工具集成的开放协议，让大模型连接万物",
+      "date": "2026-05-04",
+      "category": "技术",
+      "tags": [
+        "MCP",
+        "AI",
+        "大模型",
+        "工具集成",
+        "协议设计"
+      ],
+      "excerpt": "Model Context Protocol（MCP）是 Anthropic 发布的开放协议，为 AI 应用与外部系统之间建立标准化连接。本文深入剖析 MCP 的协议架构、三大核心原语（Tools/Resources/Prompts），并手把手用 Python 构建自定义 MCP Server。",
+      "cover": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=600&h=400&fit=crop",
+      "readtime": 14,
+      "views": 0
+    },
+    {
       "slug": "ai-news-2026-05-04",
       "title": "AI 日报：2026年05月04日 | 越温暖越危险，AI安全与性能的悖论",
       "date": "2026-05-04",
