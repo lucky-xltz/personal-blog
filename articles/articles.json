@@ -1,6 +1,24 @@
 {
   "articles": [
     {
+      "slug": "bun-zig-to-rust-porting-2026",
+      "title": "Bun 从 Zig 迁移到 Rust：一个大型运行时项目跨语言重写的深度解析",
+      "date": "2026-05-05",
+      "category": "技术",
+      "tags": [
+        "Bun",
+        "Rust",
+        "Zig",
+        "JavaScript运行时",
+        "跨语言迁移",
+        "系统编程"
+      ],
+      "excerpt": "2026年5月5日，Bun 创始人 Jarred Sumner 提交了一份 576 行的 Zig 到 Rust 迁移指南，正式开启这个 89,600+ Star 的 JS 运行时的跨语言重写。本文深入解析迁移策略、crate 架构、类型映射和 AI 辅助迁移的新范式。",
+      "cover": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&h=400&fit=crop",
+      "readtime": 15,
+      "views": 0
+    },
+    {
       "slug": "ai-news-2026-05-05",
       "title": "AI 日报：2026年05月05日 | AI安全能力趋同、教育研究翻车与温情模型的代价",
       "date": "2026-05-05",
