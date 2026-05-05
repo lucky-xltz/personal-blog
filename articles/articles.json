@@ -1,6 +1,23 @@
 {
   "articles": [
     {
+      "slug": "agent-skills-senior-engineer-scaffolding-for-ai-coders-2026",
+      "title": "Agent Skills：给 AI 编码代理装上「高级工程师骨架」",
+      "date": "2026-05-05",
+      "category": "技术",
+      "tags": [
+        "AI编程",
+        "Agent",
+        "软件工程",
+        "Claude Code",
+        "SDLC"
+      ],
+      "excerpt": "Google 工程师 Addy Osmani 的 Agent Skills 项目获得 26K+ Star，它解决了 AI 编码代理最核心的问题：代理默认走最短路径，跳过规格说明、测试、审查等高级工程师的「不可见工作」。本文深度解析五大承重设计决策——流程优于散文、反合理化表格、验证不可谈判、渐进式披露、范围纪律，以及如何为自己的团队构建定制化 Skill 系统。",
+      "cover": "https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=600&h=400&fit=crop",
+      "readtime": 12,
+      "views": 0
+    },
+    {
       "slug": "bun-zig-to-rust-porting-2026",
       "title": "Bun 从 Zig 迁移到 Rust：一个大型运行时项目跨语言重写的深度解析",
       "date": "2026-05-05",
