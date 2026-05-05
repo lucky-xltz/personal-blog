@@ -1,6 +1,23 @@
 {
   "articles": [
     {
+      "slug": "ai-news-2026-05-05",
+      "title": "AI 日报：2026年05月05日 | AI安全能力趋同、教育研究翻车与温情模型的代价",
+      "date": "2026-05-05",
+      "category": "技术",
+      "tags": [
+        "AI日报",
+        "GPT-5.5",
+        "AI安全",
+        "Sierra融资",
+        "AI教育"
+      ],
+      "excerpt": "今天的AI领域：Sierra以150亿美元估值完成9.5亿美元融资；GPT-5.5在网络安全测试中追平Mythos Preview；一篇被引用500多次的ChatGPT教育研究被撤稿；牛津研究发现让AI更'温暖'会让错误率增加60%；OpenAI、Google、微软联合支持AI素养教育法案。",
+      "cover": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&h=400&fit=crop",
+      "readtime": 10,
+      "views": 0
+    },
+    {
       "slug": "webgpu-next-gen-web-graphics-compute-2026",
       "title": "WebGPU 深度实战：浏览器中的下一代图形与计算引擎",
       "date": "2026-05-04",
