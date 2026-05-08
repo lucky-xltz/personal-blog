@@ -498,6 +498,50 @@
         .article-nav-link:hover {
             border-color: rgba(99, 102, 241, 0.3);
             transform: translateY(-4px);
+        }
+
+        /* Giscus Comments Section - Neumorphism Style */
+        .comments-section {
+            max-width: 900px;
+            margin: 48px auto 0;
+            padding: 0 24px;
+        }
+
+        .comments-section-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 24px;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .comments-section-title svg {
+            width: 28px;
+            height: 28px;
+            filter: drop-shadow(0 0 8px rgba(99, 102, 241, 0.4));
+        }
+
+        .comments-container {
+            background: var(--gradient-glass);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-xl);
+            padding: 32px;
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow-soft);
+            animation: fadeInUp 0.8s ease 0.3s backwards;
+        }
+
+        .comments-container iframe {
+            border-radius: var(--radius-md);
+        }
+
+        .article-nav-link:hover {
             box-shadow: var(--shadow-glow);
         }
 
@@ -732,6 +776,34 @@
             <div class="loading-text">正在加载文章...</div>
         </div>
     </div>
+
+    <!-- Comments Section -->
+    <section class="comments-section">
+        <h2 class="comments-section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+            评论区
+        </h2>
+        <div class="comments-container">
+            <script src="https://giscus.app/client.js"
+                data-repo="lucky-xltz/personal-blog"
+                data-repo-id=""
+                data-category="Announcements"
+                data-category-id=""
+                data-mapping="pathname"
+                data-strict="0"
+                data-reactions-enabled="1"
+                data-emit-metadata="0"
+                data-input-position="top"
+                data-theme="dark"
+                data-lang="zh-CN"
+                data-loading="lazy"
+                crossorigin="anonymous"
+                async>
+            </script>
+        </div>
+    </section>
 
     <!-- Footer -->
     <footer class="footer">

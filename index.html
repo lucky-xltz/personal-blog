@@ -884,6 +884,8 @@
         .sidebar-card:nth-child(1) { animation-delay: 0.1s; }
         .sidebar-card:nth-child(2) { animation-delay: 0.2s; }
         .sidebar-card:nth-child(3) { animation-delay: 0.3s; }
+        .sidebar-card:nth-child(4) { animation-delay: 0.4s; }
+        .sidebar-card:nth-child(5) { animation-delay: 0.5s; }
 
         /* ===== FLOATING SHAPES (background) ===== */
         .bg-shapes {
@@ -951,6 +953,84 @@
             box-shadow: var(--neu-raised-sm), 0 0 12px rgba(124, 131, 219, 0.15);
         }
 
+        /* ===== SIDEBAR HOT ARTICLES ===== */
+        .sidebar-hot-list {
+            list-style: none;
+        }
+        .sidebar-hot-list li {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .sidebar-hot-list li:last-child { border-bottom: none; }
+        .sidebar-hot-rank {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 22px;
+            height: 22px;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            flex-shrink: 0;
+            background: var(--bg);
+            box-shadow: var(--neu-inset-sm);
+            color: var(--text-muted);
+        }
+        .sidebar-hot-rank.top-1 { background: var(--accent); color: #fff; box-shadow: var(--neu-raised-sm); }
+        .sidebar-hot-rank.top-2 { background: var(--accent-pink); color: #fff; box-shadow: var(--neu-raised-sm); }
+        .sidebar-hot-rank.top-3 { background: var(--accent-teal); color: #fff; box-shadow: var(--neu-raised-sm); }
+        .sidebar-hot-list a {
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color var(--transition);
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .sidebar-hot-list a:hover { color: var(--accent); }
+        .sidebar-hot-views {
+            color: var(--text-muted);
+            font-size: 0.7rem;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        /* ===== SIDEBAR ARCHIVE ===== */
+        .sidebar-archive-list {
+            list-style: none;
+        }
+        .sidebar-archive-list li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 7px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .sidebar-archive-list li:last-child { border-bottom: none; }
+        .sidebar-archive-month {
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            text-decoration: none;
+            transition: color var(--transition);
+        }
+        .sidebar-archive-month:hover { color: var(--accent); }
+        .sidebar-archive-count {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            background: var(--bg);
+            box-shadow: var(--neu-inset-sm);
+            padding: 2px 8px;
+            border-radius: var(--radius-full);
+            font-weight: 600;
+        }
+
     </style>
 </head>
 <body>
@@ -1008,27 +1088,7 @@
                 <span class="article-count" id="articleCount"></span>
             </div>
 
-        <!-- Featured Article -->
-        <div class="featured-card reveal" data-slug="nodejs-supply-chain-security-practices" onclick="window.location.href='article.html?slug=nodejs-supply-chain-security-practices'">
-            <div class="featured-card-image">
-                <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&h=500&fit=crop" alt="软件供应链安全" loading="lazy">
-            </div>
-            <div class="featured-card-content">
-                <span class="featured-badge">精选推荐</span>
-                <h3 class="featured-card-title">软件供应链安全实战：从 Bitwarden CLI 被攻击事件看 Node.js 项目防护体系</h3>
-                <p class="featured-card-excerpt">Bitwarden CLI 2026.4.0 遭遇严重供应链攻击，影响超千万用户。本文以该事件为切入点，系统性拆解 Node.js 项目面临的五大供应链攻击向量，并提供完整可落地的多层防护方案。</p>
-                <div class="featured-card-meta">
-                    <span>
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                        2026年04月24日
-                    </span>
-                    <span class="reading-time">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>
-                        18 分钟阅读
-                    </span>
-                </div>
-            </div>
-        </div>
+
 
         <!-- Category Filters -->
         <div class="category-filters reveal">
@@ -1627,7 +1687,7 @@
  </span>
  </div>
 </article>
-<article class="article-card" data-slug="nodejs-supply-chain-security-practices" style="display:none;">
+<article class="article-card" data-slug="nodejs-supply-chain-security-practices">
     <div class="article-image">
         <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=600&h=400&fit=crop" alt="软件供应链安全">
     </div>
@@ -2614,6 +2674,20 @@
                 </ul>
             </div>
 
+            <!-- Hot Articles -->
+            <div class="sidebar-card">
+                <h3 class="sidebar-title">🔥 热门文章</h3>
+                <ul class="sidebar-hot-list" id="sidebarHot">
+                </ul>
+            </div>
+
+            <!-- Archive -->
+            <div class="sidebar-card">
+                <h3 class="sidebar-title">📁 归档</h3>
+                <ul class="sidebar-archive-list" id="sidebarArchive">
+                </ul>
+            </div>
+
             <!-- Tags -->
             <div class="sidebar-card">
                 <h3 class="sidebar-title">热门标签</h3>
@@ -3022,9 +3096,12 @@
                     articleCards.forEach(card => {
                         const slug = card.dataset.slug;
                         if (slug && data.views[slug] !== undefined) {
+                            card.dataset.views = data.views[slug];
                             updateCardViews(card, data.views[slug]);
                         }
                     });
+                    // Refresh hot articles sidebar with real view data
+                    buildSidebarHot();
                 }
             } catch (error) {
                 console.error('获取阅读量失败:', error);
@@ -3054,7 +3131,6 @@
 
         function getFilteredCards() {
             return Array.from(allArticleCards).filter(card => {
-                if (card.style.display === 'none' && card.dataset.slug === 'nodejs-supply-chain-security-practices') return false;
                 if (currentCategory === 'all') return true;
                 const cat = card.querySelector('.article-category');
                 if (!cat) return false;
@@ -3076,7 +3152,6 @@
             });
             // Hide non-matching cards
             allArticleCards.forEach(card => {
-                if (card.dataset.slug === 'nodejs-supply-chain-security-practices') return;
                 if (!filtered.includes(card)) {
                     card.style.display = 'none';
                 }
@@ -3167,6 +3242,82 @@
             ).join('');
         }
 
+        // 动态生成侧栏热门文章
+        function buildSidebarHot() {
+            const container = document.getElementById('sidebarHot');
+            if (!container) return;
+
+            // Collect all articles with slug data
+            const cards = document.querySelectorAll('.article-card[data-slug]');
+            const articles = [];
+            cards.forEach(card => {
+                const slug = card.dataset.slug;
+                const title = card.querySelector('.article-title');
+                if (!slug || !title) return;
+                // Use views from API (data-views attribute) or default 0
+                const views = parseInt(card.dataset.views || '0', 10);
+                articles.push({ slug, title: title.textContent.trim(), views });
+            });
+
+            // Sort by views descending, take top 5
+            articles.sort((a, b) => b.views - a.views);
+            const top5 = articles.slice(0, 5);
+
+            if (top5.length === 0) return;
+
+            container.innerHTML = top5.map((item, i) => {
+                const rankClass = i < 3 ? ' top-' + (i + 1) : '';
+                const displayTitle = item.title.length > 18 ? item.title.substring(0, 18) + '...' : item.title;
+                return '<li>' +
+                    '<span class="sidebar-hot-rank' + rankClass + '">' + (i + 1) + '</span>' +
+                    '<a href="article.html?slug=' + item.slug + '">' + displayTitle + '</a>' +
+                    '<span class="sidebar-hot-views">' +
+                        '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>' +
+                        item.views +
+                    '</span>' +
+                '</li>';
+            }).join('');
+        }
+
+        // 动态生成侧栏归档
+        function buildSidebarArchive() {
+            const container = document.getElementById('sidebarArchive');
+            if (!container) return;
+
+            // Collect all articles with date data
+            const cards = document.querySelectorAll('.article-card[data-slug]');
+            const monthMap = {};
+            cards.forEach(card => {
+                const dateEl = card.querySelector('.article-meta span');
+                if (!dateEl) return;
+                const dateText = dateEl.textContent.trim();
+                const dateMatch = dateText.match(/(\d{4})年(\d{2})月(\d{2})日/);
+                if (!dateMatch) return;
+                const yearMonth = dateMatch[1] + '-' + dateMatch[2];
+                if (!monthMap[yearMonth]) {
+                    monthMap[yearMonth] = { year: dateMatch[1], month: dateMatch[2], count: 0 };
+                }
+                monthMap[yearMonth].count++;
+            });
+
+            // Sort by year-month descending
+            const months = Object.values(monthMap).sort((a, b) =>
+                (b.year + b.month).localeCompare(a.year + a.month)
+            );
+
+            if (months.length === 0) return;
+
+            const monthNames = ['1月', '2月', '3月', '4月', '5月', '6月',
+                '7月', '8月', '9月', '10月', '11月', '12月'];
+
+            container.innerHTML = months.map(m =>
+                '<li>' +
+                    '<span class="sidebar-archive-month">' + m.year + '年' + monthNames[parseInt(m.month, 10) - 1] + '</span>' +
+                    '<span class="sidebar-archive-count">' + m.count + ' 篇</span>' +
+                '</li>'
+            ).join('');
+        }
+
         // 3D Tilt Effect for Article Cards
         function initTiltEffect() {
             document.querySelectorAll('.article-card, .featured-card').forEach(card => {
@@ -3196,6 +3347,8 @@
             applyFilterAndPagination();
             animateStatNumbers();
             buildSidebarLatest();
+            buildSidebarHot();
+            buildSidebarArchive();
             initTiltEffect();
         });
     </script>
