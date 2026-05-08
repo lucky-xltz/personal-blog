@@ -128,76 +128,6 @@
         .nav-links a:hover { color: var(--text); }
         .nav-links a:hover::after { width: 100%; }
 
-        /* ===== HERO ===== */
-        .hero {
-            min-height: 100vh;
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            text-align: center;
-            padding: 120px 24px 80px;
-            position: relative;
-        }
-        .hero-badge {
-            display: inline-flex; align-items: center; gap: 8px;
-            padding: 8px 20px;
-            background: var(--bg-raised);
-            box-shadow: var(--neu-raised-sm);
-            border-radius: var(--radius-full);
-            font-size: 0.875rem;
-            color: var(--text-dim);
-            margin-bottom: 32px;
-            animation: fadeInUp 0.8s ease;
-        }
-        .hero-badge .dot {
-            width: 8px; height: 8px;
-            background: var(--accent-teal);
-            border-radius: 50%;
-            animation: pulse 2s ease-in-out infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(1.2); }
-        }
-
-        .hero-title {
-            font-family: 'Outfit', sans-serif;
-            font-size: clamp(3rem, 8vw, 5.5rem);
-            font-weight: 800;
-            line-height: 1.1;
-            margin-bottom: 24px;
-            animation: fadeInUp 0.8s ease 0.1s backwards;
-            color: var(--text);
-        }
-        .hero-title .gradient {
-            background: linear-gradient(135deg, var(--accent), var(--accent-pink));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .hero-subtitle {
-            font-size: clamp(1.1rem, 2.5vw, 1.5rem);
-            color: var(--text-dim);
-            max-width: 600px;
-            margin-bottom: 48px;
-            animation: fadeInUp 0.8s ease 0.2s backwards;
-        }
-        .hero-subtitle .typing-text {
-            color: var(--text);
-            border-right: 2px solid var(--accent);
-            animation: blink 1s step-end infinite;
-        }
-        @keyframes blink { 50% { border-color: transparent; } }
-
-        .hero-buttons {
-            display: flex; gap: 16px; flex-wrap: wrap; justify-content: center;
-            animation: fadeInUp 0.8s ease 0.3s backwards;
-        }
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
         /* ===== BUTTONS ===== */
         .btn {
             display: inline-flex; align-items: center; gap: 8px;
@@ -233,20 +163,6 @@
         }
         .btn-secondary:active {
             box-shadow: var(--neu-inset);
-        }
-
-        /* ===== SCROLL INDICATOR ===== */
-        .scroll-indicator {
-            position: absolute; bottom: 40px; left: 50%;
-            transform: translateX(-50%);
-            display: flex; flex-direction: column; align-items: center; gap: 8px;
-            color: var(--text-muted); font-size: 0.875rem;
-            animation: bounce 2s ease-in-out infinite;
-        }
-        .scroll-indicator svg { width: 24px; height: 24px; }
-        @keyframes bounce {
-            0%, 100% { transform: translateX(-50%) translateY(0); }
-            50% { transform: translateX(-50%) translateY(10px); }
         }
 
         /* ===== SECTIONS ===== */
@@ -843,6 +759,224 @@
         ::-webkit-scrollbar-track { background: var(--bg); }
         ::-webkit-scrollbar-thumb { background: var(--bg-raised); border-radius: 4px; box-shadow: var(--neu-inset-sm); }
         ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+    
+
+        /* ===== BLOG HEADER ===== */
+        .blog-header {
+            padding: 120px 48px 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .blog-header-inner {
+            display: flex; align-items: center; gap: 24px;
+            background: var(--bg-raised);
+            box-shadow: var(--neu-raised);
+            border-radius: var(--radius-xl);
+            padding: 32px 40px;
+        }
+        .blog-header-avatar {
+            width: 72px; height: 72px;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: var(--neu-inset);
+            flex-shrink: 0;
+        }
+        .blog-header-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .blog-header-info h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.6rem; font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .blog-header-info p {
+            color: var(--text-dim); font-size: 0.9rem;
+            margin-bottom: 4px;
+        }
+        .blog-header-info .typing-text {
+            color: var(--accent); font-size: 0.85rem;
+            border-right: 2px solid var(--accent);
+            animation: blink 1s step-end infinite;
+        }
+
+        /* ===== BLOG LAYOUT ===== */
+        .blog-layout {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 32px;
+            align-items: start;
+        }
+        .blog-main { min-width: 0; }
+        .articles-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 24px;
+        }
+        .articles-header h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem; font-weight: 700;
+        }
+
+        /* ===== LIST-STYLE ARTICLE CARDS ===== */
+        .article-card {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 20px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+        .article-card .article-image {
+            height: 140px;
+            margin-bottom: 0;
+        }
+        .article-card .article-title {
+            font-size: 1.15rem;
+            margin-bottom: 8px;
+        }
+        .article-card .article-excerpt {
+            font-size: 0.85rem;
+            margin-bottom: 12px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .article-card .article-meta {
+            font-size: 0.8rem;
+        }
+
+        /* Featured card */
+
+        /* ===== SIDEBAR ===== */
+        .blog-sidebar {
+            position: sticky;
+            top: 88px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .sidebar-card {
+            background: var(--bg-raised);
+            box-shadow: var(--neu-raised);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+        }
+        .sidebar-avatar {
+            width: 64px; height: 64px;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: var(--neu-inset);
+            margin: 0 auto 12px;
+        }
+        .sidebar-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .sidebar-card h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.1rem; font-weight: 700;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+        .sidebar-card > p {
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+        .sidebar-stats {
+            display: flex; justify-content: space-around;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+        .sidebar-stats div {
+            text-align: center;
+        }
+        .sidebar-stats strong {
+            display: block;
+            color: var(--accent);
+            font-size: 1.1rem;
+            font-family: 'Outfit', sans-serif;
+        }
+        .sidebar-stats span {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+        .sidebar-title {
+            text-align: left !important;
+            font-size: 0.95rem !important;
+            margin-bottom: 16px !important;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+        .sidebar-latest {
+            list-style: none;
+        }
+        .sidebar-latest li {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .sidebar-latest li:last-child { border-bottom: none; }
+        .sidebar-latest a {
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color var(--transition);
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-right: 12px;
+        }
+        .sidebar-latest a:hover { color: var(--accent); }
+        .sidebar-latest span {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            flex-shrink: 0;
+        }
+        .sidebar-tags {
+            display: flex; flex-wrap: wrap; gap: 8px;
+        }
+        .sidebar-tags a {
+            padding: 4px 12px;
+            background: var(--bg);
+            box-shadow: var(--neu-inset-sm);
+            border-radius: var(--radius-full);
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            text-decoration: none;
+            transition: all var(--transition);
+        }
+        .sidebar-tags a:hover {
+            color: var(--accent);
+            box-shadow: var(--neu-raised-sm);
+        }
+
+        /* ===== RESPONSIVE BLOG LAYOUT ===== */
+        @media (max-width: 1024px) {
+            .blog-layout {
+                grid-template-columns: 1fr;
+            }
+            .blog-sidebar {
+                position: static;
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 16px;
+            }
+            .article-card {
+                grid-template-columns: 160px 1fr;
+            }
+        }
+        @media (max-width: 768px) {
+            .blog-header { padding: 100px 24px 24px; }
+            .blog-header-inner {
+                flex-direction: column;
+                text-align: center;
+                padding: 24px;
+            }
+            .article-card {
+                grid-template-columns: 1fr;
+            }
+            .article-card .article-image {
+                height: 180px;
+            }
+        }
+
     </style>
 </head>
 <body>
@@ -883,52 +1017,29 @@
         </button>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="hero" id="home">
-        <div class="hero-badge">
-            <span class="dot"></span>
-            正在记录成长的每一个瞬间
+    <!-- Blog Header -->
+    <header class="blog-header" id="home">
+        <div class="blog-header-inner">
+            <div class="blog-header-avatar">
+                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&h=120&fit=crop&crop=face" alt="林小白">
+            </div>
+            <div class="blog-header-info">
+                <h1>林小白的数字花园</h1>
+                <p>全栈开发者 / 记录技术成长与生活思考</p>
+                <span class="typing-text" id="typingText"></span>
+            </div>
         </div>
-        <h1 class="hero-title">
-            你好，我是<span class="gradient">林小白</span>
-        </h1>
-        <p class="hero-subtitle">
-            一个热爱生活、喜欢折腾的全栈开发者。<span class="typing-text" id="typingText"></span>
-        </p>
-        <div class="hero-buttons">
-            <a href="#articles" class="btn btn-primary">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
-                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
-                </svg>
-                阅读文章
-            </a>
-            <a href="#about" class="btn btn-secondary">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <path d="M12 16v-4"></path>
-                    <path d="M12 8h.01"></path>
-                </svg>
-                了解更多
-            </a>
-        </div>
-        <div class="scroll-indicator">
-            <span>向下滚动</span>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12 5v14"></path>
-                <path d="M19 12l-7 7-7-7"></path>
-            </svg>
-        </div>
-    </section>
+    </header>
 
     <!-- Articles Section -->
     <section class="section" id="articles">
-        <div class="section-header reveal">
-            <span class="section-label">精选文章</span>
-            <h2 class="section-title">探索知识的边界</h2>
-            <p class="section-desc">分享我在技术、设计和生活中的思考与实践，每一个文字都经过精心打磨</p>
-            <span class="article-count" id="articleCount"></span>
-        </div>
+        <div class="blog-layout">
+        <!-- Main Content -->
+        <div class="blog-main">
+            <div class="articles-header">
+                <h2>最新文章</h2>
+                <span class="article-count" id="articleCount"></span>
+            </div>
 
         <!-- Featured Article -->
         <div class="featured-card reveal" data-slug="nodejs-supply-chain-security-practices" onclick="window.location.href='article.html?slug=nodejs-supply-chain-security-practices'">
@@ -2512,8 +2623,55 @@
                 </div>
             </article>
         </div>
-        <div class="load-more-wrap" id="loadMoreWrap">
-            <button class="load-more-btn" id="loadMoreBtn">加载更多文章</button>
+            <div class="load-more-wrap" id="loadMoreWrap">
+                <button class="load-more-btn" id="loadMoreBtn">加载更多文章</button>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <aside class="blog-sidebar">
+            <!-- About Card -->
+            <div class="sidebar-card">
+                <div class="sidebar-avatar">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop&crop=face" alt="林小白">
+                </div>
+                <h3>林小白</h3>
+                <p>杭州全栈开发者，热爱技术分享与写作。</p>
+                <div class="sidebar-stats">
+                    <div><strong>50+</strong><span>文章</span></div>
+                    <div><strong>10k+</strong><span>读者</span></div>
+                    <div><strong>3+</strong><span>年</span></div>
+                </div>
+            </div>
+
+            <!-- Latest Articles -->
+            <div class="sidebar-card">
+                <h3 class="sidebar-title">最新文章</h3>
+                <ul class="sidebar-latest">
+                    <li><a href="article.html?slug=ai-news-2026-05-05">AI 日报：2026年05月05日</a><span>05-05</span></li>
+                    <li><a href="article.html?slug=ai-news-2026-05-04">AI 日报：越温暖越危险</a><span>05-04</span></li>
+                    <li><a href="article.html?slug=sqlite-honker-task-queue">SQLite 即消息队列</a><span>05-01</span></li>
+                    <li><a href="article.html?slug=ai-news-2026-05-01">AI 日报：Musk庭审翻车</a><span>05-01</span></li>
+                    <li><a href="article.html?slug=ebpf-linux-kernel-programmability-2026">eBPF 深度实战</a><span>04-30</span></li>
+                </ul>
+            </div>
+
+            <!-- Tags -->
+            <div class="sidebar-card">
+                <h3 class="sidebar-title">热门标签</h3>
+                <div class="sidebar-tags">
+                    <a href="#">AI</a>
+                    <a href="#">Rust</a>
+                    <a href="#">Linux</a>
+                    <a href="#">前端</a>
+                    <a href="#">安全</a>
+                    <a href="#">架构</a>
+                    <a href="#">WebAssembly</a>
+                    <a href="#">Cloudflare</a>
+                    <a href="#">开源</a>
+                </div>
+            </div>
+        </aside>
         </div>
     </section>
 
