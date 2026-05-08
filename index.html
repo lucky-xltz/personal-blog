@@ -212,9 +212,22 @@
             position: relative;
             overflow: hidden;
         }
+        .article-card::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            width: 3px;
+            background: var(--accent);
+            border-radius: 3px 0 0 3px;
+            opacity: 0;
+            transition: opacity var(--transition);
+        }
         .article-card:hover {
-            transform: translateY(-6px);
-            box-shadow: 10px 10px 24px var(--shadow-dark), -10px -10px 24px var(--shadow-light);
+            transform: translateY(-4px);
+            box-shadow: 8px 8px 20px var(--shadow-dark), -8px -8px 20px var(--shadow-light);
+        }
+        .article-card:hover::before {
+            opacity: 1;
         }
         .article-card:active {
             transform: translateY(-2px);
@@ -222,10 +235,9 @@
         }
 
         .article-image {
-            width: 100%; height: 200px;
+            width: 100%; height: 100%;
             border-radius: var(--radius-md);
             overflow: hidden;
-            margin-bottom: 18px;
             box-shadow: var(--neu-inset);
         }
         .article-image img {
@@ -302,70 +314,66 @@
 
         /* ===== FEATURED CARD ===== */
         .featured-card {
-            display: grid;
-            grid-template-columns: 1.2fr 1fr;
-            gap: 0;
             background: var(--bg-raised);
-            box-shadow: var(--neu-raised-lg);
-            border-radius: var(--radius-xl);
+            box-shadow: var(--neu-raised);
+            border-radius: var(--radius-lg);
             overflow: hidden;
-            margin-bottom: 40px;
+            margin-bottom: 24px;
             cursor: pointer;
             transition: all var(--transition);
+            display: grid;
+            grid-template-columns: 240px 1fr;
         }
         .featured-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 12px 12px 28px var(--shadow-dark), -12px -12px 28px var(--shadow-light);
+            transform: translateY(-3px);
+            box-shadow: 8px 8px 20px var(--shadow-dark), -8px -8px 20px var(--shadow-light);
         }
         .featured-card-image {
-            height: 100%; min-height: 320px;
+            height: 100%; min-height: 180px;
             overflow: hidden; position: relative;
         }
         .featured-card-image img {
             width: 100%; height: 100%;
             object-fit: cover;
-            transition: transform 0.6s ease;
+            transition: transform 0.4s ease;
         }
         .featured-card:hover .featured-card-image img {
             transform: scale(1.05);
         }
-        .featured-card-image::after {
-            content: '';
-            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(to right, transparent 60%, var(--bg-raised));
-        }
         .featured-card-content {
-            padding: 48px 40px;
+            padding: 20px 24px;
             display: flex; flex-direction: column; justify-content: center;
         }
         .featured-badge {
             display: inline-flex; align-items: center; gap: 6px;
-            padding: 5px 14px;
+            padding: 3px 10px;
             background: var(--accent);
-            box-shadow: var(--neu-raised-sm);
             border-radius: var(--radius-full);
-            font-size: 0.75rem; font-weight: 600;
+            font-size: 0.7rem; font-weight: 600;
             color: #fff;
-            margin-bottom: 16px;
+            margin-bottom: 10px;
             width: fit-content;
-            letter-spacing: 0.5px;
         }
         .featured-card-title {
             font-family: 'Outfit', sans-serif;
-            font-size: 1.8rem; font-weight: 700;
-            line-height: 1.3; margin-bottom: 16px;
+            font-size: 1.2rem; font-weight: 700;
+            line-height: 1.35; margin-bottom: 8px;
         }
         .featured-card-excerpt {
             color: var(--text-dim);
-            font-size: 1rem; line-height: 1.7;
-            margin-bottom: 24px;
+            font-size: 0.85rem; line-height: 1.6;
+            margin-bottom: 12px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
         .featured-card-meta {
-            display: flex; align-items: center; gap: 20px;
-            font-size: 0.875rem; color: var(--text-muted);
+            display: flex; align-items: center; gap: 16px;
+            font-size: 0.8rem; color: var(--text-muted);
         }
         .featured-card-meta span {
-            display: flex; align-items: center; gap: 6px;
+            display: flex; align-items: center; gap: 4px;
         }
 
         /* ===== SEARCH RESULTS ===== */
@@ -998,7 +1006,6 @@
             <li><a href="#home">首页</a></li>
             <li><a href="#articles">文章</a></li>
             <li><a href="#about">关于</a></li>
-            <li><a href="#tags">标签</a></li>
             <li><a href="#subscribe">订阅</a></li>
         </ul>
         <div class="nav-search">
@@ -2637,22 +2644,13 @@
                 </div>
                 <h3>林小白</h3>
                 <p>杭州全栈开发者，热爱技术分享与写作。</p>
-                <div class="sidebar-stats">
-                    <div><strong>50+</strong><span>文章</span></div>
-                    <div><strong>10k+</strong><span>读者</span></div>
-                    <div><strong>3+</strong><span>年</span></div>
-                </div>
+
             </div>
 
             <!-- Latest Articles -->
             <div class="sidebar-card">
                 <h3 class="sidebar-title">最新文章</h3>
-                <ul class="sidebar-latest">
-                    <li><a href="article.html?slug=ai-news-2026-05-05">AI 日报：2026年05月05日</a><span>05-05</span></li>
-                    <li><a href="article.html?slug=ai-news-2026-05-04">AI 日报：越温暖越危险</a><span>05-04</span></li>
-                    <li><a href="article.html?slug=sqlite-honker-task-queue">SQLite 即消息队列</a><span>05-01</span></li>
-                    <li><a href="article.html?slug=ai-news-2026-05-01">AI 日报：Musk庭审翻车</a><span>05-01</span></li>
-                    <li><a href="article.html?slug=ebpf-linux-kernel-programmability-2026">eBPF 深度实战</a><span>04-30</span></li>
+                <ul class="sidebar-latest" id="sidebarLatest">
                 </ul>
             </div>
 
@@ -2698,60 +2696,18 @@
                 <p>
                     当我不在写代码的时候，你可能会发现我在研究摄影、练习吉他，或者在咖啡馆里读一本好书。生活的多样性让创作更有灵感。
                 </p>
-                <div class="about-stats">
-                    <div class="stat">
-                        <div class="stat-number">3+</div>
-                        <div class="stat-label">年写作经验</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-number">50+</div>
-                        <div class="stat-label">精选文章</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-number">10k+</div>
-                        <div class="stat-label">读者粉丝</div>
-                    </div>
-                </div>
+
             </div>
         </div>
     </section>
 
-    <!-- Tags Section -->
-    <section class="section" id="tags">
-        <div class="section-header reveal">
-            <span class="section-label">标签云</span>
-            <h2 class="section-title">探索感兴趣的话题</h2>
-            <p class="section-desc">点击标签，发现更多相关内容</p>
-        </div>
-        <div class="tags-cloud reveal">
-            <a href="#" class="tag">JavaScript</a>
-            <a href="#" class="tag">Vue.js</a>
-            <a href="#" class="tag">TypeScript</a>
-            <a href="#" class="tag">React</a>
-            <a href="#" class="tag">Node.js</a>
-            <a href="#" class="tag">CSS</a>
-            <a href="#" class="tag">前端工程化</a>
-            <a href="#" class="tag">设计系统</a>
-            <a href="#" class="tag">性能优化</a>
-            <a href="#" class="tag">全栈开发</a>
-            <a href="#" class="tag">微前端</a>
-            <a href="#" class="tag">GraphQL</a>
-            <a href="#" class="tag">Web3</a>
-            <a href="#" class="tag">DevOps</a>
-            <a href="#" class="tag">产品思维</a>
-            <a href="#" class="tag">用户体验</a>
-            <a href="#" class="tag">职业成长</a>
-            <a href="#" class="tag">编程方法论</a>
-            <a href="#" class="tag">算法</a>
-            <a href="#" class="tag">架构设计</a>
-        </div>
-    </section>
+    
 
     <!-- Newsletter Section -->
     <section class="section" id="subscribe">
         <div class="newsletter reveal">
             <h2>订阅更新</h2>
-            <p>输入邮箱，获取每周精选文章和技术干货，绝不发送垃圾邮件</p>
+            <p>获取每周精选技术文章，绝不发送垃圾邮件</p>
             <form class="newsletter-form" onsubmit="handleSubscribe(event)">
                 <input type="email" class="newsletter-input" placeholder="your@email.com" required>
                 <button type="submit" class="btn btn-primary">订阅</button>
@@ -2796,25 +2752,13 @@
                     <li><a href="#home">首页</a></li>
                     <li><a href="#articles">文章</a></li>
                     <li><a href="#about">关于</a></li>
-                    <li><a href="#tags">标签</a></li>
                 </ul>
             </div>
-            <div class="footer-links">
-                <h4>标签</h4>
-                <ul>
-                    <li><a href="#">前端开发</a></li>
-                    <li><a href="#">后端技术</a></li>
-                    <li><a href="#">设计系统</a></li>
-                    <li><a href="#">职业成长</a></li>
-                </ul>
-            </div>
+
             <div class="footer-links">
                 <h4>联系</h4>
                 <ul>
                     <li><a href="mailto:hello@example.com">Email</a></li>
-                    <li><a href="#">留言板</a></li>
-                    <li><a href="#">友链申请</a></li>
-                    <li><a href="#">赞助支持</a></li>
                 </ul>
             </div>
         </div>
@@ -3312,11 +3256,36 @@
         }
         window.addEventListener('scroll', animateStatNumbers);
 
+        // 动态生成侧栏最新文章
+        function buildSidebarLatest() {
+            const container = document.getElementById('sidebarLatest');
+            if (!container) return;
+            const cards = document.querySelectorAll('.article-card[data-slug]');
+            const items = [];
+            cards.forEach(card => {
+                if (card.style.display === 'none') return;
+                const slug = card.dataset.slug;
+                const title = card.querySelector('.article-title');
+                const dateEl = card.querySelector('.article-meta span');
+                if (!title || !dateEl) return;
+                const dateText = dateEl.textContent.trim();
+                const dateMatch = dateText.match(/(\d{4})年(\d{2})月(\d{2})日/);
+                const shortDate = dateMatch ? dateMatch[2] + '-' + dateMatch[3] : '';
+                items.push({ slug, title: title.textContent.trim(), date: shortDate });
+            });
+            container.innerHTML = items.slice(0, 6).map(item =>
+                '<li><a href="article.html?slug=' + item.slug + '">' +
+                (item.title.length > 20 ? item.title.substring(0, 20) + '...' : item.title) +
+                '</a><span>' + item.date + '</span></li>'
+            ).join('');
+        }
+
         // 页面加载完成后初始化
         document.addEventListener('DOMContentLoaded', () => {
             loadArticleViews();
             applyFilterAndPagination();
             animateStatNumbers();
+            buildSidebarLatest();
         });
     </script>
 </body>
