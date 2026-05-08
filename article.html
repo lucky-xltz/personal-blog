@@ -402,11 +402,46 @@
             content: attr(data-language);
             position: absolute;
             top: 12px;
-            right: 16px;
+            left: 16px;
             font-size: 0.75rem;
             color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 1px;
+        }
+
+        /* Code copy button */
+        .code-copy-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            padding: 6px 12px;
+            background: var(--surface);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-sm);
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            font-family: 'JetBrains Mono', monospace;
+            cursor: pointer;
+            opacity: 0.6;
+            transition: all 0.2s ease;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .code-copy-btn:hover {
+            opacity: 1;
+            background: var(--primary);
+            color: var(--text);
+            border-color: var(--primary);
+        }
+
+        .code-copy-btn.copied {
+            background: #27ae60;
+            border-color: #27ae60;
+            color: white;
+            opacity: 1;
         }
 
         /* Blockquote */
@@ -763,6 +798,163 @@
         ::-webkit-scrollbar-thumb:hover {
             background: rgba(230, 126, 34, 0.15);
         }
+
+        /* Table of Contents */
+        .toc {
+            position: fixed;
+            top: 100px;
+            right: 24px;
+            width: 250px;
+            max-height: calc(100vh - 140px);
+            overflow-y: auto;
+            background: var(--surface);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            z-index: 100;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .toc-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-muted);
+            margin-bottom: 14px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .toc-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .toc-list li {
+            margin-bottom: 2px;
+        }
+
+        .toc-list a {
+            display: block;
+            padding: 5px 10px;
+            font-size: 0.82rem;
+            line-height: 1.4;
+            color: var(--text-muted);
+            text-decoration: none;
+            border-radius: var(--radius-sm);
+            transition: all 0.25s ease;
+            border-left: 2px solid transparent;
+        }
+
+        .toc-list a:hover {
+            color: var(--text);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .toc-list a.active {
+            color: var(--primary);
+            background: rgba(230, 126, 34, 0.1);
+            border-left-color: var(--primary);
+            font-weight: 600;
+        }
+
+        .toc-list a.toc-h1 {
+            padding-left: 10px;
+            font-weight: 600;
+        }
+
+        .toc-list a.toc-h2 {
+            padding-left: 22px;
+            font-size: 0.8rem;
+        }
+
+        .toc-list a.toc-h3 {
+            padding-left: 34px;
+            font-size: 0.78rem;
+            color: rgba(148, 163, 184, 0.75);
+        }
+
+        .toc::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .toc::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+        }
+
+        @media (max-width: 1300px) {
+            .toc {
+                display: none;
+            }
+        }
+
+        /* Mobile TOC (shown below article header) */
+        .toc-mobile {
+            display: none;
+            background: var(--surface);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-lg);
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            animation: fadeInUp 0.8s ease 0.15s backwards;
+        }
+
+        .toc-mobile .toc-title {
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+        }
+
+        .toc-mobile .toc-list a {
+            font-size: 0.85rem;
+        }
+
+        .toc-mobile-toggle {
+            background: var(--surface-light);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-full);
+            color: var(--text-muted);
+            font-size: 0.82rem;
+            padding: 6px 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 10px;
+            transition: all 0.25s ease;
+        }
+
+        .toc-mobile-toggle:hover {
+            color: var(--primary);
+            border-color: rgba(230, 126, 34, 0.3);
+        }
+
+        .toc-mobile-toggle svg {
+            width: 14px;
+            height: 14px;
+            transition: transform 0.25s ease;
+        }
+
+        .toc-mobile-toggle.expanded svg {
+            transform: rotate(90deg);
+        }
+
+        .toc-mobile .toc-list {
+            display: none;
+        }
+
+        .toc-mobile.expanded .toc-list {
+            display: block;
+        }
+
+        @media (max-width: 1300px) {
+            .toc-mobile {
+                display: block;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1072,6 +1264,125 @@
 
             // Add syntax highlighting for code blocks
             addCodeHighlighting();
+
+            // Generate and render Table of Contents
+            generateTOC();
+        }
+
+        // Generate Table of Contents
+        function generateTOC() {
+            const articleContent = document.querySelector('.article-content');
+            if (!articleContent) return;
+
+            const headings = articleContent.querySelectorAll('h1, h2, h3');
+            if (headings.length < 2) return; // No need for TOC if fewer than 2 headings
+
+            // Add id to each heading and build TOC items
+            const tocItems = [];
+            headings.forEach((heading, index) => {
+                const id = 'heading-' + index;
+                heading.id = id;
+
+                const level = heading.tagName.toLowerCase(); // h1, h2, h3
+                const text = heading.textContent.trim();
+
+                tocItems.push({ id, level, text });
+            });
+
+            // Build TOC HTML
+            const tocListHtml = tocItems.map(item =>
+                `<li><a href="#${item.id}" class="toc-${item.level}" data-target="${item.id}">${item.text}</a></li>`
+            ).join('');
+
+            // Desktop TOC (fixed sidebar)
+            const tocHtml = `
+                <nav class="toc" id="toc">
+                    <div class="toc-title">目录</div>
+                    <ul class="toc-list">${tocListHtml}</ul>
+                </nav>
+            `;
+
+            // Mobile TOC (collapsible, inside article container)
+            const tocMobileHtml = `
+                <div class="toc-mobile" id="tocMobile">
+                    <button class="toc-mobile-toggle" id="tocMobileToggle">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                        目录
+                    </button>
+                    <ul class="toc-list">${tocListHtml}</ul>
+                </div>
+            `;
+
+            // Insert desktop TOC
+            document.body.insertAdjacentHTML('beforeend', tocHtml);
+
+            // Insert mobile TOC after article header
+            const articleHeader = document.querySelector('.article-header');
+            if (articleHeader) {
+                articleHeader.insertAdjacentHTML('afterend', tocMobileHtml);
+            }
+
+            // Mobile toggle
+            const tocMobileToggle = document.getElementById('tocMobileToggle');
+            const tocMobile = document.getElementById('tocMobile');
+            if (tocMobileToggle && tocMobile) {
+                tocMobileToggle.addEventListener('click', () => {
+                    tocMobile.classList.toggle('expanded');
+                    tocMobileToggle.classList.toggle('expanded');
+                });
+            }
+
+            // Smooth scroll on click (both desktop and mobile)
+            document.querySelectorAll('.toc-list a').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('data-target');
+                    const target = document.getElementById(targetId);
+                    if (target) {
+                        const offset = 100; // account for fixed nav
+                        const top = target.getBoundingClientRect().top + window.scrollY - offset;
+                        window.scrollTo({ top, behavior: 'smooth' });
+                    }
+
+                    // Collapse mobile TOC after click
+                    if (tocMobile && tocMobile.classList.contains('expanded')) {
+                        tocMobile.classList.remove('expanded');
+                        tocMobileToggle.classList.remove('expanded');
+                    }
+                });
+            });
+
+            // Scroll spy
+            initScrollSpy(tocItems);
+        }
+
+        // Scroll spy for TOC highlighting
+        function initScrollSpy(tocItems) {
+            const tocLinks = document.querySelectorAll('#toc .toc-list a');
+            if (tocLinks.length === 0) return;
+
+            const observerOptions = {
+                rootMargin: '-100px 0px -60% 0px',
+                threshold: 0
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.id;
+                        tocLinks.forEach(link => {
+                            link.classList.toggle('active', link.getAttribute('data-target') === id);
+                        });
+                    }
+                });
+            }, observerOptions);
+
+            tocItems.forEach(item => {
+                const el = document.getElementById(item.id);
+                if (el) observer.observe(el);
+            });
         }
 
         // Format date
@@ -1087,7 +1398,7 @@
             }
         }
 
-        // Simple syntax highlighting
+        // Simple syntax highlighting with copy button
         function addCodeHighlighting() {
             const preElements = document.querySelectorAll('.article-content pre');
 
@@ -1103,6 +1414,49 @@
                     // Simple highlighting
                     const text = code.textContent;
                     code.innerHTML = highlightCode(text);
+
+                    // Add copy button
+                    const copyBtn = document.createElement('button');
+                    copyBtn.className = 'code-copy-btn';
+                    copyBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> 复制';
+                    copyBtn.setAttribute('data-original-text', '复制');
+                    pre.appendChild(copyBtn);
+
+                    copyBtn.addEventListener('click', async function() {
+                        const codeText = code.textContent;
+                        try {
+                            await navigator.clipboard.writeText(codeText);
+                            copyBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> 已复制';
+                            copyBtn.classList.add('copied');
+                            setTimeout(() => {
+                                copyBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> 复制';
+                                copyBtn.classList.remove('copied');
+                            }, 2000);
+                        } catch (err) {
+                            // Fallback for older browsers
+                            const textarea = document.createElement('textarea');
+                            textarea.value = codeText;
+                            textarea.style.position = 'fixed';
+                            textarea.style.opacity = '0';
+                            document.body.appendChild(textarea);
+                            textarea.select();
+                            try {
+                                document.execCommand('copy');
+                                copyBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> 已复制';
+                                copyBtn.classList.add('copied');
+                                setTimeout(() => {
+                                    copyBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> 复制';
+                                    copyBtn.classList.remove('copied');
+                                }, 2000);
+                            } catch (e) {
+                                copyBtn.textContent = '复制失败';
+                                setTimeout(() => {
+                                    copyBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> 复制';
+                                }, 2000);
+                            }
+                            document.body.removeChild(textarea);
+                        }
+                    });
                 }
             });
         }
