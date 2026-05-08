@@ -9,9 +9,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #1e2130;
-            --bg-light: #252838;
-            --bg-raised: #272a3a;
+            --bg: #1a2420;
+            --bg-light: #1e2a24;
+            --bg-raised: #223028;
             --shadow-dark: rgba(0, 0, 0, 0.55);
             --shadow-light: rgba(255, 255, 255, 0.04);
             --shadow-dark-strong: rgba(0, 0, 0, 0.7);
@@ -1031,10 +1031,182 @@
             font-weight: 600;
         }
 
+    
+
+        /* ===== SPRING THEME BACKGROUND ===== */
+        .spring-bg {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: -2;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        /* 渐变背景 */
+        .spring-bg::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: 
+                radial-gradient(ellipse at 20% 50%, rgba(104, 159, 56, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(129, 199, 132, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 60% 80%, rgba(165, 214, 167, 0.05) 0%, transparent 50%),
+                radial-gradient(ellipse at 40% 30%, rgba(200, 230, 201, 0.04) 0%, transparent 50%);
+        }
+
+        /* 飘落的花瓣 */
+        .spring-petal {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: rgba(255, 183, 197, 0.15);
+            border-radius: 50% 0 50% 50%;
+            animation: petalFall linear infinite;
+            opacity: 0;
+        }
+
+        .spring-petal:nth-child(1) {
+            left: 10%; animation-duration: 15s; animation-delay: 0s;
+            width: 10px; height: 10px;
+        }
+        .spring-petal:nth-child(2) {
+            left: 25%; animation-duration: 18s; animation-delay: -3s;
+            width: 14px; height: 14px;
+            background: rgba(129, 199, 132, 0.12);
+        }
+        .spring-petal:nth-child(3) {
+            left: 45%; animation-duration: 20s; animation-delay: -7s;
+            width: 8px; height: 8px;
+        }
+        .spring-petal:nth-child(4) {
+            left: 65%; animation-duration: 16s; animation-delay: -2s;
+            width: 11px; height: 11px;
+            background: rgba(255, 224, 130, 0.1);
+        }
+        .spring-petal:nth-child(5) {
+            left: 80%; animation-duration: 22s; animation-delay: -10s;
+            width: 13px; height: 13px;
+        }
+        .spring-petal:nth-child(6) {
+            left: 55%; animation-duration: 17s; animation-delay: -5s;
+            width: 9px; height: 9px;
+            background: rgba(129, 199, 132, 0.1);
+        }
+        .spring-petal:nth-child(7) {
+            left: 35%; animation-duration: 19s; animation-delay: -8s;
+            width: 12px; height: 12px;
+        }
+        .spring-petal:nth-child(8) {
+            left: 90%; animation-duration: 21s; animation-delay: -4s;
+            width: 10px; height: 10px;
+            background: rgba(255, 224, 130, 0.08);
+        }
+
+        @keyframes petalFall {
+            0% {
+                transform: translateY(-10vh) rotate(0deg) translateX(0);
+                opacity: 0;
+            }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% {
+                transform: translateY(110vh) rotate(720deg) translateX(50px);
+                opacity: 0;
+            }
+        }
+
+        /* 树枝装饰 */
+        .spring-branch {
+            position: absolute;
+            bottom: 0;
+            right: -50px;
+            width: 300px;
+            height: 400px;
+            opacity: 0.04;
+            transform: rotate(-15deg);
+        }
+        .spring-branch::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 3px;
+            height: 100%;
+            background: linear-gradient(to top, rgba(139, 119, 101, 0.5), rgba(139, 119, 101, 0.1));
+            border-radius: 2px;
+            transform: rotate(5deg);
+        }
+        .spring-branch::after {
+            content: '';
+            position: absolute;
+            bottom: 200px;
+            right: 0;
+            width: 150px;
+            height: 3px;
+            background: linear-gradient(to left, rgba(139, 119, 101, 0.4), rgba(139, 119, 101, 0.1));
+            border-radius: 2px;
+            transform: rotate(-25deg);
+        }
+
+        /* 叶子装饰 */
+        .spring-leaf {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: rgba(129, 199, 132, 0.06);
+            border-radius: 0 50% 50% 50%;
+            transform: rotate(45deg);
+        }
+        .spring-leaf:nth-child(1) {
+            top: 20%; left: 5%;
+            animation: leafSway 8s ease-in-out infinite;
+        }
+        .spring-leaf:nth-child(2) {
+            top: 60%; right: 8%;
+            width: 16px; height: 16px;
+            animation: leafSway 10s ease-in-out infinite reverse;
+        }
+        .spring-leaf:nth-child(3) {
+            top: 40%; left: 15%;
+            width: 12px; height: 12px;
+            background: rgba(255, 224, 130, 0.05);
+            animation: leafSway 12s ease-in-out infinite;
+        }
+
+        @keyframes leafSway {
+            0%, 100% { transform: rotate(45deg) translateX(0); }
+            50% { transform: rotate(55deg) translateX(10px); }
+        }
+
+        /* 更新浮动形状为春天色调 */
+        .bg-shape:nth-child(1) {
+            background: rgba(129, 199, 132, 0.08);
+        }
+        .bg-shape:nth-child(2) {
+            background: rgba(255, 183, 197, 0.06);
+        }
+        .bg-shape:nth-child(3) {
+            background: rgba(255, 224, 130, 0.05);
+        }
+
     </style>
 </head>
 <body>
-    <!-- Background Shapes -->
+    <!-- Spring Theme Background -->
+    <div class="spring-bg">
+        <div class="spring-petal"></div>
+        <div class="spring-petal"></div>
+        <div class="spring-petal"></div>
+        <div class="spring-petal"></div>
+        <div class="spring-petal"></div>
+        <div class="spring-petal"></div>
+        <div class="spring-petal"></div>
+        <div class="spring-petal"></div>
+        <div class="spring-branch"></div>
+        <div class="spring-leaf"></div>
+        <div class="spring-leaf"></div>
+        <div class="spring-leaf"></div>
+    </div>
     <div class="bg-shapes">
         <div class="bg-shape"></div>
         <div class="bg-shape"></div>
