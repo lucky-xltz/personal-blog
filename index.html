@@ -167,7 +167,7 @@
 
         /* ===== SECTIONS ===== */
         .section {
-            padding: 120px 48px;
+            padding: 90px 48px 60px;
             max-width: 1400px;
             margin: 0 auto;
         }
@@ -464,116 +464,6 @@
         .notification-error .notification-content { border-left: 4px solid var(--accent-pink); }
         .notification-info .notification-content { border-left: 4px solid var(--accent); }
 
-        /* ===== ABOUT SECTION ===== */
-        .about-section {
-            background: var(--bg-light);
-            position: relative; overflow: hidden;
-            border-radius: var(--radius-xl);
-        }
-        .about-content {
-            display: grid;
-            grid-template-columns: 300px 1fr;
-            gap: 64px; align-items: center;
-            max-width: 1200px; margin: 0 auto;
-        }
-        .about-avatar { position: relative; }
-        .about-avatar-wrapper {
-            width: 280px; height: 280px;
-            border-radius: var(--radius-xl);
-            background: var(--bg);
-            box-shadow: var(--neu-raised-lg);
-            padding: 6px;
-            animation: floatAvatar 6s ease-in-out infinite;
-        }
-        @keyframes floatAvatar {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-        .about-avatar-inner {
-            width: 100%; height: 100%;
-            border-radius: calc(var(--radius-xl) - 6px);
-            background: var(--bg-raised);
-            box-shadow: var(--neu-inset);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 6rem; overflow: hidden;
-        }
-        .about-avatar-inner img { width: 100%; height: 100%; object-fit: cover; }
-
-        .about-decoration { position: absolute; width: 100px; height: 100px; border: 2px solid var(--accent); border-radius: var(--radius-md); opacity: 0.2; }
-        .about-decoration-1 { top: -20px; right: -20px; transform: rotate(15deg); }
-        .about-decoration-2 { bottom: -20px; left: -20px; transform: rotate(-10deg); }
-
-        .about-text h2 {
-            font-family: 'Outfit', sans-serif;
-            font-size: 2.5rem; font-weight: 700; margin-bottom: 24px;
-        }
-        .about-text h2 span { color: var(--accent); }
-        .about-text p { color: var(--text-dim); font-size: 1.1rem; line-height: 1.8; margin-bottom: 24px; }
-
-        .about-stats { display: flex; gap: 48px; margin-top: 40px; }
-        .stat { text-align: center; }
-        .stat-number {
-            font-family: 'Outfit', sans-serif;
-            font-size: 3rem; font-weight: 800;
-            color: var(--accent);
-            font-variant-numeric: tabular-nums;
-        }
-        .stat-label { font-size: 0.875rem; color: var(--text-muted); margin-top: 4px; }
-
-        /* ===== TAGS CLOUD ===== */
-        .tags-cloud {
-            display: flex; flex-wrap: wrap; gap: 12px;
-            justify-content: center;
-            max-width: 800px; margin: 0 auto;
-        }
-        .tag {
-            padding: 8px 20px;
-            background: var(--bg-raised);
-            box-shadow: var(--neu-raised-sm);
-            border-radius: var(--radius-full);
-            font-size: 0.9rem; color: var(--text-dim);
-            text-decoration: none;
-            transition: all var(--transition);
-            cursor: pointer;
-        }
-        .tag:hover {
-            box-shadow: var(--neu-inset-sm);
-            color: var(--accent);
-            transform: translateY(-1px);
-        }
-
-        /* ===== NEWSLETTER ===== */
-        .newsletter {
-            background: var(--bg-raised);
-            box-shadow: var(--neu-raised-lg);
-            border-radius: var(--radius-xl);
-            padding: 64px; text-align: center;
-            position: relative; overflow: hidden;
-        }
-        .newsletter h2 {
-            font-family: 'Outfit', sans-serif;
-            font-size: 2rem; font-weight: 700; margin-bottom: 16px;
-        }
-        .newsletter p { color: var(--text-dim); margin-bottom: 32px; }
-        .newsletter-form {
-            display: flex; gap: 16px;
-            max-width: 500px; margin: 0 auto;
-        }
-        .newsletter-input {
-            flex: 1; padding: 16px 24px;
-            background: var(--bg);
-            box-shadow: var(--neu-inset);
-            border: none;
-            border-radius: var(--radius-full);
-            color: var(--text); font-size: 1rem;
-            outline: none;
-            transition: all var(--transition);
-        }
-        .newsletter-input::placeholder { color: var(--text-muted); }
-        .newsletter-input:focus {
-            box-shadow: var(--neu-inset), 0 0 0 1px var(--accent);
-        }
-
         /* ===== FOOTER ===== */
         .footer {
             padding: 80px 48px 40px;
@@ -753,8 +643,7 @@
             .footer-content { grid-template-columns: 1fr; text-align: center; }
             .social-links { justify-content: center; }
             .footer-bottom { flex-direction: column; gap: 16px; }
-            .about-avatar-wrapper { width: 200px; height: 200px; }
-            .about-stats { flex-direction: column; gap: 24px; }
+
             .featured-card { grid-template-columns: 1fr; }
             .featured-card-image { min-height: 200px; }
             .featured-card-image::after { background: linear-gradient(to top, var(--bg-raised) 10%, transparent 60%); }
@@ -769,41 +658,6 @@
         ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
     
 
-        /* ===== BLOG HEADER ===== */
-        .blog-header {
-            padding: 120px 48px 40px;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-        .blog-header-inner {
-            display: flex; align-items: center; gap: 24px;
-            background: var(--bg-raised);
-            box-shadow: var(--neu-raised);
-            border-radius: var(--radius-xl);
-            padding: 32px 40px;
-        }
-        .blog-header-avatar {
-            width: 72px; height: 72px;
-            border-radius: 50%;
-            overflow: hidden;
-            box-shadow: var(--neu-inset);
-            flex-shrink: 0;
-        }
-        .blog-header-avatar img { width: 100%; height: 100%; object-fit: cover; }
-        .blog-header-info h1 {
-            font-family: 'Outfit', sans-serif;
-            font-size: 1.6rem; font-weight: 700;
-            margin-bottom: 4px;
-        }
-        .blog-header-info p {
-            color: var(--text-dim); font-size: 0.9rem;
-            margin-bottom: 4px;
-        }
-        .blog-header-info .typing-text {
-            color: var(--accent); font-size: 0.85rem;
-            border-right: 2px solid var(--accent);
-            animation: blink 1s step-end infinite;
-        }
 
         /* ===== BLOG LAYOUT ===== */
         .blog-layout {
@@ -985,9 +839,130 @@
             }
         }
 
+    
+
+        /* ===== 3D TILT EFFECT ===== */
+        .tilt-card {
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+        .tilt-card .tilt-inner {
+            transition: transform 0.15s ease-out;
+            transform-style: preserve-3d;
+        }
+
+        /* ===== ENTRANCE ANIMATIONS ===== */
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .article-card {
+            animation: slideUp 0.5s ease backwards;
+        }
+        .article-card:nth-child(1) { animation-delay: 0.05s; }
+        .article-card:nth-child(2) { animation-delay: 0.1s; }
+        .article-card:nth-child(3) { animation-delay: 0.15s; }
+        .article-card:nth-child(4) { animation-delay: 0.2s; }
+        .article-card:nth-child(5) { animation-delay: 0.25s; }
+        .article-card:nth-child(6) { animation-delay: 0.3s; }
+        .article-card:nth-child(7) { animation-delay: 0.35s; }
+        .article-card:nth-child(8) { animation-delay: 0.4s; }
+
+        .featured-card {
+            animation: slideUp 0.6s ease backwards;
+        }
+        .sidebar-card {
+            animation: slideInLeft 0.5s ease backwards;
+        }
+        .sidebar-card:nth-child(1) { animation-delay: 0.1s; }
+        .sidebar-card:nth-child(2) { animation-delay: 0.2s; }
+        .sidebar-card:nth-child(3) { animation-delay: 0.3s; }
+
+        /* ===== FLOATING SHAPES (background) ===== */
+        .bg-shapes {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        .bg-shape {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.03;
+            animation: floatShape 25s ease-in-out infinite;
+        }
+        .bg-shape:nth-child(1) {
+            width: 400px; height: 400px;
+            background: var(--accent);
+            top: -100px; right: -100px;
+            animation-delay: 0s;
+        }
+        .bg-shape:nth-child(2) {
+            width: 300px; height: 300px;
+            background: var(--accent-pink);
+            bottom: -50px; left: -50px;
+            animation-delay: -8s;
+        }
+        .bg-shape:nth-child(3) {
+            width: 200px; height: 200px;
+            background: var(--accent-teal);
+            top: 40%; left: 60%;
+            animation-delay: -16s;
+        }
+        @keyframes floatShape {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -30px) scale(1.05); }
+            66% { transform: translate(-20px, 20px) scale(0.95); }
+        }
+
+        /* ===== GLOW ON HOVER ===== */
+        .article-card:hover .article-title {
+            color: var(--accent);
+            transition: color var(--transition);
+        }
+        .article-title {
+            transition: color var(--transition);
+        }
+
+        /* ===== SCROLL-LINKED NAV SHADOW ===== */
+        .nav {
+            transition: box-shadow 0.3s ease, background 0.3s ease;
+        }
+
+        /* ===== CATEGORY FILTER PILL ANIMATION ===== */
+        .filter-btn {
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .filter-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* ===== SIDEBAR TAG HOVER GLOW ===== */
+        .sidebar-tags a:hover {
+            color: var(--accent);
+            box-shadow: var(--neu-raised-sm), 0 0 12px rgba(124, 131, 219, 0.15);
+        }
+
     </style>
 </head>
 <body>
+    <!-- Background Shapes -->
+    <div class="bg-shapes">
+        <div class="bg-shape"></div>
+        <div class="bg-shape"></div>
+        <div class="bg-shape"></div>
+    </div>
+
     <!-- Scroll Progress Bar -->
     <div class="scroll-progress" id="scrollProgress"></div>
 
@@ -1003,10 +978,9 @@
     <nav class="nav" id="nav">
         <a href="#" class="nav-logo">林小白</a>
         <ul class="nav-links" id="navLinks">
-            <li><a href="#home">首页</a></li>
+            <li><a href="#articles">首页</a></li>
             <li><a href="#articles">文章</a></li>
-            <li><a href="#about">关于</a></li>
-            <li><a href="#subscribe">订阅</a></li>
+
         </ul>
         <div class="nav-search">
             <input type="text" id="searchInput" placeholder="搜索文章..." class="search-input">
@@ -1024,19 +998,7 @@
         </button>
     </nav>
 
-    <!-- Blog Header -->
-    <header class="blog-header" id="home">
-        <div class="blog-header-inner">
-            <div class="blog-header-avatar">
-                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&h=120&fit=crop&crop=face" alt="林小白">
-            </div>
-            <div class="blog-header-info">
-                <h1>林小白的数字花园</h1>
-                <p>全栈开发者 / 记录技术成长与生活思考</p>
-                <span class="typing-text" id="typingText"></span>
-            </div>
-        </div>
-    </header>
+
 
     <!-- Articles Section -->
     <section class="section" id="articles">
@@ -1044,7 +1006,7 @@
         <!-- Main Content -->
         <div class="blog-main">
             <div class="articles-header">
-                <h2>最新文章</h2>
+                <h2><span style="color:var(--accent)">//</span> 最新文章</h2>
                 <span class="article-count" id="articleCount"></span>
             </div>
 
@@ -2673,54 +2635,18 @@
         </div>
     </section>
 
-    <!-- About Section -->
-    <section class="section about-section" id="about">
-        <div class="about-content">
-            <div class="about-avatar reveal">
-                <div class="about-avatar-wrapper">
-                    <div class="about-avatar-inner">
-                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face" alt="林小白">
-                    </div>
-                </div>
-                <div class="about-decoration about-decoration-1"></div>
-                <div class="about-decoration about-decoration-2"></div>
-            </div>
-            <div class="about-text reveal">
-                <h2>嗨，很高兴<span>认识你</span></h2>
-                <p>
-                    我是一名来自杭州的全栈开发者，目前在一家科技公司担任前端架构师。工作之余，我热衷于探索技术的边界，分享我在编程、设计和产品思维方面的见解。
-                </p>
-                <p>
-                    这个博客是我记录学习历程、沉淀思考的地方。我相信知识的价值在于分享和传承，希望通过文字能够帮助到更多在技术道路上探索的同行者。
-                </p>
-                <p>
-                    当我不在写代码的时候，你可能会发现我在研究摄影、练习吉他，或者在咖啡馆里读一本好书。生活的多样性让创作更有灵感。
-                </p>
-
-            </div>
-        </div>
-    </section>
+    
 
     
 
-    <!-- Newsletter Section -->
-    <section class="section" id="subscribe">
-        <div class="newsletter reveal">
-            <h2>订阅更新</h2>
-            <p>获取每周精选技术文章，绝不发送垃圾邮件</p>
-            <form class="newsletter-form" onsubmit="handleSubscribe(event)">
-                <input type="email" class="newsletter-input" placeholder="your@email.com" required>
-                <button type="submit" class="btn btn-primary">订阅</button>
-            </form>
-        </div>
-    </section>
+    
 
     <!-- Footer -->
     <footer class="footer">
         <div class="footer-content">
             <div class="footer-brand">
                 <h3>林小白</h3>
-                <p>记录技术成长，分享实战经验。希望这些文字能为你带来一点启发和帮助。</p>
+                <p>记录技术成长，分享实战经验。</p>
                 <div class="social-links">
                     <a href="#" class="social-link" aria-label="GitHub">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
@@ -2749,9 +2675,9 @@
             <div class="footer-links">
                 <h4>导航</h4>
                 <ul>
-                    <li><a href="#home">首页</a></li>
+                    <li><a href="#articles">首页</a></li>
                     <li><a href="#articles">文章</a></li>
-                    <li><a href="#about">关于</a></li>
+
                 </ul>
             </div>
 
@@ -3280,12 +3206,36 @@
             ).join('');
         }
 
+        // 3D Tilt Effect for Article Cards
+        function initTiltEffect() {
+            document.querySelectorAll('.article-card, .featured-card').forEach(card => {
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    const rotateX = ((y - centerY) / centerY) * -4;
+                    const rotateY = ((x - centerX) / centerX) * 4;
+                    card.style.transform = 'perspective(800px) rotateX(' + rotateX + 'deg) rotateY(' + rotateY + 'deg) translateY(-4px)';
+                });
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'perspective(800px) rotateX(0) rotateY(0) translateY(0)';
+                    card.style.transition = 'transform 0.4s ease';
+                });
+                card.addEventListener('mouseenter', () => {
+                    card.style.transition = 'transform 0.1s ease';
+                });
+            });
+        }
+
         // 页面加载完成后初始化
         document.addEventListener('DOMContentLoaded', () => {
             loadArticleViews();
             applyFilterAndPagination();
             animateStatNumbers();
             buildSidebarLatest();
+            initTiltEffect();
         });
     </script>
 </body>
