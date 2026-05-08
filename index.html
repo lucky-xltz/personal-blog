@@ -2739,44 +2739,7 @@
             });
         });
 
-        // Typing animation
-        const typingTexts = [
-            '热爱开源和技术分享',
-            '追求优雅的代码和设计',
-            '相信终身学习的力量',
-            '享受解决问题的过程'
-        ];
-        let textIndex = 0;
-        let charIndex = 0;
-        let isDeleting = false;
-        const typingElement = document.getElementById('typingText');
 
-        function typeText() {
-            const currentText = typingTexts[textIndex];
-
-            if (isDeleting) {
-                typingElement.textContent = currentText.substring(0, charIndex - 1);
-                charIndex--;
-            } else {
-                typingElement.textContent = currentText.substring(0, charIndex + 1);
-                charIndex++;
-            }
-
-            let typeSpeed = isDeleting ? 50 : 100;
-
-            if (!isDeleting && charIndex === currentText.length) {
-                typeSpeed = 2000;
-                isDeleting = true;
-            } else if (isDeleting && charIndex === 0) {
-                isDeleting = false;
-                textIndex = (textIndex + 1) % typingTexts.length;
-                typeSpeed = 500;
-            }
-
-            setTimeout(typeText, typeSpeed);
-        }
-
-        typeText();
 
         // Scroll reveal animation
         const revealElements = document.querySelectorAll('.reveal');
