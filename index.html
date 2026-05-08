@@ -1042,16 +1042,26 @@
             pointer-events: none;
         }
 
-        /* 渐变背景 - 秋天暖色调 */
+        /* 背景图片 */
         .spring-bg::before {
             content: '';
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
+            background: url('images/autumn-leaves.jpg') center/cover no-repeat;
+            opacity: 0.15;
+            filter: blur(2px);
+        }
+
+        /* 渐变叠加层 */
+        .spring-bg::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
             background: 
-                radial-gradient(ellipse at 15% 50%, rgba(255, 152, 0, 0.06) 0%, transparent 50%),
-                radial-gradient(ellipse at 85% 30%, rgba(239, 108, 0, 0.05) 0%, transparent 50%),
-                radial-gradient(ellipse at 50% 80%, rgba(255, 183, 77, 0.04) 0%, transparent 50%),
-                radial-gradient(ellipse at 70% 60%, rgba(183, 28, 28, 0.04) 0%, transparent 50%);
+                linear-gradient(180deg, rgba(31, 26, 22, 0.95) 0%, rgba(31, 26, 22, 0.85) 50%, rgba(31, 26, 22, 0.95) 100%),
+                radial-gradient(ellipse at 15% 50%, rgba(255, 152, 0, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 85% 30%, rgba(239, 108, 0, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 80%, rgba(255, 183, 77, 0.05) 0%, transparent 50%);
         }
 
         /* 飘落的枫叶 */
