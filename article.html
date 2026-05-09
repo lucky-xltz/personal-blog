@@ -17,6 +17,7 @@
             --surface: #2a231c;
             --surface-light: rgba(255, 255, 255, 0.05);
             --text: #F8FAFC;
+            --text-dim: #c0c8d8;
             --text-muted: #94A3B8;
             --gradient-primary: linear-gradient(135deg, #e67e22 0%, #c0392b 100%);
             --gradient-accent: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
@@ -41,10 +42,10 @@
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--background);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: transparent;
             color: var(--text);
-            line-height: 1.7;
+            line-height: 1.6;
             min-height: 100vh;
         }
 
@@ -57,23 +58,24 @@
             height: 100%;
             z-index: -1;
             overflow: hidden;
-            background: var(--background);
+            background: transparent;
         }
 
         .bg-gradient::before {
             content: '';
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: url('images/autumn-leaves.jpg') center/cover no-repeat;
-            opacity: 0.12;
-            filter: blur(3px);
+            background: url('images/autumn-trees.jpg') center/cover no-repeat;
+            opacity: 1;
         }
 
-        .bg-gradient::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(180deg, rgba(31, 26, 22, 0.95) 0%, rgba(31, 26, 22, 0.85) 50%, rgba(31, 26, 22, 0.95) 100%);
+        /* Canvas 枫叶飘落 */
+        #leafCanvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 1;
+            pointer-events: none;
         }
 
         .blob {
@@ -139,7 +141,7 @@
         }
 
         .nav-logo {
-            font-family: 'Outfit', sans-serif;
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             font-size: 1.5rem;
             font-weight: 700;
             background: linear-gradient(135deg, #e67e22, #c0392b);
@@ -152,7 +154,7 @@
 
         .nav-logo:hover {
             filter: brightness(1.2);
-            text-shadow: 0 0 30px rgba(99, 102, 241, 0.5);
+            text-shadow: 0 0 30px rgba(230, 126, 34, 0.5);
         }
 
         .nav-back {
@@ -186,7 +188,7 @@
         .article-container {
             max-width: 900px;
             margin: 0 auto;
-            padding: 140px 24px 80px;
+            padding: 120px 24px 80px;
         }
 
         /* Article Header */
@@ -210,7 +212,7 @@
         .article-category {
             display: inline-block;
             padding: 6px 16px;
-            background: rgba(99, 102, 241, 0.15);
+            background: rgba(230, 126, 34, 0.15);
             color: var(--primary);
             border-radius: var(--radius-full);
             font-size: 0.8rem;
@@ -223,7 +225,7 @@
         .article-category.life { background: rgba(168, 85, 247, 0.15); color: #A855F7; }
 
         .article-title {
-            font-family: 'Outfit', sans-serif;
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             font-size: clamp(2rem, 5vw, 3.5rem);
             font-weight: 800;
             line-height: 1.2;
@@ -239,9 +241,10 @@
             align-items: center;
             justify-content: center;
             gap: 24px;
-            color: var(--text-muted);
+            color: var(--text);
             font-size: 0.95rem;
             flex-wrap: wrap;
+            text-shadow: 0 1px 6px rgba(0, 0, 0, 0.6);
         }
 
         .article-meta-item {
@@ -253,12 +256,13 @@
         .article-meta-item svg {
             width: 18px;
             height: 18px;
-            opacity: 0.7;
+            opacity: 0.9;
         }
 
         .article-cover {
             width: 100%;
-            height: 450px;
+            aspect-ratio: 16 / 9;
+            max-height: 500px;
             border-radius: var(--radius-xl);
             overflow: hidden;
             margin-bottom: 48px;
@@ -301,7 +305,7 @@
         .article-content h4,
         .article-content h5,
         .article-content h6 {
-            font-family: 'Outfit', sans-serif;
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             font-weight: 700;
             margin-top: 2em;
             margin-bottom: 0.8em;
@@ -312,6 +316,8 @@
         .article-content h2 { font-size: 1.8rem; }
         .article-content h3 { font-size: 1.5rem; }
         .article-content h4 { font-size: 1.25rem; }
+        .article-content h5 { font-size: 1.1rem; }
+        .article-content h6 { font-size: 1rem; color: var(--text-dim); }
 
         .article-content h2::before {
             content: '';
@@ -325,7 +331,7 @@
 
         .article-content p {
             margin-bottom: 1.5em;
-            font-size: 1.05rem;
+            font-size: 1rem;
             color: rgba(248, 250, 252, 0.9);
         }
 
@@ -347,7 +353,7 @@
 
         .article-content em {
             font-style: italic;
-            color: var(--text-muted);
+            color: var(--text-dim);
         }
 
         .article-content ul,
@@ -374,14 +380,14 @@
         .article-content code {
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.9em;
-            background: rgba(99, 102, 241, 0.1);
+            background: rgba(230, 126, 34, 0.1);
             color: var(--accent);
             padding: 2px 8px;
             border-radius: 4px;
         }
 
         .article-content pre {
-            background: #0d1117;
+            background: #1a1510;
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: var(--radius-lg);
             padding: 24px;
@@ -438,15 +444,15 @@
         }
 
         .code-copy-btn.copied {
-            background: #27ae60;
-            border-color: #27ae60;
+            background: #4a9;
+            border-color: #4a9;
             color: white;
             opacity: 1;
         }
 
         /* Blockquote */
         .article-content blockquote {
-            background: rgba(99, 102, 241, 0.08);
+            background: rgba(230, 126, 34, 0.08);
             border-left: 4px solid var(--primary);
             padding: 20px 24px;
             margin: 1.5em 0;
@@ -484,7 +490,7 @@
         }
 
         .article-content th {
-            background: rgba(99, 102, 241, 0.1);
+            background: rgba(230, 126, 34, 0.1);
             font-weight: 600;
             color: var(--text);
         }
@@ -547,7 +553,7 @@
         }
 
         .article-nav-link:hover {
-            border-color: rgba(99, 102, 241, 0.3);
+            border-color: rgba(230, 126, 34, 0.3);
             transform: translateY(-4px);
         }
 
@@ -559,7 +565,7 @@
         }
 
         .comments-section-title {
-            font-family: 'Outfit', sans-serif;
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             font-size: 1.8rem;
             font-weight: 700;
             margin-bottom: 24px;
@@ -575,7 +581,7 @@
         .comments-section-title svg {
             width: 28px;
             height: 28px;
-            filter: drop-shadow(0 0 8px rgba(99, 102, 241, 0.4));
+            filter: drop-shadow(0 0 8px rgba(230, 126, 34, 0.4));
         }
 
         .comments-container {
@@ -626,7 +632,7 @@
         }
 
         .article-nav-title {
-            font-family: 'Outfit', sans-serif;
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             font-size: 1.1rem;
             font-weight: 600;
             color: var(--text);
@@ -682,7 +688,7 @@
         }
 
         .error-title {
-            font-family: 'Outfit', sans-serif;
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             font-size: 1.5rem;
             font-weight: 700;
             margin-bottom: 12px;
@@ -759,7 +765,8 @@
             }
 
             .article-cover {
-                height: 250px;
+                aspect-ratio: 16 / 9;
+                max-height: 300px;
                 border-radius: var(--radius-lg);
             }
 
@@ -816,7 +823,7 @@
         }
 
         .toc-title {
-            font-family: 'Outfit', sans-serif;
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             font-size: 0.85rem;
             font-weight: 700;
             text-transform: uppercase;
@@ -840,8 +847,8 @@
         .toc-list a {
             display: block;
             padding: 5px 10px;
-            font-size: 0.82rem;
-            line-height: 1.4;
+            font-size: 0.85rem;
+            line-height: 1.5;
             color: var(--text-muted);
             text-decoration: none;
             border-radius: var(--radius-sm);
@@ -868,13 +875,13 @@
 
         .toc-list a.toc-h2 {
             padding-left: 22px;
-            font-size: 0.8rem;
+            font-size: 0.82rem;
         }
 
         .toc-list a.toc-h3 {
             padding-left: 34px;
             font-size: 0.78rem;
-            color: rgba(148, 163, 184, 0.75);
+            color: var(--text-dim);
         }
 
         .toc::-webkit-scrollbar {
@@ -964,6 +971,7 @@
         <div class="blob blob-2"></div>
         <div class="blob blob-3"></div>
     </div>
+    <canvas id="leafCanvas"></canvas>
 
     <!-- Navigation -->
     <nav class="nav" id="nav">
@@ -1461,7 +1469,7 @@
             });
         }
 
-        // Basic code highlighting
+        // Basic code highlighting - warm autumn theme
         function highlightCode(code) {
             return code
                 // Escape HTML
@@ -1469,21 +1477,139 @@
                 .replace(/</g, '&lt;')
                 .replace(/>/g, '&gt;')
                 // Comments
-                .replace(/(\/\/.*$)/gm, '<span style="color: #6a737d;">$1</span>')
-                .replace(/(\/\*[\s\S]*?\*\/)/g, '<span style="color: #6a737d;">$1</span>')
+                .replace(/(\/\/.*$)/gm, '<span style="color: #7a8494;">$1</span>')
+                .replace(/(\/\*[\s\S]*?\*\/)/g, '<span style="color: #7a8494;">$1</span>')
                 // Strings
-                .replace(/(['"`])(?:(?!\1)[^\\]|\\.)*\1/g, '<span style="color: #9ecbff;">$&</span>')
+                .replace(/(['"`])(?:(?!\1)[^\\]|\\.)*\1/g, '<span style="color: #e6b07a;">$&</span>')
                 // Keywords
                 .replace(/\b(const|let|var|function|return|if|else|for|while|class|import|export|from|async|await|try|catch|throw|new|this|typeof|instanceof)\b/g,
-                    '<span style="color: #ff7b72;">$1</span>')
+                    '<span style="color: #e07a5f;">$1</span>')
                 // Numbers
-                .replace(/\b(\d+\.?\d*)\b/g, '<span style="color: #79c0ff;">$1</span>')
+                .replace(/\b(\d+\.?\d*)\b/g, '<span style="color: #f0a050;">$1</span>')
                 // Functions
-                .replace(/\b([a-zA-Z_]\w*)\s*\(/g, '<span style="color: #d2a8ff;">$1</span>(');
+                .replace(/\b([a-zA-Z_]\w*)\s*\(/g, '<span style="color: #d4a87a;">$1</span>(');
         }
 
         // Initialize
         loadArticle();
+    </script>
+
+    <!-- Canvas 枫叶飘落动画 -->
+    <script>
+    (function() {
+        const canvas = document.getElementById('leafCanvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        let W, H;
+
+        function resize() {
+            W = canvas.width = window.innerWidth;
+            H = canvas.height = window.innerHeight;
+        }
+        resize();
+        window.addEventListener('resize', resize);
+
+        const leafColors = [
+            { fill: '#e65100', stroke: '#bf360c' },
+            { fill: '#ff8f00', stroke: '#e65100' },
+            { fill: '#d32f2f', stroke: '#b71c1c' },
+            { fill: '#ff6f00', stroke: '#e65100' },
+            { fill: '#f9a825', stroke: '#f57f17' },
+            { fill: '#8d6e63', stroke: '#5d4037' },
+            { fill: '#c62828', stroke: '#8e0000' },
+            { fill: '#ef6c00', stroke: '#d84315' },
+        ];
+
+        function drawLeafPath(ctx, size) {
+            const s = size;
+            ctx.beginPath();
+            ctx.moveTo(0, s * 0.5);
+            ctx.bezierCurveTo(-s * 0.15, s * 0.3, -s * 0.5, s * 0.15, -s * 0.45, -s * 0.1);
+            ctx.bezierCurveTo(-s * 0.42, -s * 0.2, -s * 0.3, -s * 0.15, -s * 0.25, -s * 0.25);
+            ctx.bezierCurveTo(-s * 0.2, -s * 0.35, -s * 0.35, -s * 0.45, -s * 0.2, -s * 0.5);
+            ctx.bezierCurveTo(-s * 0.1, -s * 0.48, -s * 0.05, -s * 0.35, 0, -s * 0.4);
+            ctx.bezierCurveTo(s * 0.05, -s * 0.35, s * 0.1, -s * 0.48, s * 0.2, -s * 0.5);
+            ctx.bezierCurveTo(s * 0.35, -s * 0.45, s * 0.2, -s * 0.35, s * 0.25, -s * 0.25);
+            ctx.bezierCurveTo(s * 0.3, -s * 0.15, s * 0.42, -s * 0.2, s * 0.45, -s * 0.1);
+            ctx.bezierCurveTo(s * 0.5, s * 0.15, s * 0.15, s * 0.3, 0, s * 0.5);
+            ctx.closePath();
+        }
+
+        function drawVeins(ctx, size) {
+            const s = size;
+            ctx.strokeStyle = 'rgba(0,0,0,0.15)';
+            ctx.lineWidth = 0.5;
+            ctx.beginPath();
+            ctx.moveTo(0, s * 0.5);
+            ctx.lineTo(0, -s * 0.35);
+            ctx.stroke();
+            [[0,-s*0.1,-s*0.3,-s*0.2],[0,-s*0.1,s*0.3,-s*0.2],[0,s*0.1,-s*0.25,s*0.05],[0,s*0.1,s*0.25,s*0.05],[0,s*0.3,-s*0.15,s*0.2],[0,s*0.3,s*0.15,s*0.2]].forEach(function(v){
+                ctx.beginPath();ctx.moveTo(v[0],v[1]);ctx.lineTo(v[2],v[3]);ctx.stroke();
+            });
+        }
+
+        function Leaf() { this.reset(true); }
+        Leaf.prototype.reset = function(init) {
+            this.size = 10 + Math.random() * 18;
+            this.x = Math.random() * W;
+            this.y = init ? Math.random() * H : -this.size * 2;
+            this.color = leafColors[Math.floor(Math.random() * leafColors.length)];
+            this.vy = 0.6 + Math.random() * 1.2;
+            this.vx = (Math.random() - 0.5) * 0.8;
+            this.rotation = Math.random() * Math.PI * 2;
+            this.rotationSpeed = (Math.random() - 0.5) * 0.04;
+            this.tumblePhase = Math.random() * Math.PI * 2;
+            this.tumbleSpeed = 0.01 + Math.random() * 0.03;
+            this.swayPhase = Math.random() * Math.PI * 2;
+            this.swaySpeed = 0.015 + Math.random() * 0.02;
+            this.swayAmount = 0.3 + Math.random() * 0.7;
+            this.alpha = 0.7 + Math.random() * 0.3;
+        };
+        Leaf.prototype.update = function(wind) {
+            this.swayPhase += this.swaySpeed;
+            this.tumblePhase += this.tumbleSpeed;
+            this.rotation += this.rotationSpeed;
+            this.x += this.vx + Math.sin(this.swayPhase) * this.swayAmount + wind;
+            this.y += this.vy;
+            if (this.y > H + this.size * 2 || this.x < -50 || this.x > W + 50) this.reset(false);
+        };
+        Leaf.prototype.draw = function(ctx) {
+            ctx.save();
+            ctx.translate(this.x, this.y);
+            ctx.rotate(this.rotation);
+            ctx.scale(Math.cos(this.tumblePhase), 1);
+            ctx.globalAlpha = this.alpha;
+            drawLeafPath(ctx, this.size);
+            ctx.fillStyle = this.color.fill;
+            ctx.fill();
+            ctx.strokeStyle = this.color.stroke;
+            ctx.lineWidth = 0.8;
+            ctx.stroke();
+            if (this.size > 14) drawVeins(ctx, this.size);
+            ctx.restore();
+        };
+
+        var leafCount = Math.min(35, Math.floor(W / 40));
+        var leaves = [];
+        for (var i = 0; i < leafCount; i++) leaves.push(new Leaf());
+
+        var wind = 0, windTarget = 0, windChangeTimer = 0;
+        function animate() {
+            ctx.clearRect(0, 0, W, H);
+            windChangeTimer++;
+            if (windChangeTimer > 120 + Math.random() * 180) {
+                windTarget = (Math.random() - 0.5) * 1.5;
+                windChangeTimer = 0;
+            }
+            wind += (windTarget - wind) * 0.01;
+            for (var i = 0; i < leaves.length; i++) {
+                leaves[i].update(wind);
+                leaves[i].draw(ctx);
+            }
+            requestAnimationFrame(animate);
+        }
+        animate();
+    })();
     </script>
 </body>
 </html>

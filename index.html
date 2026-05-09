@@ -6,7 +6,7 @@
     <title>林小白的数字花园 | 探索·思考·成长</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg: #1f1a16;
@@ -17,18 +17,26 @@
             --shadow-dark-strong: rgba(0, 0, 0, 0.7);
             --accent: #e67e22;
             --accent-soft: rgba(230, 126, 34, 0.15);
-            --accent-pink: #c0392b;
-            --accent-teal: #f39c12;
-            --accent-yellow: #e74c3c;
+            --accent-red: #c0392b;
+            --accent-amber: #f39c12;
+            --accent-coral: #e74c3c;
             --text: #e0e5ec;
-            --text-dim: #8b95a5;
-            --text-muted: #5c6575;
+            --text-dim: #a0a8b8;
+            --text-muted: #7a8494;
             --border: rgba(255, 255, 255, 0.04);
             --radius-sm: 12px;
             --radius-md: 18px;
             --radius-lg: 24px;
             --radius-xl: 32px;
             --radius-full: 9999px;
+            --z-bg: -2;
+            --z-shapes: -1;
+            --z-canvas: 1;
+            --z-content: 10;
+            --z-nav: 1000;
+            --z-back-to-top: 1001;
+            --z-notification: 9999;
+            --z-progress: 10000;
             --neu-raised: 6px 6px 14px var(--shadow-dark), -6px -6px 14px var(--shadow-light);
             --neu-raised-sm: 3px 3px 8px var(--shadow-dark), -3px -3px 8px var(--shadow-light);
             --neu-raised-lg: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
@@ -41,7 +49,7 @@
         html { scroll-behavior: smooth; }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: var(--bg);
             color: var(--text);
             line-height: 1.6;
@@ -54,7 +62,7 @@
             height: 72px;
             display: flex; align-items: center; justify-content: space-between;
             padding: 0 48px;
-            z-index: 1000;
+            z-index: var(--z-nav);
             transition: all var(--transition);
             background: var(--bg);
         }
@@ -62,7 +70,7 @@
             box-shadow: 0 4px 20px var(--shadow-dark);
         }
         .nav-logo {
-            font-family: 'Outfit', sans-serif;
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             font-size: 1.4rem; font-weight: 700;
             color: var(--accent);
             text-decoration: none;
@@ -98,7 +106,7 @@
             color: var(--text-dim);
             cursor: pointer;
             padding: 8px;
-            border-radius: 50%;
+            border-radius: var(--radius-full);
             transition: all var(--transition);
             display: flex; align-items: center; justify-content: center;
         }
@@ -167,7 +175,7 @@
 
         /* ===== SECTIONS ===== */
         .section {
-            padding: 90px 48px 60px;
+            padding: 80px 48px;
             max-width: 1400px;
             margin: 0 auto;
         }
@@ -184,7 +192,7 @@
             margin-bottom: 16px;
         }
         .section-title {
-            font-family: 'Outfit', sans-serif;
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             font-size: clamp(2rem, 4vw, 3rem);
             font-weight: 700;
             margin-bottom: 16px;
@@ -258,19 +266,19 @@
             margin-bottom: 12px;
             letter-spacing: 0.5px;
         }
-        .article-category.design { color: var(--accent-pink); }
-        .article-category.tech { color: var(--accent-teal); }
-        .article-category.life { color: var(--accent-yellow); }
+        .article-category.design { color: var(--accent-red); }
+        .article-category.tech { color: var(--accent-amber); }
+        .article-category.life { color: var(--accent-coral); }
 
         .article-title {
-            font-family: 'Outfit', sans-serif;
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             font-size: 1.4rem; font-weight: 700;
             margin-bottom: 10px; line-height: 1.35;
         }
         .article-excerpt {
             color: var(--text-dim);
-            font-size: 0.92rem;
-            margin-bottom: 18px; line-height: 1.7;
+            font-size: 0.9rem;
+            margin-bottom: 18px; line-height: 1.6;
         }
         .article-meta {
             display: flex; align-items: center; gap: 16px;
@@ -295,7 +303,7 @@
             background: var(--bg);
             box-shadow: var(--neu-inset-sm);
             border-radius: var(--radius-full);
-            font-size: 0.7rem; color: var(--text-muted);
+            font-size: 0.7rem; color: var(--text-dim);
         }
         .reading-time {
             display: inline-flex; align-items: center; gap: 4px;
@@ -353,7 +361,7 @@
             width: fit-content;
         }
         .featured-card-title {
-            font-family: 'Outfit', sans-serif;
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             font-size: 1.2rem; font-weight: 700;
             line-height: 1.35; margin-bottom: 8px;
         }
@@ -397,7 +405,7 @@
 
         /* ===== NOTIFICATIONS ===== */
         .notification {
-            position: fixed; top: 100px; right: 20px; z-index: 9999;
+            position: fixed; top: 100px; right: 20px; z-index: var(--z-notification);
             animation: slideIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
             max-width: 90%; width: 400px;
         }
@@ -422,10 +430,10 @@
             border-radius: 50%; font-size: 14px; font-weight: bold;
         }
         .notification-success .notification-icon {
-            background: rgba(92, 196, 176, 0.2); color: var(--accent-teal);
+            background: rgba(92, 196, 176, 0.2); color: var(--accent-amber);
         }
         .notification-error .notification-icon {
-            background: rgba(212, 120, 155, 0.2); color: var(--accent-pink);
+            background: rgba(212, 120, 155, 0.2); color: var(--accent-red);
         }
         .notification-info .notification-icon {
             background: var(--accent-soft); color: var(--accent);
@@ -436,7 +444,7 @@
             margin-bottom: 4px; font-size: 0.95rem;
         }
         .notification-message {
-            color: var(--text-dim); font-size: 0.9rem; line-height: 1.5;
+            color: var(--text-dim); font-size: 0.9rem; line-height: 1.6;
         }
         .notification-close {
             background: transparent; border: none;
@@ -458,8 +466,8 @@
             animation: progress 5s linear forwards;
         }
         @keyframes progress { from { width: 100%; } to { width: 0%; } }
-        .notification-success .notification-content { border-left: 4px solid var(--accent-teal); }
-        .notification-error .notification-content { border-left: 4px solid var(--accent-pink); }
+        .notification-success .notification-content { border-left: 4px solid var(--accent-amber); }
+        .notification-error .notification-content { border-left: 4px solid var(--accent-red); }
         .notification-info .notification-content { border-left: 4px solid var(--accent); }
 
         /* ===== FOOTER ===== */
@@ -474,7 +482,7 @@
             gap: 48px;
         }
         .footer-brand h3 {
-            font-family: 'Outfit', sans-serif;
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             font-size: 1.5rem; font-weight: 700;
             color: var(--accent); margin-bottom: 16px;
         }
@@ -581,7 +589,7 @@
         .scroll-progress {
             position: fixed; top: 0; left: 0;
             height: 3px; background: var(--accent);
-            z-index: 10001;
+            z-index: var(--z-progress);
             transition: width 0.1s linear;
             border-radius: 0 2px 2px 0;
         }
@@ -596,7 +604,7 @@
             color: var(--text-muted);
             cursor: pointer;
             display: flex; align-items: center; justify-content: center;
-            z-index: 999;
+            z-index: var(--z-back-to-top);
             opacity: 0; transform: translateY(20px);
             transition: all var(--transition);
             pointer-events: none;
@@ -670,7 +678,7 @@
             margin-bottom: 24px;
         }
         .articles-header h2 {
-            font-family: 'Outfit', sans-serif;
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             font-size: 1.5rem; font-weight: 700;
         }
 
@@ -727,7 +735,7 @@
         }
         .sidebar-avatar img { width: 100%; height: 100%; object-fit: cover; }
         .sidebar-card h3 {
-            font-family: 'Outfit', sans-serif;
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             font-size: 1.1rem; font-weight: 700;
             text-align: center;
             margin-bottom: 8px;
@@ -750,7 +758,7 @@
             display: block;
             color: var(--accent);
             font-size: 1.1rem;
-            font-family: 'Outfit', sans-serif;
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         }
         .sidebar-stats span {
             font-size: 0.75rem;
@@ -891,7 +899,7 @@
         .bg-shapes {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            z-index: -1;
+            z-index: var(--z-shapes);
             overflow: hidden;
             pointer-events: none;
         }
@@ -909,13 +917,13 @@
         }
         .bg-shape:nth-child(2) {
             width: 300px; height: 300px;
-            background: var(--accent-pink);
+            background: var(--accent-red);
             bottom: -50px; left: -50px;
             animation-delay: -8s;
         }
         .bg-shape:nth-child(3) {
             width: 200px; height: 200px;
-            background: var(--accent-teal);
+            background: var(--accent-amber);
             top: 40%; left: 60%;
             animation-delay: -16s;
         }
@@ -949,8 +957,8 @@
 
         /* ===== SIDEBAR TAG HOVER GLOW ===== */
         .sidebar-tags a:hover {
-            color: #ff9800;
-            box-shadow: var(--neu-raised-sm), 0 0 12px rgba(255, 152, 0, 0.15);
+            color: var(--accent);
+            box-shadow: var(--neu-raised-sm), 0 0 12px var(--accent-soft);
         }
 
         /* ===== SIDEBAR HOT ARTICLES ===== */
@@ -980,8 +988,8 @@
             color: var(--text-muted);
         }
         .sidebar-hot-rank.top-1 { background: var(--accent); color: #fff; box-shadow: var(--neu-raised-sm); }
-        .sidebar-hot-rank.top-2 { background: var(--accent-pink); color: #fff; box-shadow: var(--neu-raised-sm); }
-        .sidebar-hot-rank.top-3 { background: var(--accent-teal); color: #fff; box-shadow: var(--neu-raised-sm); }
+        .sidebar-hot-rank.top-2 { background: var(--accent-red); color: #fff; box-shadow: var(--neu-raised-sm); }
+        .sidebar-hot-rank.top-3 { background: var(--accent-amber); color: #fff; box-shadow: var(--neu-raised-sm); }
         .sidebar-hot-list a {
             color: var(--text-dim);
             text-decoration: none;
@@ -1037,7 +1045,7 @@
         .spring-bg {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            z-index: -2;
+            z-index: var(--z-bg);
             overflow: hidden;
             pointer-events: none;
         }
@@ -1047,153 +1055,17 @@
             content: '';
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: url('images/autumn-leaves.jpg') center/cover no-repeat;
-            opacity: 0.15;
-            filter: blur(2px);
+            background: url('images/autumn-trees.jpg') center/cover no-repeat;
+            opacity: 1;
         }
 
-        /* 渐变叠加层 */
-        .spring-bg::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: 
-                linear-gradient(180deg, rgba(31, 26, 22, 0.95) 0%, rgba(31, 26, 22, 0.85) 50%, rgba(31, 26, 22, 0.95) 100%),
-                radial-gradient(ellipse at 15% 50%, rgba(255, 152, 0, 0.08) 0%, transparent 50%),
-                radial-gradient(ellipse at 85% 30%, rgba(239, 108, 0, 0.06) 0%, transparent 50%),
-                radial-gradient(ellipse at 50% 80%, rgba(255, 183, 77, 0.05) 0%, transparent 50%);
-        }
-
-        /* 飘落的枫叶 */
-        .spring-petal {
-            position: absolute;
-            width: 14px;
-            height: 14px;
-            background: rgba(255, 152, 0, 0.18);
-            border-radius: 0 50% 50% 50%;
-            transform: rotate(45deg);
-            animation: leafFall linear infinite;
-            opacity: 0;
-        }
-
-        .spring-petal:nth-child(1) {
-            left: 8%; animation-duration: 12s; animation-delay: 0s;
-            width: 12px; height: 12px;
-            background: rgba(239, 108, 0, 0.2);
-        }
-        .spring-petal:nth-child(2) {
-            left: 22%; animation-duration: 16s; animation-delay: -2s;
-            width: 16px; height: 16px;
-            background: rgba(183, 28, 28, 0.15);
-        }
-        .spring-petal:nth-child(3) {
-            left: 38%; animation-duration: 14s; animation-delay: -5s;
-            width: 10px; height: 10px;
-            background: rgba(255, 183, 77, 0.2);
-        }
-        .spring-petal:nth-child(4) {
-            left: 52%; animation-duration: 18s; animation-delay: -3s;
-            width: 13px; height: 13px;
-            background: rgba(255, 87, 34, 0.18);
-        }
-        .spring-petal:nth-child(5) {
-            left: 68%; animation-duration: 15s; animation-delay: -8s;
-            width: 11px; height: 11px;
-            background: rgba(255, 152, 0, 0.15);
-        }
-        .spring-petal:nth-child(6) {
-            left: 78%; animation-duration: 17s; animation-delay: -4s;
-            width: 14px; height: 14px;
-            background: rgba(183, 28, 28, 0.12);
-        }
-        .spring-petal:nth-child(7) {
-            left: 45%; animation-duration: 13s; animation-delay: -6s;
-            width: 9px; height: 9px;
-            background: rgba(255, 183, 77, 0.18);
-        }
-        .spring-petal:nth-child(8) {
-            left: 92%; animation-duration: 19s; animation-delay: -1s;
-            width: 15px; height: 15px;
-            background: rgba(255, 87, 34, 0.15);
-        }
-
-        @keyframes leafFall {
-            0% {
-                transform: translateY(-10vh) rotate(45deg) translateX(0);
-                opacity: 0;
-            }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% {
-                transform: translateY(110vh) rotate(405deg) translateX(60px);
-                opacity: 0;
-            }
-        }
-
-        /* 树枝装饰 */
-        .spring-branch {
-            position: absolute;
-            bottom: 0;
-            right: -50px;
-            width: 300px;
-            height: 400px;
-            opacity: 0.04;
-            transform: rotate(-15deg);
-        }
-        .spring-branch::before {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            width: 3px;
-            height: 100%;
-            background: linear-gradient(to top, rgba(121, 85, 72, 0.5), rgba(121, 85, 72, 0.1));
-            border-radius: 2px;
-            transform: rotate(5deg);
-        }
-        .spring-branch::after {
-            content: '';
-            position: absolute;
-            bottom: 200px;
-            right: 0;
-            width: 150px;
-            height: 3px;
-            background: linear-gradient(to left, rgba(121, 85, 72, 0.4), rgba(121, 85, 72, 0.1));
-            border-radius: 2px;
-            transform: rotate(-25deg);
-        }
-
-        /* 小果实装饰 */
-        .spring-leaf {
-            position: absolute;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            animation: fruitGlow ease-in-out infinite;
-        }
-        .spring-leaf:nth-child(1) {
-            top: 25%; left: 6%;
-            background: rgba(255, 152, 0, 0.1);
-            animation-duration: 4s;
-        }
-        .spring-leaf:nth-child(2) {
-            top: 55%; right: 10%;
-            width: 6px; height: 6px;
-            background: rgba(183, 28, 28, 0.08);
-            animation-duration: 5s;
-            animation-delay: -1.5s;
-        }
-        .spring-leaf:nth-child(3) {
-            top: 35%; left: 18%;
-            width: 7px; height: 7px;
-            background: rgba(255, 183, 77, 0.08);
-            animation-duration: 6s;
-            animation-delay: -3s;
-        }
-
-        @keyframes fruitGlow {
-            0%, 100% { opacity: 0.3; transform: scale(1); }
-            50% { opacity: 0.8; transform: scale(1.3); }
+        /* Canvas 枫叶飘落 */
+        #leafCanvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: var(--z-canvas);
+            pointer-events: none;
         }
 
         /* 更新浮动形状为秋天色调 */
@@ -1206,34 +1078,13 @@
         .bg-shape:nth-child(3) {
             background: rgba(255, 183, 77, 0.05);
         }
-        .bg-shape:nth-child(1) {
-            background: rgba(129, 199, 132, 0.08);
-        }
-        .bg-shape:nth-child(2) {
-            background: rgba(255, 183, 197, 0.06);
-        }
-        .bg-shape:nth-child(3) {
-            background: rgba(255, 224, 130, 0.05);
-        }
 
     </style>
 </head>
 <body>
-    <!-- Spring Theme Background -->
-    <div class="spring-bg">
-        <div class="spring-petal"></div>
-        <div class="spring-petal"></div>
-        <div class="spring-petal"></div>
-        <div class="spring-petal"></div>
-        <div class="spring-petal"></div>
-        <div class="spring-petal"></div>
-        <div class="spring-petal"></div>
-        <div class="spring-petal"></div>
-        <div class="spring-branch"></div>
-        <div class="spring-leaf"></div>
-        <div class="spring-leaf"></div>
-        <div class="spring-leaf"></div>
-    </div>
+    <!-- Autumn Theme Background -->
+    <div class="spring-bg"></div>
+    <canvas id="leafCanvas"></canvas>
     <div class="bg-shapes">
         <div class="bg-shape"></div>
         <div class="bg-shape"></div>
@@ -3550,6 +3401,184 @@
             buildSidebarArchive();
             initTiltEffect();
         });
+    </script>
+
+    <!-- Canvas 枫叶飘落动画 -->
+    <script>
+    (function() {
+        const canvas = document.getElementById('leafCanvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        let W, H;
+
+        function resize() {
+            W = canvas.width = window.innerWidth;
+            H = canvas.height = window.innerHeight;
+        }
+        resize();
+        window.addEventListener('resize', resize);
+
+        // 枫叶颜色
+        const leafColors = [
+            { fill: '#e65100', stroke: '#bf360c' },  // 深橙
+            { fill: '#ff8f00', stroke: '#e65100' },  // 琥珀
+            { fill: '#d32f2f', stroke: '#b71c1c' },  // 红色
+            { fill: '#ff6f00', stroke: '#e65100' },  // 橙色
+            { fill: '#f9a825', stroke: '#f57f17' },  // 金黄
+            { fill: '#8d6e63', stroke: '#5d4037' },  // 棕色
+            { fill: '#c62828', stroke: '#8e0000' },  // 深红
+            { fill: '#ef6c00', stroke: '#d84315' },  // 橘红
+        ];
+
+        // 绘制枫叶形状
+        function drawLeafPath(ctx, size) {
+            const s = size;
+            ctx.beginPath();
+            // 中心叶柄起点
+            ctx.moveTo(0, s * 0.5);
+            // 左叶瓣
+            ctx.bezierCurveTo(-s * 0.15, s * 0.3, -s * 0.5, s * 0.15, -s * 0.45, -s * 0.1);
+            ctx.bezierCurveTo(-s * 0.42, -s * 0.2, -s * 0.3, -s * 0.15, -s * 0.25, -s * 0.25);
+            // 左上叶瓣
+            ctx.bezierCurveTo(-s * 0.2, -s * 0.35, -s * 0.35, -s * 0.45, -s * 0.2, -s * 0.5);
+            ctx.bezierCurveTo(-s * 0.1, -s * 0.48, -s * 0.05, -s * 0.35, 0, -s * 0.4);
+            // 右上叶瓣
+            ctx.bezierCurveTo(s * 0.05, -s * 0.35, s * 0.1, -s * 0.48, s * 0.2, -s * 0.5);
+            ctx.bezierCurveTo(s * 0.35, -s * 0.45, s * 0.2, -s * 0.35, s * 0.25, -s * 0.25);
+            // 右叶瓣
+            ctx.bezierCurveTo(s * 0.3, -s * 0.15, s * 0.42, -s * 0.2, s * 0.45, -s * 0.1);
+            ctx.bezierCurveTo(s * 0.5, s * 0.15, s * 0.15, s * 0.3, 0, s * 0.5);
+            ctx.closePath();
+        }
+
+        // 叶脉
+        function drawVeins(ctx, size) {
+            const s = size;
+            ctx.strokeStyle = 'rgba(0,0,0,0.15)';
+            ctx.lineWidth = 0.5;
+            // 中脉
+            ctx.beginPath();
+            ctx.moveTo(0, s * 0.5);
+            ctx.lineTo(0, -s * 0.35);
+            ctx.stroke();
+            // 侧脉
+            const veins = [
+                [0, -s * 0.1, -s * 0.3, -s * 0.2],
+                [0, -s * 0.1, s * 0.3, -s * 0.2],
+                [0, s * 0.1, -s * 0.25, s * 0.05],
+                [0, s * 0.1, s * 0.25, s * 0.05],
+                [0, s * 0.3, -s * 0.15, s * 0.2],
+                [0, s * 0.3, s * 0.15, s * 0.2],
+            ];
+            veins.forEach(function(v) {
+                ctx.beginPath();
+                ctx.moveTo(v[0], v[1]);
+                ctx.lineTo(v[2], v[3]);
+                ctx.stroke();
+            });
+        }
+
+        // 叶子类
+        function Leaf() {
+            this.reset(true);
+        }
+
+        Leaf.prototype.reset = function(init) {
+            this.size = 10 + Math.random() * 18;
+            this.x = Math.random() * W;
+            this.y = init ? Math.random() * H : -this.size * 2;
+            this.color = leafColors[Math.floor(Math.random() * leafColors.length)];
+            // 下落速度
+            this.vy = 0.6 + Math.random() * 1.2;
+            // 水平漂移
+            this.vx = (Math.random() - 0.5) * 0.8;
+            // 旋转
+            this.rotation = Math.random() * Math.PI * 2;
+            this.rotationSpeed = (Math.random() - 0.5) * 0.04;
+            // 3D 翻转模拟
+            this.tumblePhase = Math.random() * Math.PI * 2;
+            this.tumbleSpeed = 0.01 + Math.random() * 0.03;
+            // 摇摆
+            this.swayPhase = Math.random() * Math.PI * 2;
+            this.swaySpeed = 0.015 + Math.random() * 0.02;
+            this.swayAmount = 0.3 + Math.random() * 0.7;
+            // 透明度
+            this.alpha = 0.7 + Math.random() * 0.3;
+        };
+
+        Leaf.prototype.update = function(wind) {
+            this.swayPhase += this.swaySpeed;
+            this.tumblePhase += this.tumbleSpeed;
+            this.rotation += this.rotationSpeed;
+
+            // 摇摆效果
+            this.x += this.vx + Math.sin(this.swayPhase) * this.swayAmount + wind;
+            this.y += this.vy;
+
+            // 超出屏幕重置
+            if (this.y > H + this.size * 2 || this.x < -50 || this.x > W + 50) {
+                this.reset(false);
+            }
+        };
+
+        Leaf.prototype.draw = function(ctx) {
+            ctx.save();
+            ctx.translate(this.x, this.y);
+            ctx.rotate(this.rotation);
+            // 3D 翻转：X轴缩放模拟
+            var scaleX = Math.cos(this.tumblePhase);
+            ctx.scale(scaleX, 1);
+            ctx.globalAlpha = this.alpha;
+
+            // 绘制枫叶
+            drawLeafPath(ctx, this.size);
+            ctx.fillStyle = this.color.fill;
+            ctx.fill();
+            ctx.strokeStyle = this.color.stroke;
+            ctx.lineWidth = 0.8;
+            ctx.stroke();
+
+            // 叶脉
+            if (this.size > 14) {
+                drawVeins(ctx, this.size);
+            }
+
+            ctx.restore();
+        };
+
+        // 创建叶子
+        var leafCount = Math.min(35, Math.floor(W / 40));
+        var leaves = [];
+        for (var i = 0; i < leafCount; i++) {
+            leaves.push(new Leaf());
+        }
+
+        // 风力
+        var wind = 0;
+        var windTarget = 0;
+        var windChangeTimer = 0;
+
+        function animate() {
+            ctx.clearRect(0, 0, W, H);
+
+            // 风力变化
+            windChangeTimer++;
+            if (windChangeTimer > 120 + Math.random() * 180) {
+                windTarget = (Math.random() - 0.5) * 1.5;
+                windChangeTimer = 0;
+            }
+            wind += (windTarget - wind) * 0.01;
+
+            for (var i = 0; i < leaves.length; i++) {
+                leaves[i].update(wind);
+                leaves[i].draw(ctx);
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+    })();
     </script>
 </body>
 </html>
