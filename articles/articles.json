@@ -1,6 +1,24 @@
 {
   "articles": [
     {
+      "slug": "ai-vulnerability-hunting-mythos-curl-firefox-2026",
+      "title": "AI 漏洞猎人：当 Mythos 遇上 curl 和 Firefox，AI 安全审计到底有多强？",
+      "date": "2026-05-11",
+      "category": "技术",
+      "tags": [
+        "AI安全",
+        "漏洞挖掘",
+        "Mythos",
+        "curl",
+        "Firefox",
+        "代码审计"
+      ],
+      "excerpt": "Anthropic 的 Mythos 模型在两个月内为 Mozilla 找到了 271 个 Firefox 安全漏洞，但 curl 创始人 Daniel Stenberg 的实测却给出了截然不同的结论。深入拆解 AI 安全审计的真实战报：Agent Harness 的设计原理、双 LLM 验证机制、以及为什么代码库的安全成熟度决定了 AI 的发现上限。",
+      "cover": "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=600&h=400&fit=crop",
+      "readtime": 14,
+      "views": 0
+    },
+    {
       "slug": "ai-coding-limits-god-object-antipattern-2026",
       "title": "AI 编码的「上帝对象」陷阱：为什么无约束的 Vibe Coding 会产出不可维护的代码",
       "date": "2026-05-11",
