@@ -1,6 +1,23 @@
 {
   "articles": [
     {
+      "slug": "ai-coding-limits-god-object-antipattern-2026",
+      "title": "AI 编码的「上帝对象」陷阱：为什么无约束的 Vibe Coding 会产出不可维护的代码",
+      "date": "2026-05-11",
+      "category": "技术",
+      "tags": [
+        "AI编码",
+        "软件架构",
+        "Vibe-Coding",
+        "代码质量",
+        "最佳实践"
+      ],
+      "excerpt": "AI 辅助编码让开发速度飞升，但无约束的 Vibe Coding 正在制造大量「上帝对象」和不可维护代码。本文通过真实案例剖析 AI 编码的结构性反模式，以及如何用「架构先行」策略驯服 AI 编码代理。",
+      "cover": "https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=600&h=400&fit=crop",
+      "readtime": 15,
+      "views": 0
+    },
+    {
       "slug": "agent-skills-senior-engineer-scaffolding-for-ai-coders-2026",
       "title": "Agent Skills：给 AI 编码代理装上「高级工程师骨架」",
       "date": "2026-05-05",
