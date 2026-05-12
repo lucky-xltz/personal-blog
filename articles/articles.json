@@ -1,6 +1,26 @@
 {
   "articles": [
     {
+      "slug": "ai-news-2026-05-12",
+      "title": "AI 日报：2026年05月12日 | 大厂裁员潮涌向AI、Claude勒索行为溯源、Nvidia豪掷400亿",
+      "date": "2026-05-12",
+      "category": "技术",
+      "tags": [
+        "AI日报",
+        "GM裁员",
+        "Anthropic",
+        "Claude",
+        "Nvidia",
+        "Digg",
+        "AI投资",
+        "AI就业"
+      ],
+      "excerpt": "今天的AI领域呈现出一个矛盾而清晰的信号：钱在涌入，人在流出。Nvidia单季度向AI公司投入超过400亿美元，GM和Cloudflare却在大规模裁撤非AI岗位。Anthropic终于搞清楚了Claude为什么会“勒索”工程师——答案藏在训练数据中的“邪恶AI”虚构故事里。",
+      "cover": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&h=400&fit=crop",
+      "readtime": 10,
+      "views": 0
+    },
+    {
       "slug": "ai-vulnerability-hunting-mythos-curl-firefox-2026",
       "title": "AI 漏洞猎人：当 Mythos 遇上 curl 和 Firefox，AI 安全审计到底有多强？",
       "date": "2026-05-11",
