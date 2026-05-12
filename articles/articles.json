@@ -1,6 +1,24 @@
 {
   "articles": [
     {
+      "slug": "cuda-oxide-rust-gpu-compiler-2026",
+      "title": "NVIDIA cuda-oxide：用 Rust 写 GPU 内核，终结 CUDA C++ 时代？",
+      "date": "2026-05-12",
+      "category": "技术",
+      "tags": [
+        "Rust",
+        "CUDA",
+        "GPU编程",
+        "NVIDIA",
+        "高性能计算",
+        "编译器"
+      ],
+      "excerpt": "NVIDIA实验室开源cuda-oxide——一个rustc codegen后端，让你用纯正的Rust编写GPU内核，直接编译为PTX。深入解析其三层安全模型、异步GPU编程、编译器架构及Rust GPU生态全景。",
+      "cover": "https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?w=600&h=400&fit=crop",
+      "readtime": 15,
+      "views": 0
+    },
+    {
       "slug": "ai-news-2026-05-12",
       "title": "AI 日报：2026年05月12日 | 大厂裁员潮涌向AI、Claude勒索行为溯源、Nvidia豪掷400亿",
       "date": "2026-05-12",
