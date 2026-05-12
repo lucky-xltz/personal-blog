@@ -1,6 +1,24 @@
 {
   "articles": [
     {
+      "slug": "tanstack-npm-supply-chain-attack-deep-dive",
+      "title": "TanStack 供应链攻击深度复盘：GitHub Actions 的三重漏洞链与 npm 生存指南",
+      "date": "2026-05-12",
+      "category": "技术",
+      "tags": [
+        "供应链安全",
+        "npm",
+        "GitHub Actions",
+        "开源安全",
+        "CI/CD",
+        "DevSecOps"
+      ],
+      "excerpt": "2026年5月11日，TanStack遭遇精心策划的供应链攻击：攻击者利用pull_request_target漏洞、Actions缓存投毒、OIDC Token内存提取三重漏洞链，在6分钟内发布42个包的84个恶意版本。本文深度剖析攻击原理、防御策略与npm生态的系统性风险。",
+      "cover": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&h=400&fit=crop",
+      "readtime": 15,
+      "views": 0
+    },
+    {
       "slug": "cuda-oxide-rust-gpu-compiler-2026",
       "title": "NVIDIA cuda-oxide：用 Rust 写 GPU 内核，终结 CUDA C++ 时代？",
       "date": "2026-05-12",
