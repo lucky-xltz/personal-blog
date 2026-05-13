@@ -1,6 +1,25 @@
 {
   "articles": [
     {
+      "slug": "duckdb-quack-protocol-deep-dive",
+      "title": "DuckDB Quack协议深度解读：嵌入式数据库如何优雅地走向分布式",
+      "date": "2026-05-13",
+      "category": "技术",
+      "tags": [
+        "DuckDB",
+        "数据库",
+        "分布式系统",
+        "Quack协议",
+        "HTTP",
+        "性能优化",
+        "数据工程"
+      ],
+      "excerpt": "DuckDB团队发布Quack协议，让嵌入式数据库首次支持原生客户端-服务器模式。基于HTTP的Quack在批量传输和小事务场景下均超越PostgreSQL和Arrow Flight SQL，6000万行数据不到5秒完成传输。本文深入解析协议设计哲学、安全模型、性能基准测试，以及DuckDB从分析工具到分布式基础设施组件的进化之路。",
+      "cover": "https://images.unsplash.com/photo-1544383835-bda2bc66a55d?w=600&h=400&fit=crop",
+      "readtime": 14,
+      "views": 0
+    },
+    {
       "slug": "quic-cubic-death-spiral-congestion-control-2026",
       "title": "当空闲不是空闲：一个Linux内核优化如何让QUIC陷入拥塞死亡螺旋",
       "date": "2026-05-13",
