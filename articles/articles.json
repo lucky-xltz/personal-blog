@@ -1,6 +1,25 @@
 {
   "articles": [
     {
+      "slug": "ai-news-2026-05-13",
+      "title": "AI 日报：2026年05月13日 | Google太空建数据中心、Anthropic进军法律AI、GM用AI重塑劳动力",
+      "date": "2026-05-13",
+      "category": "技术",
+      "tags": [
+        "AI日报",
+        "Google",
+        "Anthropic",
+        "SpaceX",
+        "GM裁员",
+        "AI法律",
+        "AI基础设施"
+      ],
+      "excerpt": "今日AI领域多线并进：Google与SpaceX联手探索太空AI算力，Anthropic将Claude带入法律服务赛道，通用汽车以裁员重组拥抱AI转型，OpenAI控制权之争在法庭上继续发酵，Vapi以5亿美元估值完成新一轮融资。",
+      "cover": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=600&h=400&fit=crop",
+      "readtime": 8,
+      "views": 0
+    },
+    {
       "slug": "tanstack-npm-supply-chain-attack-deep-dive",
       "title": "TanStack 供应链攻击深度复盘：GitHub Actions 的三重漏洞链与 npm 生存指南",
       "date": "2026-05-12",
