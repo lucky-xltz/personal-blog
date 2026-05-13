@@ -1,6 +1,25 @@
 {
   "articles": [
     {
+      "slug": "quic-cubic-death-spiral-congestion-control-2026",
+      "title": "当空闲不是空闲：一个Linux内核优化如何让QUIC陷入拥塞死亡螺旋",
+      "date": "2026-05-13",
+      "category": "技术",
+      "tags": [
+        "QUIC",
+        "拥塞控制",
+        "CUBIC",
+        "Linux内核",
+        "网络协议",
+        "Cloudflare",
+        "性能优化"
+      ],
+      "excerpt": "Cloudflare在QUIC实现quiche中发现了一个令人着迷的bug：CUBIC拥塞窗口被永久锁定在最小值。根源可追溯到2017年Linux内核的一个空闲期优化——当它被移植到用户空间的QUIC时，引发了“死亡螺旋”。本文深入分析拥塞控制机制、内核与用户空间的时序差异，以及那个优雅的单行修复。",
+      "cover": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=600&h=400&fit=crop",
+      "readtime": 15,
+      "views": 0
+    },
+    {
       "slug": "ai-news-2026-05-13",
       "title": "AI 日报：2026年05月13日 | Google太空建数据中心、Anthropic进军法律AI、GM用AI重塑劳动力",
       "date": "2026-05-13",
