@@ -1,6 +1,25 @@
 {
   "articles": [
     {
+      "slug": "software-emacsification-ai-agents-native-apps",
+      "title": "软件的Emacs化：当AI代理让每个人都能写原生应用",
+      "date": "2026-05-14",
+      "category": "技术",
+      "tags": [
+        "AI编程",
+        "原生开发",
+        "Emacs",
+        "Electron",
+        "SwiftUI",
+        "软件工程",
+        "AI代理"
+      ],
+      "excerpt": "安全研究员Ptacek提出'软件Emacs化'概念：AI代理让原生UI开发变得像写elisp一样随意。本文深入探讨这个范式转变的技术内涵——从Electron的困境到个人软件的复兴，以及它对我们每个开发者意味着什么。",
+      "cover": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&h=400&fit=crop",
+      "readtime": 12,
+      "views": 0
+    },
+    {
       "slug": "ai-news-2026-05-14",
       "title": "AI 日报：2026年5月14日 | 科幻小说塑造了AI的「恶」，斯坦福研究发现AI也会「闹革命」",
       "date": "2026-05-14",
