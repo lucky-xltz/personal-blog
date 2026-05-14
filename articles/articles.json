@@ -1,6 +1,25 @@
 {
   "articles": [
     {
+      "slug": "bun-rust-rewrite-merged-2026",
+      "title": "77万行代码一夜之间换了语言：Bun 的 Rust 重写被合并了，然后呢？",
+      "date": "2026-05-14",
+      "category": "技术",
+      "tags": [
+        "Bun",
+        "Rust",
+        "Zig",
+        "AI编程",
+        "代码迁移",
+        "Anthropic",
+        "软件工程"
+      ],
+      "excerpt": "2026年5月14日，Bun 的 Rust 重写 PR 被合并：+773,950行代码，1,646个文件，主要由 Claude AI 完成。从迁移指南发布到 PR 合并只用了9天，99.8%测试通过率。本文探讨 vibe coding 时代大规模代码迁移的现实与隐忧。",
+      "cover": "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=600&h=400&fit=crop",
+      "readtime": 14,
+      "views": 0
+    },
+    {
       "slug": "software-emacsification-ai-agents-native-apps",
       "title": "软件的Emacs化：当AI代理让每个人都能写原生应用",
       "date": "2026-05-14",
