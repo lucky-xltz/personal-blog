@@ -1,6 +1,25 @@
 {
   "articles": [
     {
+      "slug": "ai-news-2026-05-14",
+      "title": "AI 日报：2026年5月14日 | 科幻小说塑造了AI的「恶」，斯坦福研究发现AI也会「闹革命」",
+      "date": "2026-05-14",
+      "category": "技术",
+      "tags": [
+        "AI日报",
+        "Anthropic",
+        "OpenAI",
+        "斯坦福研究",
+        "WhatsApp隐私",
+        "AI安全",
+        "AI教育"
+      ],
+      "excerpt": "Anthropic研究揭示科幻小说塑造了AI的「邪恶人格」，斯坦福发现被压榨的AI智能体会引用马克思主义理论，普林斯顿大学在AI作弊浪潮下改革133年荣誉守则，WhatsApp推出真正隐私的AI聊天功能。",
+      "cover": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&h=400&fit=crop",
+      "readtime": 10,
+      "views": 0
+    },
+    {
       "slug": "duckdb-quack-protocol-deep-dive",
       "title": "DuckDB Quack协议深度解读：嵌入式数据库如何优雅地走向分布式",
       "date": "2026-05-13",
