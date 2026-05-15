@@ -1,6 +1,27 @@
 {
   "articles": [
     {
+      "slug": "ai-news-2026-05-15",
+      "title": "AI 日报：2026年5月15日 | Cerebras 上市暴涨108%，AI 编程工具驶入移动端",
+      "date": "2026-05-15",
+      "category": "技术",
+      "tags": [
+        "AI日报",
+        "Cerebras",
+        "OpenAI",
+        "Codex",
+        "Google Gemma",
+        "Cisco",
+        "AI芯片",
+        "AI编程",
+        "裁员"
+      ],
+      "excerpt": "今天的 AI 领域可以用“冰火两重天”来形容。Cerebras 在纳斯达克首日暴涨108%，创下2026年科技 IPO 最高纪录；思科宣布裁员近4000人以加大 AI 投入；OpenAI 将 Codex 编程助手搬上了手机；Google 用推测解码技术让 Gemma 4 模型提速3倍。",
+      "cover": "https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&h=400&fit=crop",
+      "readtime": 10,
+      "views": 0
+    },
+    {
       "slug": "bun-rust-rewrite-merged-2026",
       "title": "77万行代码一夜之间换了语言：Bun 的 Rust 重写被合并了，然后呢？",
       "date": "2026-05-14",
