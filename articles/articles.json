@@ -1,6 +1,23 @@
 {
   "articles": [
     {
+      "slug": "rust-compiler-llm-policy-2026",
+      "title": "当编译器开始思考：Rust 项目如何为 LLM 立规矩",
+      "date": "2026-05-15",
+      "category": "技术",
+      "tags": [
+        "Rust",
+        "LLM",
+        "开源治理",
+        "AI编程",
+        "编译器"
+      ],
+      "excerpt": "Rust 编译器项目提交了目前主流开源社区中最细致的 LLM 使用政策——核心原则是「LLM 可以用来思考，但不能用来创造」。本文深度解析这份政策的分级框架、实验性例外、以及对开源治理的启示。",
+      "cover": "https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=600&h=400&fit=crop",
+      "readtime": 12,
+      "views": 0
+    },
+    {
       "slug": "typescript-sound-mode-stricter-type-checking",
       "title": "TypeScript Sound Mode：当类型检查器决定不再「睁一只眼闭一只眼」",
       "date": "2026-05-15",
