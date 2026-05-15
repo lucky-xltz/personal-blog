@@ -1,6 +1,24 @@
 {
   "articles": [
     {
+      "slug": "typescript-sound-mode-stricter-type-checking",
+      "title": "TypeScript Sound Mode：当类型检查器决定不再「睁一只眼闭一只眼」",
+      "date": "2026-05-15",
+      "category": "技术",
+      "tags": [
+        "TypeScript",
+        "类型系统",
+        "tsz",
+        "Rust",
+        "静态分析",
+        "编程语言"
+      ],
+      "excerpt": "TypeScript 之所以成功，是因为它的务实——不追求理论上的完美，而是选择与庞大的 JavaScript 生态共存。但这种务实也留下了缝隙。tsz 推出的 Sound Mode 实验探索了：如果类型检查器愿意更严格一些，能抓住多少隐藏的错误？本文深入分析三个已实现和五个计划中的严格检查，以及 AI 时代严格类型系统的新机遇。",
+      "cover": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&h=400&fit=crop",
+      "readtime": 12,
+      "views": 0
+    },
+    {
       "slug": "ai-news-2026-05-15",
       "title": "AI 日报：2026年5月15日 | Cerebras 上市暴涨108%，AI 编程工具驶入移动端",
       "date": "2026-05-15",
