@@ -1,6 +1,24 @@
 {
   "articles": [
     {
+      "slug": "mimalloc-memory-allocator-deep-dive-2026",
+      "title": "mimalloc：微软研究院的内存分配器如何重新定义高性能并发",
+      "date": "2026-05-16",
+      "category": "技术",
+      "tags": [
+        "内存管理",
+        "性能优化",
+        "并发编程",
+        "C语言",
+        "系统编程",
+        "微软研究"
+      ],
+      "excerpt": "微软研究院的mimalloc用不到12K行C代码重新定义了现代内存分配器。本文深入剖析其线程本地堆、三重空闲列表、随机化设计等核心机制，展示它如何在基准测试中全面超越jemalloc和tcmalloc，以及如何零成本集成到你的项目中。",
+      "cover": "https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&h=400&fit=crop",
+      "readtime": 14,
+      "views": 0
+    },
+    {
       "slug": "wasm-edge-sandbox-python-nodejs-2026",
       "title": "当 WebAssembly 吞下整条后端：Python、Node.js 和边缘计算的三重奏",
       "date": "2026-05-16",
