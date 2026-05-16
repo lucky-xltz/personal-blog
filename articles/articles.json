@@ -1,6 +1,25 @@
 {
   "articles": [
     {
+      "slug": "ai-news-2026-05-16",
+      "title": "AI日报：2026年05月16日 | 当AI从工具变成KPI，企业正在经历一场集体幻觉",
+      "date": "2026-05-16",
+      "category": "技术",
+      "tags": [
+        "AI行业",
+        "企业AI",
+        "OpenAI",
+        "Anthropic",
+        "AI安全",
+        "AI伦理",
+        "大模型"
+      ],
+      "excerpt": "今天AI领域呈现矛盾图景：巨头继续高歌猛进，Anthropic与盖茨基金会达成2亿美元合作，OpenAI将ChatGPT接入银行账户；但HashiCorp创始人炮轰企业陷入“AI精神病”，亚马逊员工为完成AI使用KPI编造任务。前沿AI获取门槛悄然抬高，地缘政治正在重塑AI版图。",
+      "cover": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&h=400&fit=crop",
+      "readtime": 12,
+      "views": 0
+    },
+    {
       "slug": "rust-compiler-llm-policy-2026",
       "title": "当编译器开始思考：Rust 项目如何为 LLM 立规矩",
       "date": "2026-05-15",
