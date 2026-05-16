@@ -1,6 +1,25 @@
 {
   "articles": [
     {
+      "slug": "wasm-edge-sandbox-python-nodejs-2026",
+      "title": "当 WebAssembly 吞下整条后端：Python、Node.js 和边缘计算的三重奏",
+      "date": "2026-05-16",
+      "category": "技术",
+      "tags": [
+        "WebAssembly",
+        "WASIX",
+        "边缘计算",
+        "Python",
+        "Node.js",
+        "容器安全",
+        "无服务器"
+      ],
+      "excerpt": "Wasmer 一周内连续放出 Python WASM 全栈支持和 Edge.js 开源，WebAssembly 正从浏览器玩具变成后端沙箱基础设施。本文拆解 WASIX 的 POSIX 映射机制、Python/Node.js 沙箱化的技术细节，以及 88% 原生性能背后的编译优化故事。",
+      "cover": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=600&h=400&fit=crop",
+      "readtime": 12,
+      "views": 0
+    },
+    {
       "slug": "ai-news-2026-05-16",
       "title": "AI日报：2026年05月16日 | 当AI从工具变成KPI，企业正在经历一场集体幻觉",
       "date": "2026-05-16",
