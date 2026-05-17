@@ -1,6 +1,25 @@
 {
   "articles": [
     {
+      "slug": "ai-news-2026-05-17",
+      "title": "AI日报：2026年05月17日 | 当学术殿堂开始拒绝AI代笔，当开源模型让操控技术重回桌面",
+      "date": "2026-05-17",
+      "category": "技术",
+      "tags": [
+        "AI行业",
+        "ArXiv",
+        "DeepSeek",
+        "OpenAI",
+        "LLM操控",
+        "学术诚信",
+        "大模型"
+      ],
+      "excerpt": "今天的AI领域呈现出有趣的张力：ArXiv宣布封禁AI代写论文的作者，DeepSeek-V4-Flash让操控向量技术重回桌面，OpenAI推出个人金融工具并进行组织重组，而AI行业的财富分化正引发广泛讨论。",
+      "cover": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&h=400&fit=crop",
+      "readtime": 10,
+      "views": 0
+    },
+    {
       "slug": "mimalloc-memory-allocator-deep-dive-2026",
       "title": "mimalloc：微软研究院的内存分配器如何重新定义高性能并发",
       "date": "2026-05-16",
