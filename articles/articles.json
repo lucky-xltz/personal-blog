@@ -1,6 +1,24 @@
 {
   "articles": [
     {
+      "slug": "modern-css-architecture-2026",
+      "title": "2026年CSS架构实战：从Tailwind到原生CSS的现代方案",
+      "date": "2026-05-17",
+      "category": "技术",
+      "tags": [
+        "CSS",
+        "前端开发",
+        "Tailwind",
+        "CSS变量",
+        "Grid布局",
+        "响应式设计"
+      ],
+      "excerpt": "Julia’s Tailwind迁移文章引发热议，折射出2026年CSS的巨变。本文深入讲解如何用原生CSS特性（@layer、嵌套、容器查询、Grid）构建可维护的样式架构，包含完整的组件化实战示例和从Tailwind的迁移策略。",
+      "cover": "https://images.unsplash.com/photo-1507721999472-8ed4421c4af2?w=600&h=400&fit=crop",
+      "readtime": 12,
+      "views": 0
+    },
+    {
       "slug": "ai-news-2026-05-17",
       "title": "AI日报：2026年05月17日 | 当学术殿堂开始拒绝AI代笔，当开源模型让操控技术重回桌面",
       "date": "2026-05-17",
