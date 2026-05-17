@@ -1,6 +1,25 @@
 {
   "articles": [
     {
+      "slug": "proof-of-work-anti-bot-systems-2026",
+      "title": "工作量证明反爬虫系统深度剖析：从Hashcash到Anubis，PoW真能保护网站吗？",
+      "date": "2026-05-17",
+      "category": "技术",
+      "tags": [
+        "网络安全",
+        "反爬虫",
+        "密码学",
+        "Proof-of-Work",
+        "SHA-256",
+        "性能分析",
+        "系统架构"
+      ],
+      "excerpt": "2026年的互联网正在经历一场静默的战争——AI爬虫军团vs小型网站管理员。Anubis用动漫猫娘验证页面阻挡爬虫，访客需完成SHA-256工作量证明。本文从密码学原理到经济学分析，全面拆解PoW反爬虫方案的核心缺陷：它惩罚的是真实用户而非攻击者。",
+      "cover": "https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=600&h=400&fit=crop",
+      "readtime": 14,
+      "views": 0
+    },
+    {
       "slug": "modern-css-architecture-2026",
       "title": "2026年CSS架构实战：从Tailwind到原生CSS的现代方案",
       "date": "2026-05-17",
