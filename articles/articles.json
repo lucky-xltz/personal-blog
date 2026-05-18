@@ -1,6 +1,25 @@
 {
   "articles": [
     {
+      "slug": "ai-news-2026-05-18",
+      "title": "AI日报：2026年05月18日 | OpenAI权力重组、Anthropic天价和解生变、AI“精神病”席卷硅谷",
+      "date": "2026-05-18",
+      "category": "技术",
+      "tags": [
+        "AI行业",
+        "OpenAI",
+        "Anthropic",
+        "苹果",
+        "AI治理",
+        "版权争议",
+        "硅谷"
+      ],
+      "excerpt": "OpenAI联合创始人Greg Brockman重新掌舵产品线，ChatGPT与Codex或将合并；Anthropic的15亿美元版权和解案遭遇法官推迟批准，律师团被指急功近利；Ghostty创始人Mitchell Hashimoto警告整个行业正处于“AI精神病”状态。",
+      "cover": "https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=600&h=400&fit=crop",
+      "readtime": 12,
+      "views": 0
+    },
+    {
       "slug": "proof-of-work-anti-bot-systems-2026",
       "title": "工作量证明反爬虫系统深度剖析：从Hashcash到Anubis，PoW真能保护网站吗？",
       "date": "2026-05-17",
