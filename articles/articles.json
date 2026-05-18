@@ -1,6 +1,24 @@
 {
   "articles": [
     {
+      "slug": "docker-compose-production-2026-guide",
+      "title": "Docker Compose 生产环境实战指南（2026）",
+      "date": "2026-05-18",
+      "category": "技术",
+      "tags": [
+        "Docker",
+        "DevOps",
+        "容器化",
+        "部署",
+        "运维",
+        "Docker Compose"
+      ],
+      "excerpt": "Docker Compose 长期被视为开发工具，但在 2026 年它完全可以胜任中小规模生产部署。本文从健康检查、资源限制、安全加固到运维自动化，系统梳理 Docker Compose 生产环境的关键配置和最佳实践，涵盖镜像版本锁定、日志管理、数据备份、防火墙陷阱等核心议题。",
+      "cover": "https://images.unsplash.com/photo-1605745341112-85968b19335b?w=600&h=400&fit=crop",
+      "readtime": 14,
+      "views": 0
+    },
+    {
       "slug": "ai-news-2026-05-18",
       "title": "AI日报：2026年05月18日 | OpenAI权力重组、Anthropic天价和解生变、AI“精神病”席卷硅谷",
       "date": "2026-05-18",
