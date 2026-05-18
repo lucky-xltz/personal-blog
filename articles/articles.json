@@ -1,6 +1,24 @@
 {
   "articles": [
     {
+      "slug": "postgresql-unconventional-optimizations-2026",
+      "title": "PostgreSQL 非常规优化：三个被忽视的性能提升技巧",
+      "date": "2026-05-18",
+      "category": "技术",
+      "tags": [
+        "PostgreSQL",
+        "数据库",
+        "性能优化",
+        "SQL",
+        "索引",
+        "数据库架构"
+      ],
+      "excerpt": "PostgreSQL 的深度远超大多数人的想象。本文介绍三种非常规但极其有效的优化技巧：用 CHECK 约束消除全表扫描、虚拟生成列解决函数索引的纪律问题、Hash 排除约束实现高效唯一性。不涉及硬件升级，不依赖复杂调参，却能带来数量级的性能提升。",
+      "cover": "https://images.unsplash.com/photo-1544383835-bda2bc66a55d?w=600&h=400&fit=crop",
+      "readtime": 14,
+      "views": 0
+    },
+    {
       "slug": "docker-compose-production-2026-guide",
       "title": "Docker Compose 生产环境实战指南（2026）",
       "date": "2026-05-18",
