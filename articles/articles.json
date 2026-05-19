@@ -1,6 +1,24 @@
 {
   "articles": [
     {
+      "slug": "ai-security-mcp-poisoning-2026",
+      "title": "AI Agent 的阿喀琉斯之踵：MCP 漏洞与数据投毒如何威胁你的整个技术栈",
+      "date": "2026-05-19",
+      "category": "技术",
+      "tags": [
+        "AI安全",
+        "MCP",
+        "大模型",
+        "提示注入",
+        "数据投毒",
+        "安全架构"
+      ],
+      "excerpt": "MCP 让 AI 拥有了读写数据库、调用 API 的能力，但也引入了致命的安全隐患。本文深入剖析 Supabase MCP 的'致命三角'攻击——通过客服工单注入窃取整个数据库，以及 Anthropic 发现的 250 篇文档投毒任意规模模型的惊人研究，并提供完整的防御指南。",
+      "cover": "https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=600&h=400&fit=crop",
+      "readtime": 14,
+      "views": 0
+    },
+    {
       "slug": "ai-news-2026-05-19",
       "title": "AI 日报：2026年05月19日 | 马斯克败诉、AI遭毕业演讲嘘声、教皇通谕关注人工智能",
       "date": "2026-05-19",
