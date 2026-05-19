@@ -1,6 +1,23 @@
 {
   "articles": [
     {
+      "slug": "ai-news-2026-05-19",
+      "title": "AI 日报：2026年05月19日 | 马斯克败诉、AI遭毕业演讲嘘声、教皇通谕关注人工智能",
+      "date": "2026-05-19",
+      "category": "技术",
+      "tags": [
+        "AI日报",
+        "OpenAI",
+        "人工智能伦理",
+        "AI安全",
+        "欧洲AI政策"
+      ],
+      "excerpt": "今天的AI领域：马斯克诉OpenAI案以败诉告终，前Google CEO Eric Schmidt在毕业典礼上因谈AI遭嘘声，语音AI被曝隐藏音频攻击漏洞，Mistral CEO警告欧洲正沦为美国AI附庸国，Anthropic联合创始人将与教皇共同发布AI通谕。",
+      "cover": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&h=400&fit=crop",
+      "readtime": 10,
+      "views": 0
+    },
+    {
       "slug": "postgresql-unconventional-optimizations-2026",
       "title": "PostgreSQL 非常规优化：三个被忽视的性能提升技巧",
       "date": "2026-05-18",
