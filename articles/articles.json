@@ -1,6 +1,25 @@
 {
   "articles": [
     {
+      "slug": "bun-zig-to-rust-rewrite-2026",
+      "title": "Bun 从 Zig 到 Rust 的百万行重写：AI 驱动的运行时迁移意味着什么？",
+      "date": "2026-05-19",
+      "category": "技术",
+      "tags": [
+        "Bun",
+        "Rust",
+        "Zig",
+        "JavaScript运行时",
+        "AI编程",
+        "代码迁移",
+        "系统编程"
+      ],
+      "excerpt": "2026年5月，JavaScript运行时Bun提交了一个百万行级的PR：将整个代码库从Zig重写为Rust。更令人震惊的是，这次迁移的主要执行者是AI——Claude。本文深入分析这次史诗级重写的技术细节、性能对比、AI编程的边界，以及Rust在系统编程领域的全面崛起。",
+      "cover": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&h=400&fit=crop",
+      "readtime": 14,
+      "views": 0
+    },
+    {
       "slug": "ai-security-mcp-poisoning-2026",
       "title": "AI Agent 的阿喀琉斯之踵：MCP 漏洞与数据投毒如何威胁你的整个技术栈",
       "date": "2026-05-19",
