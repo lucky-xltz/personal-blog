@@ -1,6 +1,24 @@
 {
   "articles": [
     {
+      "slug": "ai-news-2026-05-20",
+      "title": "AI 日报：2026年05月20日 | Google I/O 重磅出击，Karpathy 加盟 Anthropic",
+      "date": "2026-05-20",
+      "category": "技术",
+      "tags": [
+        "AI日报",
+        "Google I/O",
+        "Anthropic",
+        "Gemini",
+        "AI搜索",
+        "人才流动"
+      ],
+      "excerpt": "今天的AI领域可以用“地震级”来形容。Google I/O 2026大会引爆了多个重磅消息：Gemini 3.5 Flash横空出世、Google Search迎来25年来最大改版。与此同时，OpenAI联合创始人Andrej Karpathy正式加入Anthropic，AI人才格局发生标志性转折。",
+      "cover": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&h=400&fit=crop",
+      "readtime": 10,
+      "views": 0
+    },
+    {
       "slug": "bun-zig-to-rust-rewrite-2026",
       "title": "Bun 从 Zig 到 Rust 的百万行重写：AI 驱动的运行时迁移意味着什么？",
       "date": "2026-05-19",
