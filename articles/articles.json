@@ -1,6 +1,24 @@
 {
   "articles": [
     {
+      "slug": "opentelemetry-production-guide-2026",
+      "title": "OpenTelemetry 2026 实战指南：从混乱到清晰的可观测性架构",
+      "date": "2026-05-20",
+      "category": "技术",
+      "tags": [
+        "OpenTelemetry",
+        "可观观测性",
+        "DevOps",
+        "分布式追踪",
+        "监控",
+        "性能分析"
+      ],
+      "excerpt": "如果你在2024年尝试过OpenTelemetry，大概率经历过文档散落、概念混乱、CPU飙升的噩梦。但2026年的OTel已经脱胎换骨——Profiles信号进入Public Alpha、Collector架构趋于稳定。本文直接进入实战：200行代码跑起完整Tracing管线，以及文档不会告诉你的生产级避坑指南。",
+      "cover": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&h=400&fit=crop",
+      "readtime": 15,
+      "views": 0
+    },
+    {
       "slug": "ai-news-2026-05-20",
       "title": "AI 日报：2026年05月20日 | Google I/O 重磅出击，Karpathy 加盟 Anthropic",
       "date": "2026-05-20",
