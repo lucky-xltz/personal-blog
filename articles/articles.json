@@ -1,6 +1,25 @@
 {
   "articles": [
     {
+      "slug": "ntsync-linux-kernel-gaming-2026",
+      "title": "NTSYNC 与 Linux 内核的 Windows 化：当操作系统开始模仿它的对手",
+      "date": "2026-05-20",
+      "category": "技术",
+      "tags": [
+        "Linux",
+        "NTSYNC",
+        "内核",
+        "游戏",
+        "Wine",
+        "操作系统",
+        "同步原语"
+      ],
+      "excerpt": "2026年3月Linux在Steam上的用户占比突破5%，核心推动力是NTSYNC——一个直接写入Linux内核的Windows同步原语实现。本文深入解析NTSYNC的技术架构、从esync到fsync再到NTSYNC的演进历程，以及Linux内核正在系统性吸收Windows API的更大趋势。",
+      "cover": "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=600&h=400&fit=crop",
+      "readtime": 12,
+      "views": 0
+    },
+    {
       "slug": "opentelemetry-production-guide-2026",
       "title": "OpenTelemetry 2026 实战指南：从混乱到清晰的可观测性架构",
       "date": "2026-05-20",
