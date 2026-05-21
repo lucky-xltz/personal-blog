@@ -1,6 +1,24 @@
 {
   "articles": [
     {
+      "slug": "nodejs-26-temporal-api-2026",
+      "title": "Node.js 26 正式发布：Temporal API 终结 JavaScript 日期处理的二十年之痛",
+      "date": "2026-05-21",
+      "category": "技术",
+      "tags": [
+        "Node.js",
+        "Temporal",
+        "JavaScript",
+        "TypeScript",
+        "前端开发",
+        "后端架构"
+      ],
+      "excerpt": "Node.js 26 正式发布，Temporal API 默认启用。本文深入解析 Temporal 的类型体系、实战用法、与 Date 的互操作，以及从旧代码迁移到 Temporal 的完整指南。",
+      "cover": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&h=400&fit=crop",
+      "readtime": 12,
+      "views": 0
+    },
+    {
       "slug": "ai-news-2026-05-21",
       "title": "AI 日报：2026年05月21日 | AI破解数学猜想、毕业典礼嘘声与IPO风暴",
       "date": "2026-05-21",
