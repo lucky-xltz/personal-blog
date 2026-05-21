@@ -1,6 +1,25 @@
 {
   "articles": [
     {
+      "slug": "async-rust-compiler-optimization-2026",
+      "title": "Async Rust 的编译器困境：零成本抽象为何成了空头支票",
+      "date": "2026-05-21",
+      "category": "技术",
+      "tags": [
+        "Rust",
+        "异步编程",
+        "编译器",
+        "性能优化",
+        "状态机",
+        "嵌入式",
+        "系统编程"
+      ],
+      "excerpt": "Rust 的 async/await 承诺零成本抽象，但编译器生成的状态机远非最优。一个简单的 async { 5 } 生成 360 行 MIR，而等价的手写 Future 只需 23 行。深入分析 Returned/Panicked 状态的冗余开销、缺失的 Future 内联优化、以及重复状态合并问题，探讨这些改进将如何重塑 Rust 在嵌入式和 WebAssembly 领域的竞争力。",
+      "cover": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&h=400&fit=crop",
+      "readtime": 14,
+      "views": 0
+    },
+    {
       "slug": "nodejs-26-temporal-api-2026",
       "title": "Node.js 26 正式发布：Temporal API 终结 JavaScript 日期处理的二十年之痛",
       "date": "2026-05-21",
