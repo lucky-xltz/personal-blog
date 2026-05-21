@@ -1,6 +1,25 @@
 {
   "articles": [
     {
+      "slug": "ai-news-2026-05-21",
+      "title": "AI 日报：2026年05月21日 | AI破解数学猜想、毕业典礼嘘声与IPO风暴",
+      "date": "2026-05-21",
+      "category": "技术",
+      "tags": [
+        "AI日报",
+        "OpenAI",
+        "数学证明",
+        "AI社会反应",
+        "Google I/O",
+        "AI伦理",
+        "IPO"
+      ],
+      "excerpt": "OpenAI模型自主证明离散几何猜想，大学生用嘘声回应AI颂扬式毕业演讲，Google I/O展示AI信任挑战，OpenAI准备提交IPO申请，数据中心建设引发社区冲突。技术突破与社会反弹并行，AI行业正面临关键转折点。",
+      "cover": "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&h=400&fit=crop",
+      "readtime": 10,
+      "views": 0
+    },
+    {
       "slug": "ntsync-linux-kernel-gaming-2026",
       "title": "NTSYNC 与 Linux 内核的 Windows 化：当操作系统开始模仿它的对手",
       "date": "2026-05-20",
