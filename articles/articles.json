@@ -1,6 +1,27 @@
 {
   "articles": [
     {
+      "slug": "ai-news-2026-05-22",
+      "title": "AI 日报：2026年05月22日 | OpenAI秘密提交IPO申请，AI行业迎来上市潮",
+      "date": "2026-05-22",
+      "category": "技术",
+      "tags": [
+        "AI日报",
+        "OpenAI",
+        "IPO",
+        "Spotify",
+        "AI音乐",
+        "Google SynthID",
+        "Figure AI",
+        "人形机器人",
+        "xAI"
+      ],
+      "excerpt": "OpenAI秘密提交IPO申请冲击8500亿美元估值，SpaceX/xAI同周跟进；Spotify与环球音乐达成AI翻唱授权协议；Google SynthID水印技术获OpenAI、Nvidia采纳；Figure AI人形机器人直播意外走红。AI行业正从技术竞赛全面转向商业化和资本化。",
+      "cover": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&h=400&fit=crop",
+      "readtime": 10,
+      "views": 0
+    },
+    {
       "slug": "async-rust-compiler-optimization-2026",
       "title": "Async Rust 的编译器困境：零成本抽象为何成了空头支票",
       "date": "2026-05-21",
