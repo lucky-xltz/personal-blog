@@ -1,6 +1,22 @@
 {
   "articles": [
     {
+      "slug": "python-315-hidden-features-2026",
+      "title": "Python 3.15 深度解读：lazy imports、frozendict 与 Tachyon 性能分析器",
+      "date": "2026-05-22",
+      "category": "技术",
+      "tags": [
+        "Python",
+        "编程语言",
+        "性能优化",
+        "并发编程"
+      ],
+      "excerpt": "Python 3.15 进入 Beta 阶段，带来了延迟导入、不可变字典、线程安全迭代器、Tachyon 性能分析器等重要改进。本文深入解读这些被忽视但实用的特性，涵盖 lazy imports 的启动加速、frozendict 的并发安全设计、sentinel 哨兵值的标准化，以及 TaskGroup.cancel() 对结构化并发的优化。",
+      "cover": "https://images.unsplash.com/photo-1526379095098-d400fd0bf935?w=600&h=400&fit=crop",
+      "readtime": 12,
+      "views": 0
+    },
+    {
       "slug": "ai-news-2026-05-22",
       "title": "AI 日报：2026年05月22日 | OpenAI秘密提交IPO申请，AI行业迎来上市潮",
       "date": "2026-05-22",
