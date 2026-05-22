@@ -1,6 +1,24 @@
 {
   "articles": [
     {
+      "slug": "uv-package-management-ux-2026",
+      "title": "uv 的甜蜜烦恼：当 Python 包管理器的速度碾压了一切，UX 却在拖后腿",
+      "date": "2026-05-22",
+      "category": "技术",
+      "tags": [
+        "Python",
+        "uv",
+        "包管理",
+        "开发者体验",
+        "Astral",
+        "工具链"
+      ],
+      "excerpt": "Astral 的 uv 以令人瞠目的速度成为 Python 生态最炙手可热的工具，但日常维护中的 CLI 设计却暴露出令人费解的粗糙。从缺失的 outdated 命令到危险的默认版本约束，从冗长的升级语法到为机器而非人设计的交互——这是一个关于速度与体验之间微妙平衡的技术分析。",
+      "cover": "https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=600&h=400&fit=crop",
+      "readtime": 12,
+      "views": 0
+    },
+    {
       "slug": "python-315-hidden-features-2026",
       "title": "Python 3.15 深度解读：lazy imports、frozendict 与 Tachyon 性能分析器",
       "date": "2026-05-22",
