@@ -1,6 +1,25 @@
 {
   "articles": [
     {
+      "slug": "webgpu-browser-gpu-revolution-2026",
+      "title": "WebGPU：浏览器终于拿到了显卡的钥匙",
+      "date": "2026-05-23",
+      "category": "技术",
+      "tags": [
+        "WebGPU",
+        "GPU",
+        "浏览器",
+        "前端开发",
+        "WGSL",
+        "计算着色器",
+        "性能优化"
+      ],
+      "excerpt": "WebGPU 不是 WebGL 的简单升级，而是浏览器 GPU 编程范式的根本性变革。compute shader 的加入让 GPU 从画图工具变成通用并行计算引擎——百万级数据可视化、浏览器端 AI 推理、专业视频编辑，全部在客户端完成。",
+      "cover": "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=600&h=400&fit=crop",
+      "readtime": 14,
+      "views": 0
+    },
+    {
       "slug": "webassembly-component-model-first-class-web",
       "title": "WebAssembly 组件模型：从二等公民到 Web 一等公民的进化之路",
       "date": "2026-05-23",
