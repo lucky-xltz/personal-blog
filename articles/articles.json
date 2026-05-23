@@ -1,6 +1,25 @@
 {
   "articles": [
     {
+      "slug": "webassembly-component-model-first-class-web",
+      "title": "WebAssembly 组件模型：从二等公民到 Web 一等公民的进化之路",
+      "date": "2026-05-23",
+      "category": "技术",
+      "tags": [
+        "WebAssembly",
+        "Wasm",
+        "前端开发",
+        "浏览器",
+        "组件模型",
+        "Rust",
+        "性能优化"
+      ],
+      "excerpt": "WebAssembly 1.0 发布九年后，Wasm 仍是 Web 平台的二等公民——所有 Web API 访问都必须通过 JavaScript 胶水代码，导致 45% 的性能损耗和陡峭的学习曲线。Mozilla 提出的 Component Model 提案旨在通过 WIT 接口描述语言和浏览器内置绑定，彻底消除这层中间件。本文深入分析问题根源、解决方案的技术架构，以及开发者如何提前布局。",
+      "cover": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&h=400&fit=crop",
+      "readtime": 14,
+      "views": 0
+    },
+    {
       "slug": "ai-news-2026-05-23",
       "title": "AI 日报：2026年05月23日 | Anthropic安全警报、Spotify全面AI化与创业公司ARR泡沫",
       "date": "2026-05-23",
