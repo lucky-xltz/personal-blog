@@ -1,6 +1,26 @@
 {
   "articles": [
     {
+      "slug": "ai-news-2026-05-23",
+      "title": "AI 日报：2026年05月23日 | Anthropic安全警报、Spotify全面AI化与创业公司ARR泡沫",
+      "date": "2026-05-23",
+      "category": "技术",
+      "tags": [
+        "AI日报",
+        "Anthropic",
+        "Spotify",
+        "AI安全",
+        "AI音乐",
+        "创业公司",
+        "漏洞利用",
+        "AI伦理"
+      ],
+      "excerpt": "Anthropic披露Claude Mythos Preview惊人的漏洞利用能力引发安全警报；Spotify一口气推出ElevenLabs有声书、AI播客和翻唱工具三款产品；AI创业公司ARR泡沫和Anthropic盈利争议揭示行业财务透明度危机。",
+      "cover": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&h=400&fit=crop",
+      "readtime": 12,
+      "views": 0
+    },
+    {
       "slug": "uv-package-management-ux-2026",
       "title": "uv 的甜蜜烦恼：当 Python 包管理器的速度碾压了一切，UX 却在拖后腿",
       "date": "2026-05-22",
