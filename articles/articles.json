@@ -1,6 +1,25 @@
 {
   "articles": [
     {
+      "slug": "kubernetes-2-0-community-wishlist-2026",
+      "title": "Kubernetes 2.0 社区愿望清单：十年之后，我们到底需要什么？",
+      "date": "2026-05-24",
+      "category": "技术",
+      "tags": [
+        "Kubernetes",
+        "云原生",
+        "DevOps",
+        "基础设施",
+        "容器编排",
+        "YAML",
+        "etcd"
+      ],
+      "excerpt": "2014年Kubernetes第一个commit至今已十年。综合HN社区432条深度讨论，梳理K8s 2.0最需要解决的五大核心问题：YAML配置语言之痛、etcd存储层困境、Helm包管理替代、IPv6现代化、以及开发者体验断层。每个问题都附有技术细节和可行方案。",
+      "cover": "https://images.unsplash.com/photo-1667372393119-3d4c48d07fc9?w=600&h=400&fit=crop",
+      "readtime": 15,
+      "views": 0
+    },
+    {
       "slug": "ai-news-2026-05-24",
       "title": "AI 日报：2026年05月24日 | 成本危机、价格战与信任崩塌——AI行业的三重困境",
       "date": "2026-05-24",
