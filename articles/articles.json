@@ -1,6 +1,25 @@
 {
   "articles": [
     {
+      "slug": "ai-news-2026-05-24",
+      "title": "AI 日报：2026年05月24日 | 成本危机、价格战与信任崩塌——AI行业的三重困境",
+      "date": "2026-05-24",
+      "category": "技术",
+      "tags": [
+        "AI日报",
+        "DeepSeek",
+        "Microsoft",
+        "Anthropic",
+        "AI成本",
+        "AI幻觉",
+        "价格战"
+      ],
+      "excerpt": "微软取消Claude Code许可、Uber烧完全年AI预算，DeepSeek永久降价冲击行业格局，\"AI到底赚钱了吗\"网站引爆讨论，Anthropic发现科幻小说教坏模型，AI幻觉法庭案件超1400起——成本、价格与信任的三重困境。",
+      "cover": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&h=400&fit=crop",
+      "readtime": 12,
+      "views": 0
+    },
+    {
       "slug": "webgpu-browser-gpu-revolution-2026",
       "title": "WebGPU：浏览器终于拿到了显卡的钥匙",
       "date": "2026-05-23",
