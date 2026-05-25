@@ -1,6 +1,27 @@
 {
   "articles": [
     {
+      "slug": "ai-news-2026-05-25",
+      "title": "AI 日报：2026年05月25日 | DeepSeek掀桌价永久化、Mythos万漏洞风暴与LLM代理的结构性崩塌",
+      "date": "2026-05-25",
+      "category": "技术",
+      "tags": [
+        "AI日报",
+        "DeepSeek",
+        "Anthropic",
+        "Mythos",
+        "LLM代理",
+        "代码生成",
+        "IPO",
+        "AI安全",
+        "成本革命"
+      ],
+      "excerpt": "DeepSeek将V4 Pro价格折扣永久化并发布原生编码代理Reasonix，MLA架构让推理成本降低5-13倍；Anthropic Project Glasswing报告Mythos模型发现超10,000个安全漏洞却不敢公开发布；arXiv论文揭示LLM编码代理的约束衰减现象；SpaceX、OpenAI和Anthropic三巨头同时IPO测试AI繁荣天花板。",
+      "cover": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&h=400&fit=crop",
+      "readtime": 12,
+      "views": 0
+    },
+    {
       "slug": "github-vscode-extension-supply-chain-breach-2026",
       "title": "当你的IDE变成攻击入口：GitHub代码库泄露事件与VSCode扩展生态的安全困局",
       "date": "2026-05-24",
