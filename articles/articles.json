@@ -1,6 +1,25 @@
 {
   "articles": [
     {
+      "slug": "io-uring-linux-io-revolution-2026",
+      "title": "io_uring：Linux I/O 的范式革命——从系统调用地狱到零拷贝的进化之路",
+      "date": "2026-05-25",
+      "category": "技术",
+      "tags": [
+        "io_uring",
+        "Linux",
+        "系统编程",
+        "性能优化",
+        "内核",
+        "Rust",
+        "网络编程"
+      ],
+      "excerpt": "每次系统调用都是一次上下文切换的代价。io_uring用共享内存环形缓冲区消灭了这个开销——1次系统调用提交100个请求，SQPOLL模式甚至完全消除系统调用。本文从传统I/O三代模型的困境出发，详解io_uring的架构设计、与kTLS的零拷贝HTTPS实战、颠覆mmap的性能数据、以及ZCRX安全漏洞的警示。",
+      "cover": "https://images.unsplash.com/photo-1629654297299-c8506221ca97?w=600&h=400&fit=crop",
+      "readtime": 15,
+      "views": 0
+    },
+    {
       "slug": "rust-to-typescript-wasm-boundary-tax",
       "title": "Rust重写成TypeScript反而快了3倍：WASM边界税与重写幻觉的深度剖析",
       "date": "2026-05-25",
