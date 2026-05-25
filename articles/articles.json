@@ -1,6 +1,25 @@
 {
   "articles": [
     {
+      "slug": "rust-to-typescript-wasm-boundary-tax",
+      "title": "Rust重写成TypeScript反而快了3倍：WASM边界税与重写幻觉的深度剖析",
+      "date": "2026-05-25",
+      "category": "技术",
+      "tags": [
+        "WebAssembly",
+        "Rust",
+        "TypeScript",
+        "性能优化",
+        "浏览器",
+        "前端开发",
+        "V8"
+      ],
+      "excerpt": "OpenUI团队将Rust WASM解析器重写为TypeScript后，单次调用快了2.2-4.6倍。问题不在Rust，而在WASM与JavaScript之间的边界税——序列化、复制、反序列化的隐性开销。本文深度剖析WASM边界成本、O(N²)流式架构的修复、以及何时该用WASM的实践指南。",
+      "cover": "https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=600&h=400&fit=crop",
+      "readtime": 12,
+      "views": 0
+    },
+    {
       "slug": "ai-news-2026-05-25",
       "title": "AI 日报：2026年05月25日 | DeepSeek掀桌价永久化、Mythos万漏洞风暴与LLM代理的结构性崩塌",
       "date": "2026-05-25",
