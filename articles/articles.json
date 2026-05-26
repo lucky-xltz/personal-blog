@@ -1,6 +1,24 @@
 {
   "articles": [
     {
+      "slug": "pg-unconventional-optimizations-2026",
+      "title": "超越索引：PostgreSQL 那些不为人知的非常规优化技巧",
+      "date": "2026-05-26",
+      "category": "技术",
+      "tags": [
+        "PostgreSQL",
+        "数据库",
+        "性能优化",
+        "SQL",
+        "后端架构",
+        "索引"
+      ],
+      "excerpt": "提到数据库优化，大多数人只会加索引和改查询。本文介绍三种你可能从未用过的非常规优化技巧：constraint_exclusion 跳过不可能的查询、PG 18 虚拟生成列统一函数索引、Hash 索引配合排他约束实现 5 倍存储压缩。不改架构、不加硬件，纯软件层面的数量级提升。",
+      "cover": "https://images.unsplash.com/photo-1544383835-bda2bc66a55d?w=600&h=400&fit=crop",
+      "readtime": 15,
+      "views": 0
+    },
+    {
       "slug": "ai-news-2026-05-26",
       "title": "AI 日报：2026年05月26日 | Tokenmaxxing风暴席卷硅谷，教皇通谕拷问AI伦理",
       "date": "2026-05-26",
