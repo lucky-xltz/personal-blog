@@ -1,6 +1,26 @@
 {
   "articles": [
     {
+      "slug": "ai-news-2026-05-26",
+      "title": "AI 日报：2026年05月26日 | Tokenmaxxing风暴席卷硅谷，教皇通谕拷问AI伦理",
+      "date": "2026-05-26",
+      "category": "技术",
+      "tags": [
+        "AI日报",
+        "Tokenmaxxing",
+        "教皇通谕",
+        "特朗普",
+        "GPT",
+        "AI安全",
+        "企业AI",
+        "AI伦理"
+      ],
+      "excerpt": "今天的AI领域，一场关于“值不值得”的灵魂拷问正在硅谷蔓延——从Uber到亚马逊，企业开始质疑天价AI投入的真实回报；而在梵蒂冈，教皇利奥以200页通谕向整个科技行业发出警告。与此同时，特朗普政府在AI安全监管上的退缩，以及一项看似简单的“猜数字”实验，都在揭示AI生态系统的深层张力。",
+      "cover": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&h=400&fit=crop",
+      "readtime": 10,
+      "views": 0
+    },
+    {
       "slug": "io-uring-linux-io-revolution-2026",
       "title": "io_uring：Linux I/O 的范式革命——从系统调用地狱到零拷贝的进化之路",
       "date": "2026-05-25",
