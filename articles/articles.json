@@ -1,6 +1,25 @@
 {
   "articles": [
     {
+      "slug": "sqlite-renaissance-2026",
+      "title": "SQLite 文艺复兴：从嵌入式玩具到国会图书馆认证的工业级数据库",
+      "date": "2026-05-26",
+      "category": "技术",
+      "tags": [
+        "SQLite",
+        "数据库",
+        "性能优化",
+        "后端架构",
+        "数据持久化",
+        "WAL",
+        "Litestream"
+      ],
+      "excerpt": "美国国会图书馆将 SQLite 列为推荐数据存储格式，有人在十亿行数据上跑出十万 TPS，Rails 8 将其作为默认数据库——这不是 SQLite 的中年危机，而是它的高光时刻。本文深入解析 SQLite 的性能神话、生产环境实战经验和生态系统爆发。",
+      "cover": "https://images.unsplash.com/photo-1544383835-bda2bc66a55d?w=600&h=400&fit=crop",
+      "readtime": 14,
+      "views": 0
+    },
+    {
       "slug": "pg-unconventional-optimizations-2026",
       "title": "超越索引：PostgreSQL 那些不为人知的非常规优化技巧",
       "date": "2026-05-26",
