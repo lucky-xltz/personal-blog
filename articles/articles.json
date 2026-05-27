@@ -1,6 +1,24 @@
 {
   "articles": [
     {
+      "slug": "nodejs-26-temporal-api-2026",
+      "title": "告别 Date 地狱：Node.js 26 正式启用 Temporal API，JavaScript 日期处理的范式革命",
+      "date": "2026-05-27",
+      "category": "技术",
+      "tags": [
+        "Node.js",
+        "JavaScript",
+        "Temporal API",
+        "前端开发",
+        "后端架构",
+        "TC39"
+      ],
+      "excerpt": "Node.js 26 正式发布，Temporal API 默认启用——这是 JavaScript 诞生 27 年以来对日期时间处理最深刻的一次重构。告别 Date 对象的可变性陷阱、月份从零开始的反人类设计、时区转换的一团乱麻，拥抱不可变、类型安全、时区原生的全新日期 API。",
+      "cover": "https://images.unsplash.com/photo-1504711434969-e33886168d6c?w=600&h=400&fit=crop",
+      "readtime": 12,
+      "views": 0
+    },
+    {
       "slug": "ai-news-2026-05-27",
       "title": "AI 日报：2026年05月27日 | LLM学会「睡觉」、Altman收回末日预言与AI安全裂缝蔓延",
       "date": "2026-05-27",

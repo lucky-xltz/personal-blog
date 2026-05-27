@@ -1,326 +1,370 @@
 ---
-title: "Node.js 26 正式发布：Temporal API 终结 JavaScript 日期处理的二十年之痛"
-date: 2026-05-21
+title: "告别 Date 地狱：Node.js 26 正式启用 Temporal API，JavaScript 日期处理的范式革命"
+date: 2026-05-27
 category: 技术
-tags: [Node.js, Temporal, JavaScript, TypeScript, 前端开发, 后端架构]
+tags: [Node.js, JavaScript, Temporal API, 前端开发, 后端架构, TC39]
 author: 林小白
 readtime: 12
-cover: https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&h=400&fit=crop
+cover: https://images.unsplash.com/photo-1504711434969-e33886168d6c?w=600&h=400&fit=crop
 ---
 
-# Node.js 26 正式发布：Temporal API 终结 JavaScript 日期处理的二十年之痛
+# 告别 Date 地狱：Node.js 26 正式启用 Temporal API，JavaScript 日期处理的范式革命
 
-2026 年 4 月 29 日，Node.js 26.0.0 正式发布。这个版本最大的亮点不是 V8 引擎升级到 14.6，也不是 Undici 更新到 8.0，而是一个等待了近十年的 TC39 提案终于落地——**Temporal API 正式默认启用**。
+2026 年 5 月 5 日，Node.js 26.0.0 正式发布。在众多更新中，最具里程碑意义的是 **Temporal API 默认启用**——这是 JavaScript 诞生 27 年以来，对日期时间处理能力最深刻的一次重构。
 
-对于每一个曾经在 `Date` 对象的时区陷阱、夏令时 bug 和月份索引地狱中挣扎过的 JavaScript 开发者来说，这是一个里程碑式的时刻。
+如果你曾经在凌晨三点被时区转换的 bug 惊醒，或者因为 `Date` 对象的月份从 0 开始而写出过 `month: today.getMonth() + 1`，那么 Temporal 就是为你准备的解药。
 
-## 一、`Date` 对象：一个二十年的技术债
+## 一、JavaScript Date 的原罪
 
-JavaScript 的 `Date` 对象诞生于 1995 年，参考了 Java 1.0 的 `java.util.Date` 设计。讽刺的是，Java 自己早就废弃了这个设计，先后推出了 `Calendar`、`java.time`（JSR-310），而 JavaScript 却被这个 1995 年的设计锁死了整整 31 年。
+在讨论 Temporal 之前，我们需要回顾一下 `Date` 对象到底有多糟糕。
 
-### `Date` 的核心问题
+### 1.1 可变性带来的并发噩梦
 
-**可变性（Mutability）**：`Date` 对象是可变的，这意味着你传递给函数的日期可能被意外修改。
-
-```javascript
-const birthday = new Date('2026-01-15');
-someFunction(birthday);
-console.log(birthday); // 可能已经被修改了！
-```
-
-**零索引月份**：月份从 0 开始计数，这是 JavaScript 最著名的"设计失误"之一。
+`Date` 是可变对象。这意味着你不能安全地传递一个 Date 实例给其他函数——它随时可能被修改：
 
 ```javascript
-new Date(2026, 0, 15)  // 2026年1月15日，不是0月！
-new Date(2026, 11, 25) // 2026年12月25日
+const meeting = new Date('2026-06-15T10:00:00');
+sendCalendarInvite(meeting);
+
+// 某个第三方库内部偷偷修改了你的对象
+function sendCalendarInvite(date) {
+  date.setHours(date.getHours() + 1); // 时区偏移？
+  // 你的 meeting 现在变成了 11:00
+}
 ```
 
-**时区处理混乱**：`Date` 内部始终以 UTC 存储，但几乎所有方法都依赖本地时区，导致时区相关的 bug 层出不穷。
+### 1.2 那些令人窒息的 API 设计
 
 ```javascript
-// 在 UTC+8 时区
-const d = new Date('2026-06-15T00:00:00Z');
-d.getDate();      // 15 还是 16？取决于你的时区！
-d.getUTCDate();   // 15，但你必须记得用 getUTC* 版本
+const d = new Date(2026, 4, 27); // 5月？不，是4月（月份从0开始）
+d.getDate();   // 获取日期（不是"获取Date"）
+d.getDay();    // 获取星期几（不是"获取日期"）
+d.getTime();   // 获取时间戳（不是"获取时间"）
 ```
 
-**无法表示"没有时间的日期"**：你无法创建一个纯粹的"日期"值，它总是带着时间信息。当你想表示"2026年5月21日"这个概念时，`Date` 会强制附加一个时间，而这个时间在不同时区的解读完全不同。
+### 1.3 时区的一团乱麻
 
-**解析不一致**：不同浏览器对日期字符串的解析行为不一致，这是无数跨浏览器 bug 的根源。
+`Date` 内部始终以 UTC 存储，但 `toString()` 输出本地时区，`toISOString()` 输出 UTC。你永远无法确定一个 `Date` 对象代表的"到底是几点"：
 
 ```javascript
-new Date('2026-05-21')      // UTC 时间 00:00:00
-new Date('2026/05/21')      // 本地时间 00:00:00
-new Date('May 21, 2026')    // 本地时间 00:00:00
-// 三种写法，三种行为！
+const d = new Date('2026-06-15T10:00:00Z');
+console.log(d.toString());     // "Sun Jun 15 2026 18:00:00 GMT+0800"
+console.log(d.toISOString());  // "2026-06-15T10:00:00.000Z"
+// 哪个才是"真实"的？取决于你在哪里，以及你问的是谁
 ```
 
-## 二、Temporal API：从头设计的现代日期时间方案
+### 1.4 日期计算的反人类设计
 
-Temporal 是 TC39 委员会历经近十年打磨的 Stage 4 提案（已正式纳入 ECMA-262 标准）。它的设计目标非常明确：**提供一套不可变、时区感知、类型安全的日期时间 API，彻底替代 `Date` 对象**。
+计算两个日期之间的天数差，你需要这样写：
 
-### 核心设计原则
+```javascript
+const d1 = new Date('2026-01-01');
+const d2 = new Date('2026-03-15');
+const diffMs = d2 - d1; // 毫秒差
+const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24)); // 73天
+// 但如果跨越了 DST 切换，结果可能是 72 或 74...
+```
 
-1. **所有 Temporal 对象都是不可变的**——创建后不能修改，所有操作返回新对象
-2. **明确区分"有时间的日期"和"没有时间的日期"**——通过不同的类型表达不同的精度
-3. **一等公民时区支持**——时区不是事后补丁，而是 API 的核心部分
-4. **日历系统无关**——支持非公历日历（如伊斯兰历、希伯来历等）
+这些问题在 Moment.js、Luxon、date-fns 等库中得到了部分缓解，但它们本质上是在修补一个有缺陷的底层抽象。Temporal 从设计层面解决了这一切。
 
-### Temporal 的类型体系
+## 二、Temporal API 核心概念
 
-Temporal 提供了 6 个核心类型，每个类型精确对应一种日期时间语义：
+Temporal 的设计哲学是 **"类型即意图"**——不同的日期时间场景，使用不同的类型来表达，让你的代码自文档化。
 
-| 类型 | 语义 | 示例 |
+### 2.1 类型全景图
+
+| 类型 | 用途 | 示例 |
 |------|------|------|
-| `Temporal.Instant` | UTC 时间线上的精确时刻 | `2026-05-21T12:00:00Z` |
-| `Temporal.ZonedDateTime` | 带时区的日期时间 | `2026-05-21T20:00:00+08:00[Asia/Shanghai]` |
-| `Temporal.PlainDate` | 纯日期（无时间、无时区） | `2026-05-21` |
-| `Temporal.PlainTime` | 纯时间（无日期、无时区） | `14:30:00` |
-| `Temporal.PlainDateTime` | 日期+时间（无时区） | `2026-05-21T14:30:00` |
-| `Temporal.PlainYearMonth` | 年月 | `2026-05` |
-| `Temporal.PlainMonthDay` | 月日 | `05-21` |
+| `Temporal.Instant` | 精确时间点（UTC 绝对时间） | 日志时间戳、事件排序 |
+| `Temporal.ZonedDateTime` | 带时区的完整日期时间 | 会议安排、航班时刻 |
+| `Temporal.PlainDate` | 纯日期（不含时间） | 生日、截止日期 |
+| `Temporal.PlainTime` | 纯时间（不含日期） | 闹钟时间、营业时间 |
+| `Temporal.PlainDateTime` | 日期+时间（不含时区） | 日程显示、本地格式化 |
+| `Temporal.PlainYearMonth` | 年月 | 账单周期、月份选择器 |
+| `Temporal.PlainMonthDay` | 月日 | 每年重复的节日 |
+| `Temporal.Duration` | 时间段 | "3小时30分钟" |
+| `Temporal.Calendar` | 日历系统 | 农历、伊斯兰历 |
 
-## 三、实战指南：用 Temporal 重写常见日期操作
+### 2.2 核心原则：不可变
 
-### 3.1 创建日期时间
+所有 Temporal 对象都是 **不可变的**。每一个修改操作都会返回一个新对象：
 
 ```javascript
-// 创建一个精确时刻（UTC）
-const now = Temporal.Now.instant();
-console.log(now.toString()); // 2026-05-21T04:00:00.123456789Z
+const date = Temporal.PlainDate.from('2026-05-27');
+const tomorrow = date.add({ days: 1 });
 
-// 创建带时区的当前时间
-const zoned = Temporal.Now.zonedDateTimeISO();
-console.log(zoned.toString()); // 2026-05-21T12:00:00+08:00[Asia/Shanghai]
+console.log(date.toString());     // "2026-05-27" — 原对象不变
+console.log(tomorrow.toString());  // "2026-05-28" — 返回新对象
+```
 
-// 创建纯日期
-const date = new Temporal.PlainDate(2026, 5, 21);
-console.log(date.toString()); // 2026-05-21
+## 三、实战代码：从 Date 迁移到 Temporal
 
-// 从字符串解析
-const parsed = Temporal.PlainDate.from('2026-05-21');
-const zonedParsed = Temporal.ZonedDateTime.from(
-  '2026-05-21T12:00:00+08:00[Asia/Shanghai]'
+### 3.1 获取当前时间
+
+```javascript
+// ❌ 旧方式
+const now = new Date();
+console.log(now.toISOString());
+
+// ✅ Temporal 方式
+const instant = Temporal.Now.instant();
+console.log(instant.toString()); // "2026-05-27T04:00:00.123456789Z"
+
+// 获取带时区的本地时间
+const localNow = Temporal.Now.zonedDateTimeISO();
+console.log(localNow.toString());
+// "2026-05-27T12:00:00+08:00[Asia/Shanghai]"
+```
+
+### 3.2 日期解析与创建
+
+```javascript
+// ❌ 旧方式 — 需要记住各种格式陷阱
+const d1 = new Date('2026-05-27');        // UTC 午夜
+const d2 = new Date(2026, 4, 27);         // 本地时间，月份从0
+const d3 = new Date('05/27/2026');         // 美式格式，其他地区可能解析失败
+
+// ✅ Temporal 方式 — 清晰、无歧义
+const date = Temporal.PlainDate.from('2026-05-27');
+const date2 = Temporal.PlainDate.from({ year: 2026, month: 5, day: 27 });
+const time = Temporal.PlainTime.from('14:30:00');
+const datetime = Temporal.PlainDateTime.from('2026-05-27T14:30:00');
+const zoned = Temporal.ZonedDateTime.from('2026-05-27T14:30:00[Asia/Shanghai]');
+```
+
+注意 `month: 5` 就是 5 月，不需要再写 `month - 1`。
+
+### 3.3 日期运算——真正直觉化的 API
+
+```javascript
+const today = Temporal.PlainDate.from('2026-05-27');
+
+// 加减运算
+const nextWeek = today.add({ weeks: 1 });
+const lastMonth = today.subtract({ months: 1 });
+const tomorrow = today.add({ days: 1 });
+
+// 跨月自动处理
+const endOfMonth = Temporal.PlainDate.from('2026-01-31');
+const feb = endOfMonth.add({ months: 1 });
+console.log(feb.toString()); // "2026-02-28" — 自动修正为合法日期
+
+// Duration：表达时间段
+const duration = Temporal.Duration.from({ hours: 2, minutes: 30 });
+console.log(duration.toString()); // "PT2H30M"
+
+// 两个日期之间的差
+const d1 = Temporal.PlainDate.from('2026-01-01');
+const d2 = Temporal.PlainDate.from('2026-05-27');
+const diff = d1.until(d2);
+console.log(diff.toString()); // "P4M26D" — 4个月26天
+console.log(d1.until(d2, { largestUnit: 'day' }).days); // 147天
+```
+
+### 3.4 时区处理——告别 moment-timezone
+
+```javascript
+// 创建带时区的时间
+const tokyo = Temporal.ZonedDateTime.from({
+  year: 2026, month: 5, day: 27,
+  hour: 9, minute: 0,
+  timeZone: 'Asia/Tokyo'
+});
+
+// 转换到另一个时区
+const nyc = tokyo.withTimeZone('America/New_York');
+console.log(nyc.toString());
+// "2026-05-26T20:00:00-04:00[America/New_York]"
+// 东京5月27日9点 = 纽约5月26日20点
+
+// DST 安全的时区运算
+const winter = Temporal.ZonedDateTime.from(
+  '2026-11-01T01:30:00[America/New_York]'
 );
+const later = winter.add({ hours: 2 });
+// 自动处理 DST 回拨，不会出现 1:30 AM + 2h = 2:30 AM 的歧义
 ```
 
-### 3.2 日期运算——告别手动计算
-
-Temporal 的所有运算都返回新对象，原对象不变：
+### 3.5 比较与排序
 
 ```javascript
-const today = Temporal.Now.plainDateISO();
+const a = Temporal.PlainDate.from('2026-05-27');
+const b = Temporal.PlainDate.from('2026-06-01');
 
-// 3 天后
-const threeDaysLater = today.add({ days: 3 });
+// 静态比较方法
+console.log(Temporal.PlainDate.compare(a, b)); // -1 (a < b)
 
-// 2 个月前
-const twoMonthsAgo = today.subtract({ months: 2 });
+// 实例方法
+console.log(a.equals(b));     // false
+console.log(a.toString() < b.toString()); // true (ISO 字符串可直接比较)
 
-// 复合运算
-const future = today.add({ months: 3, weeks: 2, days: 1 });
-
-// 跨越夏令时的日期运算——自动处理！
-const winter = new Temporal.PlainDate(2026, 11, 1);
-const summer = winter.add({ months: 6});
-// 不会因为夏令时而出现 off-by-one 错误
+// 对 Instant 的比较（精确到纳秒）
+const t1 = Temporal.Now.instant();
+// ... 某些操作 ...
+const t2 = Temporal.Now.instant();
+const elapsed = t1.until(t2);
+console.log(`耗时: ${elapsed.total('milliseconds')}ms`);
 ```
 
-### 3.3 时区转换——一行代码搞定
+### 3.6 自定义日历系统
 
 ```javascript
-// 创建一个 UTC 时刻
-const utc = Temporal.Instant.from('2026-05-21T12:00:00Z');
+// 使用非公历日历
+const hebrewDate = Temporal.PlainDate.from({
+  year: 5786, month: 9, day: 1,
+  calendar: 'hebrew'
+});
+console.log(hebrewDate.toString()); // "5786-09-01[u-ca=hebrew]"
 
-// 转换到各个时区
-const tokyo = utc.toZonedDateTimeISO('Asia/Tokyo');
-const nyc = utc.toZonedDateTimeISO('America/New_York');
-const shanghai = utc.toZonedDateTimeISO('Asia/Shanghai');
+// 转换到公历
+const gregorian = hevidate.withCalendar('iso8601');
+console.log(gregorian.toString());
 
-console.log(tokyo.hour);     // 21
-console.log(nyc.hour);       // 8
-console.log(shanghai.hour);  // 20
-
-// ZonedDateTime 之间也可以直接转换
-const tokyoTime = shanghai.withTimeZone('Asia/Tokyo');
-```
-
-### 3.4 计算两个日期之间的差异
-
-```javascript
-const start = new Temporal.PlainDate(2026, 1, 1);
-const end = new Temporal.PlainDate(2026, 5, 21);
-
-// 精确差异
-const diff = start.until(end);
-console.log(diff.toString()); // P140D（140天）
-
-// 按指定单位返回
-console.log(start.until(end, { largestUnit: 'months' }).toString());
-// P4M20D（4个月20天）
-
-// 计算年龄
-const birthday = new Temporal.PlainDate(1995, 6, 15);
-const today = Temporal.Now.plainDateISO();
-const age = birthday.until(today, { largestUnit: 'years' });
-console.log(`年龄：${age.years} 岁`); // 年龄：30 岁
-```
-
-### 3.5 日历和本地化
-
-```javascript
-// 使用伊斯兰历
-const islamicDate = new Temporal.PlainDate(
-  1447, 11, 22, 'islamic-umalqura'
-);
-console.log(islamicDate.toString()); // 1447-11-22[u-ca=islamic-umalqura]
-console.log(islamicDate.toLocaleString('zh-CN'));
-// 2026年5月21日（公历对应日期）
-
-// 使用日本历
-const jpDate = new Temporal.PlainDate(2026, 5, 21, 'japanese');
-console.log(jpDate.era); // reiwa
-console.log(jpDate.year); // 8（令和8年）
+// 支持的历法包括：iso8601, buddhist, chinese, coptic, ethiopic,
+// hebrew, indian, islamic, japanese, persian, roc 等
 ```
 
 ## 四、Node.js 26 的其他重要更新
 
 ### 4.1 V8 引擎升级到 14.6
 
-V8 14.6 带来了两个新的 TC39 提案支持：
+V8 14.6 带来了几个值得注意的 TC39 提案实现：
 
-**Upsert 操作**：`Map.prototype.getOrInsert()` 和 `Map.prototype.getOrInsertComputed()`，终于可以在一次操作中完成"获取或插入"：
+**Upsert 方法**：`Map.prototype.getOrInsert()` 和 `getOrInsertComputed()`
 
 ```javascript
-const cache = new Map();
-
-// 之前
-if (!cache.has(key)) {
-  cache.set(key, expensiveComputation(key));
+// 以前：获取或创建
+if (!map.has(key)) {
+  map.set(key, computeValue());
 }
-const value = cache.get(key);
+const value = map.get(key);
 
-// 现在
-const value = cache.getOrInsert(key, expensiveComputation(key));
+// 现在：一行搞定
+const value = map.getOrInsert(key, computeValue());
 ```
 
-**Iterator.concat()**：将多个迭代器串联成一个：
+**Iterator.concat()**：连接多个迭代器
 
 ```javascript
 const combined = Iterator.concat(
   [1, 2, 3].values(),
   [4, 5].values(),
-  [6, 7, 8].values()
+  [6].values()
 );
-console.log([...combined]); // [1, 2, 3, 4, 5, 6, 7, 8]
+console.log([...combined]); // [1, 2, 3, 4, 5, 6]
 ```
 
 ### 4.2 Undici 8.0
 
-Node.js 的 HTTP 客户端 Undici 升级到 8.0，带来了更好的 HTTP/2 支持和性能改进。
+Node.js 内置的 HTTP 客户端库 Undici 升级到 8.0，带来了连接池改进和更好的 HTTP/2 支持：
 
-### 4.3 stream.compose 稳定
+```javascript
+import { request } from 'undici';
 
-`stream.compose` 正式标记为稳定 API，用于组合流（Streams）变得更加可靠。
+const { statusCode, body } = await request('https://api.example.com/data', {
+  method: 'GET',
+  headers: { 'Accept': 'application/json' }
+});
 
-### 4.4 移除的特性
+const data = await body.json();
+```
 
-- `--experimental-transform-types` 被移除——TypeScript 类型转换不再内置，需要使用 `tsx` 或 `tsc`
-- `module.register()` 被标记为运行时废弃
-- 旧的 `_stream_*` 内部模块完全移除
-- `http.Server.prototype.writeHeader()` 完全移除（使用 `writeHead()` 替代）
+### 4.3 移除与废弃
 
-## 五、迁移指南：从 Date 到 Temporal
+Node.js 26 清理了一批历史遗留：
+
+- **移除** `_stream_readable`、`_stream_writable` 等内部模块（使用 `stream` 模块替代）
+- **移除** `http.Server.prototype.writeHeader()`（使用 `writeHead()`）
+- **移除** `--experimental-transform-types` 标志
+- **运行时废弃** `module.register()`
+- **不再捆绑** `corepack`（需要单独安装）
+
+## 五、迁移到 Temporal 的实战建议
 
 ### 5.1 渐进式迁移策略
 
-Temporal 和 `Date` 可以共存。推荐的迁移路径：
+不需要一次性替换所有 `Date` 引用。推荐的迁移路径：
 
-1. **新代码全面使用 Temporal**——所有新的日期时间操作都用 Temporal
-2. **库作者优先迁移**——如果你维护 npm 包，优先提供 Temporal 支持
-3. **逐步替换 `Date`**——按模块逐步将 `Date` 替换为 Temporal 类型
+1. **新代码全部用 Temporal**：所有新功能的日期处理直接使用 Temporal API
+2. **关键路径优先**：时区转换、日期计算、跨时区调度——这些是 bug 高发区，优先迁移
+3. **数据库交互层统一**：在 ORM 或数据访问层做好 `Date` ↔ `Temporal` 的转换
 
-### 5.2 与 Date 互转
+### 5.2 与现有库的互操作
 
 ```javascript
 // Date → Temporal
-const legacyDate = new Date();
-const instant = legacyDate.toTemporalInstant();
+const legacyDate = new Date('2026-05-27T10:00:00Z');
+const instant = Temporal.Instant.fromEpochMilliseconds(legacyDate.getTime());
 
 // Temporal → Date
-const temporalInstant = Temporal.Now.instant();
-const jsDate = new Date(temporalInstant.epochMilliseconds);
+const temporal = Temporal.Instant.from('2026-05-27T10:00:00Z');
+const jsDate = new Date(temporal.epochMilliseconds);
+
+// 与数据库交互（通常存储为 ISO 字符串或时间戳）
+const dbTimestamp = '2026-05-27T10:00:00Z';
+const parsed = Temporal.Instant.from(dbTimestamp);
+const zoned = parsed.toZonedDateTimeISO('Asia/Shanghai');
 ```
 
-### 5.3 与第三方库配合
+### 5.3 浏览器兼容性
 
-目前主流日期库的状态：
+截至 2026 年 5 月，Temporal 的浏览器支持状态：
 
-| 库 | 建议 |
-|------|------|
-| Moment.js | 已于 2020 年停止维护，趁此机会迁移到 Temporal |
-| date-fns | 可继续使用，逐步引入 Temporal |
-| Luxon | 作者建议新项目直接用 Temporal |
-| Day.js | 轻量场景可继续使用，复杂场景迁移到 Temporal |
-
-## 六、浏览器支持现状
-
-Temporal 的浏览器支持正在快速推进：
-
-- ✅ **Chrome 144**（2026年1月）——已支持
-- ✅ **Firefox 139**（2025年5月）——已支持
-- ⏳ **Safari**——尚未支持，这是目前 Web 端采用的最大障碍
-- ✅ **Node.js 26**（2026年5月）——已支持
-- ✅ **Deno**——已支持（基于 V8）
+| 浏览器 | 支持状态 |
+|--------|---------|
+| Chrome 133+ | ✅ 已支持 |
+| Firefox 134+ | ✅ 已支持 |
+| Safari | ❌ 尚未支持（唯一的 holdout） |
+| Node.js 26+ | ✅ 默认启用 |
 
 对于需要支持 Safari 的项目，可以使用 `@js-temporal/polyfill` 作为过渡方案：
 
-```bash
-npm install @js-temporal/polyfill
-```
-
 ```javascript
 import { Temporal } from '@js-temporal/polyfill';
-// 代码无需修改
+// 之后的代码与原生 API 完全一致
 ```
 
-## 七、性能考量
+## 六、性能考量
 
-Temporal 对象的创建和操作比 `Date` 稍慢，因为：
+Temporal 对象的不可变性意味着每次修改都创建新实例。在高性能场景下需要注意：
 
-1. 不可变性意味着每次操作都创建新对象
-2. 时区计算需要查表和计算
-3. 类型系统更复杂
+```javascript
+// ❌ 高频循环中的性能陷阱
+for (let i = 0; i < 100000; i++) {
+  const date = startDate.add({ days: i }); // 每次创建新对象
+  processDate(date);
+}
 
-但在实际应用中，这些性能差异几乎可以忽略。日期操作很少成为性能瓶颈，而 Temporal 带来的正确性和可维护性收益远超微小的性能开销。
+// ✅ 优化方案：使用 epochNanoseconds 做批量计算
+const startNs = startDate.toZonedDateTime('UTC').epochNanoseconds;
+const oneDayNs = 86_400_000_000_000n;
+for (let i = 0; i < 100000; i++) {
+  const ns = startNs + BigInt(i) * oneDayNs;
+  const date = Temporal.Instant.fromEpochNanoseconds(ns)
+    .toZonedDateTimeISO('UTC')
+    .toPlainDate();
+  processDate(date);
+}
+```
 
-如果你确实需要高性能的日期运算（如批量处理百万条日志的时间戳），可以考虑：
-- 使用 `Temporal.Instant` 而非 `Temporal.ZonedDateTime`（避免时区计算）
-- 缓存时区对象的创建
-- 在极端场景下，`Date` 的 epoch 毫秒数运算仍然是最快的
+对于大多数业务应用来说，Temporal 的性能完全够用。只有在处理数十万次日期运算的批处理任务中，才需要考虑这类优化。
 
-## 八、总结
+## 七、总结
 
-Node.js 26 的发布标志着 JavaScript 日期处理进入了一个新时代。Temporal API 不仅仅是一个新 API，它是对过去 30 年日期处理痛点的系统性回应。
+Node.js 26 的发布标志着 JavaScript 日期处理正式进入现代时代。Temporal API 不是对 `Date` 的修补，而是一次彻底的范式替换：
 
-**对开发者的意义**：
-- 不再需要 Moment.js、Luxon 等第三方日期库
-- 时区相关的 bug 将大幅减少
-- 代码的可读性和可维护性显著提升
-- 不可变性避免了意外的副作用
+- **不可变** — 从根本上消除共享状态导致的 bug
+- **类型安全** — `PlainDate` 不含时间信息，`PlainTime` 不含日期信息，类型即文档
+- **时区原生** — 一等公民的时区支持，DST 转换不再靠猜
+- **日历无关** — 内置支持公历以外的历法系统
+- **精度可选** — 从年月到纳秒，按需选择精度
 
-**行动建议**：
-1. 立即升级到 Node.js 26，开始在新项目中使用 Temporal
-2. 在现有项目中逐步引入 Temporal，替代 `Date` 的使用
-3. 关注 Safari 的支持进度，准备好 polyfill 方案
-4. 库作者应开始提供 Temporal 原生支持
-
-`Date` 对象的黄昏已经到来，Temporal 的黎明正在破晓。三十年的技术债，终于有了偿还的希望。
+对于 2026 年的新项目来说，没有理由再使用 `new Date()` 了。Temporal 就是正确答案。
 
 ---
 
 *相关阅读：*
 
-- [Node.js 26.0.0 官方发布公告](https://nodejs.org/en/blog/release/v26.0.0)
+- [Node.js 26 官方发布公告](https://nodejs.org/en/blog/release/v26.0.0)
 - [TC39 Temporal 提案文档](https://tc39.es/proposal-temporal/docs/)
-- [Temporal API Cookbook](https://tc39.es/proposal-temporal/docs/cookbook.html)
+- [MDN Temporal API 参考](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Temporal)
