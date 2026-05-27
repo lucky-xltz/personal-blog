@@ -1,6 +1,25 @@
 {
   "articles": [
     {
+      "slug": "c-compiler-portability-gcc-duopoly-2026",
+      "title": "GCC 的阴影帝国：C 编译器为何难以逃离 '__GNUC__' 的引力场",
+      "date": "2026-05-27",
+      "category": "技术",
+      "tags": [
+        "C语言",
+        "编译器",
+        "系统编程",
+        "可移植性",
+        "GCC",
+        "LLVM",
+        "开源生态"
+      ],
+      "excerpt": "你以为写一个 C 编译器最难的是解析语法？不，最难的是让那些“理论上可移植”的代码跑起来。glibc 硬编码了 GCC/clang/TCC 三个编译器的名字，不属于它们的编译器连 hello world 都过不去。深入分析 GCC 35 年建立的扩展引力场、extern inline 的标准混乱、以及独立编译器的生存策略。",
+      "cover": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&h=400&fit=crop",
+      "readtime": 14,
+      "views": 0
+    },
+    {
       "slug": "nodejs-26-temporal-api-2026",
       "title": "告别 Date 地狱：Node.js 26 正式启用 Temporal API，JavaScript 日期处理的范式革命",
       "date": "2026-05-27",
