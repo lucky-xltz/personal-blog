@@ -1,6 +1,28 @@
 {
   "articles": [
     {
+      "slug": "ai-news-2026-05-27",
+      "title": "AI 日报：2026年05月27日 | LLM学会「睡觉」、Altman收回末日预言与AI安全裂缝蔓延",
+      "date": "2026-05-27",
+      "category": "技术",
+      "tags": [
+        "AI日报",
+        "LLM",
+        "睡眠机制",
+        "Sam Altman",
+        "Anthropic",
+        "AI就业",
+        "中国AI",
+        "宗教偏见",
+        "AI安全",
+        "Starlette"
+      ],
+      "excerpt": "今天的AI领域呈现了一幅颇为矛盾的图景：研究者正在赋予大语言模型「睡眠」能力，行业领袖正在集体收回末日预言，而地缘政治暗流、伦理偏见的系统性暴露与开源安全漏洞的蔓延，提醒我们AI的基础设施远比想象中脆弱。",
+      "cover": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=400&fit=crop",
+      "readtime": 11,
+      "views": 0
+    },
+    {
       "slug": "sqlite-renaissance-2026",
       "title": "SQLite 文艺复兴：从嵌入式玩具到国会图书馆认证的工业级数据库",
       "date": "2026-05-26",
