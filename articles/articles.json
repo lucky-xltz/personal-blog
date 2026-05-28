@@ -1,6 +1,25 @@
 {
   "articles": [
     {
+      "slug": "mesh-networking-meshtastic-meshcore-reticulum-2026",
+      "title": "从 Meshtastic 到 Reticulum：LoRa 去中心化组网的三条路线与终极博弈",
+      "date": "2026-05-28",
+      "category": "技术",
+      "tags": [
+        "Mesh网络",
+        "LoRa",
+        "Reticulum",
+        "Meshtastic",
+        "去中心化",
+        "通信协议",
+        "开源硬件"
+      ],
+      "excerpt": "在 LoRa 无线电这个看似原始的物理层上，Meshtastic、MeshCore 和 Reticulum 三种方案正展开一场关于什么是真正的 mesh 的终极辩论。从泛洪广播到智能异构路由，从聊天工具到替代互联网协议栈——本文深度对比三者架构、效率与愿景。",
+      "cover": "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=600&h=400&fit=crop",
+      "readtime": 14,
+      "views": 0
+    },
+    {
       "slug": "go-generic-methods-2026",
       "title": "Go 泛型方法终于来了：从 \"永远不会\" 到 Proposal Accepted 的五年博弈",
       "date": "2026-05-28",
