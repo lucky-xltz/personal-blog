@@ -1,6 +1,24 @@
 {
   "articles": [
     {
+      "slug": "go-generic-methods-2026",
+      "title": "Go 泛型方法终于来了：从 \"永远不会\" 到 Proposal Accepted 的五年博弈",
+      "date": "2026-05-28",
+      "category": "技术",
+      "tags": [
+        "Go",
+        "泛型",
+        "编程语言",
+        "类型系统",
+        "后端架构",
+        "语言设计"
+      ],
+      "excerpt": "2026年1月，Go团队发布了泛型方法提案，直接挑战了\"不预期添加泛型方法\"的官方立场。本文深入分析这个标记为release-blocker的语言变更：从Go泛型的未竟之路、核心设计洞察（具体方法vs接口方法）、编译器实现机制，到实际应用场景和社区反应。泛型方法让链式API设计自然从左到右阅读，同时保持完全向后兼容。",
+      "cover": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=600&h=400&fit=crop",
+      "readtime": 14,
+      "views": 0
+    },
+    {
       "slug": "ai-news-2026-05-28",
       "title": "AI 日报：2026年5月28日 | 用户反噬、定价革命与Agent的天花板",
       "date": "2026-05-28",
