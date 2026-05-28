@@ -1,6 +1,27 @@
 {
   "articles": [
     {
+      "slug": "ai-news-2026-05-28",
+      "title": "AI 日报：2026年5月28日 | 用户反噬、定价革命与Agent的天花板",
+      "date": "2026-05-28",
+      "category": "技术",
+      "tags": [
+        "AI日报",
+        "DuckDuckGo",
+        "Anthropic",
+        "OpenAI",
+        "AI Agent",
+        "编程助手",
+        "产品市场契合",
+        "AI搜索",
+        "DeepSWE"
+      ],
+      "excerpt": "DuckDuckGo因Google强制AI搜索而流量暴涨28%，Anthropic和OpenAI在编码Agent领域找到产品市场契合并大幅调整企业定价，技术社区深入反思AI Agent的能力边界——它们能写代码但还远不能维护系统。",
+      "cover": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&h=400&fit=crop",
+      "readtime": 12,
+      "views": 0
+    },
+    {
       "slug": "c-compiler-portability-gcc-duopoly-2026",
       "title": "GCC 的阴影帝国：C 编译器为何难以逃离 '__GNUC__' 的引力场",
       "date": "2026-05-27",
