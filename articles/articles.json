@@ -1,6 +1,25 @@
 {
   "articles": [
     {
+      "slug": "postgres-durable-workflows-2026",
+      "title": "Postgres 即编排器：用 SELECT FOR UPDATE SKIP LOCKED 构建持久化工作流",
+      "date": "2026-05-29",
+      "category": "技术",
+      "tags": [
+        "PostgreSQL",
+        "工作流",
+        "分布式系统",
+        "后端架构",
+        "数据库",
+        "持久化执行",
+        "AI Agent"
+      ],
+      "excerpt": "Temporal、Airflow 都在解决的问题——程序崩溃后如何从中断处继续——其实用 Postgres 的 SKIP LOCKED 和事务就能搞定。本文展示如何仅用 SQL 构建生产级持久化工作流引擎，涵盖检查点恢复、超时重试、LISTEN/NOTIFY 事件驱动，并以 AI Agent 多步推理为实战案例。",
+      "cover": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=600&h=400&fit=crop",
+      "readtime": 14,
+      "views": 0
+    },
+    {
       "slug": "openwrt-wifi-roaming-80211kvr-guide-2026",
       "title": "告别Wi-Fi粘连：用OpenWRT的802.11k/v/r打造无缝漫游体验",
       "date": "2026-05-29",
