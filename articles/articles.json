@@ -1,6 +1,26 @@
 {
   "articles": [
     {
+      "slug": "openwrt-wifi-roaming-80211kvr-guide-2026",
+      "title": "告别Wi-Fi粘连：用OpenWRT的802.11k/v/r打造无缝漫游体验",
+      "date": "2026-05-29",
+      "category": "技术",
+      "tags": [
+        "OpenWRT",
+        "Wi-Fi",
+        "网络工程",
+        "802.11r",
+        "802.11k",
+        "802.11v",
+        "usteer",
+        "无线网络"
+      ],
+      "excerpt": "你的设备总是\"粘\"在远处的Wi-Fi接入点上不肯切换？本文深入解析802.11k/v/r三大漫游协议的原理，详解OpenWRT上usteer、static-neighbor-reports的配置方法，结合社区实战经验，帮你打造企业级的无缝Wi-Fi漫游体验。",
+      "cover": "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=600&h=400&fit=crop",
+      "readtime": 15,
+      "views": 0
+    },
+    {
       "slug": "ai-news-2026-05-29",
       "title": "AI 日报：2026年5月29日 | Opus 4.8加冕、LLM事实核查集体翻车与Google搜索之死",
       "date": "2026-05-29",
