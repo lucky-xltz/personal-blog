@@ -1,6 +1,26 @@
 {
   "articles": [
     {
+      "slug": "ai-news-2026-05-29",
+      "title": "AI 日报：2026年5月29日 | Opus 4.8加冕、LLM事实核查集体翻车与Google搜索之死",
+      "date": "2026-05-29",
+      "category": "技术",
+      "tags": [
+        "AI日报",
+        "Claude Opus",
+        "Anthropic",
+        "LLM事实核查",
+        "Google AI",
+        "Perplexity",
+        "版权诉讼",
+        "AI搜索"
+      ],
+      "excerpt": "Anthropic发布Claude Opus 4.8并以$965B估值登顶全球最有价值AI公司；研究揭示五大前沿LLM在67%的真实事实核查案例上存在分歧；CNN起诉Perplexity逐字抄袭付费内容；Google计划用Gemini完全取代传统搜索结果。",
+      "cover": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&h=400&fit=crop",
+      "readtime": 12,
+      "views": 0
+    },
+    {
       "slug": "mesh-networking-meshtastic-meshcore-reticulum-2026",
       "title": "从 Meshtastic 到 Reticulum：LoRa 去中心化组网的三条路线与终极博弈",
       "date": "2026-05-28",
