@@ -1,6 +1,24 @@
 {
   "articles": [
     {
+      "slug": "ai-deskilling-frontend-lost-decade-2026",
+      "title": "AI 正在重演前端的「失落十年」？去技能化争论的深层解剖",
+      "date": "2026-05-30",
+      "category": "技术",
+      "tags": [
+        "AI编程",
+        "前端开发",
+        "去技能化",
+        "软件工程",
+        "开发者生态",
+        "职业发展"
+      ],
+      "excerpt": "Mastro作者称AI对程序员的冲击不过是前端十年前经历的「去技能化」翻版。框架降低了前端门槛，AI正在对整个开发行业做同样的事。本文深入剖析这场争论的正反方观点、历史类比与实用建议。",
+      "cover": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&h=400&fit=crop",
+      "readtime": 14,
+      "views": 0
+    },
+    {
       "slug": "ai-news-2026-05-30",
       "title": "AI 日报：2026年05月30日 | 推理速度突破3000 tokens/s，AI Agent正式进军股市",
       "date": "2026-05-30",
