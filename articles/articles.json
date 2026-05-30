@@ -1,6 +1,25 @@
 {
   "articles": [
     {
+      "slug": "ai-news-2026-05-30",
+      "title": "AI 日报：2026年05月30日 | 推理速度突破3000 tokens/s，AI Agent正式进军股市",
+      "date": "2026-05-30",
+      "category": "技术",
+      "tags": [
+        "AI日报",
+        "LLM推理",
+        "Robinhood",
+        "AI Agent",
+        "机器人训练",
+        "供应链安全",
+        "CAPTCHA"
+      ],
+      "excerpt": "KOG AI推理引擎在标准GPU上突破3000 tokens/s，Robinhood开放AI Agent股票交易引发争议，Shift用免费家政换取机器人训练数据暴露隐私风险，jqwik库植入针对AI编码Agent的提示注入开创'抗议软件'新范式，研究发现CAPTCHA仍可通过行为差异检测AI。",
+      "cover": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&h=400&fit=crop",
+      "readtime": 10,
+      "views": 0
+    },
+    {
       "slug": "postgres-durable-workflows-2026",
       "title": "Postgres 即编排器：用 SELECT FOR UPDATE SKIP LOCKED 构建持久化工作流",
       "date": "2026-05-29",
