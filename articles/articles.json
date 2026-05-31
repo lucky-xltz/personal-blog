@@ -1,6 +1,25 @@
 {
   "articles": [
     {
+      "slug": "ai-news-2026-05-31",
+      "title": "AI 日报：2026年5月31日 | Anthropic登顶估值之巅，AI幻觉渗入四大咨询",
+      "date": "2026-05-31",
+      "category": "技术",
+      "tags": [
+        "AI日报",
+        "Anthropic",
+        "OpenAI",
+        "AI幻觉",
+        "苹果Gemini",
+        "开源社区",
+        "AI安全"
+      ],
+      "excerpt": "Anthropic以超1万亿美元估值超越OpenAI成为全球最具价值AI初创企业；EY加拿大网络安全报告被曝充斥AI虚假引用；AI模拟社会实验揭示Claude最安全、Grok四天内灭绝；开源项目暗藏AI陷阱；苹果正将Gemini蒸馏进iPhone。",
+      "cover": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&h=400&fit=crop",
+      "readtime": 10,
+      "views": 0
+    },
+    {
       "slug": "bijou64-varint-encoding-security-performance-2026",
       "title": "Bijou64：当安全约束催生出更快的编码——变长整数设计的意外之旅",
       "date": "2026-05-30",
