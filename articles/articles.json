@@ -1,6 +1,25 @@
 {
   "articles": [
     {
+      "slug": "zig-build-system-rework-2026",
+      "title": "Zig 构建系统的双进程革命：从 150ms 到 14ms 的 10 倍提速之路",
+      "date": "2026-05-31",
+      "category": "技术",
+      "tags": [
+        "Zig",
+        "构建系统",
+        "编译器",
+        "系统编程",
+        "增量编译",
+        "性能优化",
+        "ELF链接器"
+      ],
+      "excerpt": "Zig将构建系统拆分为configurer和maker两个进程，zig build --help从150ms降至14ms提速10倍；自研ELF链接器突破里程碑，能链接含LLVM的完整编译器，增量重建仅需30ms。深入分析架构设计、性能数据和社区反响。",
+      "cover": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&h=400&fit=crop",
+      "readtime": 14,
+      "views": 0
+    },
+    {
       "slug": "ai-news-2026-05-31",
       "title": "AI 日报：2026年5月31日 | Anthropic登顶估值之巅，AI幻觉渗入四大咨询",
       "date": "2026-05-31",
