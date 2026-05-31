@@ -1,6 +1,26 @@
 {
   "articles": [
     {
+      "slug": "openrsync-macos-replacement-2026",
+      "title": "从 rsync 到 openrsync：一个工具替换背后的许可证战争、安全哲学与协议困境",
+      "date": "2026-05-31",
+      "category": "技术",
+      "tags": [
+        "rsync",
+        "openrsync",
+        "OpenBSD",
+        "macOS",
+        "许可证",
+        "系统工具",
+        "安全模型",
+        "协议设计"
+      ],
+      "excerpt": "macOS Sequoia 用 openrsync 替换 rsync，背后牵扯着 GPL v3 许可证博弈、OpenBSD 的 pledge/unveil 安全哲学，以及\"协议该由谁定义\"的深层架构问题。从滚动校验和算法到反 Tivoization 条款，一篇文章讲透。",
+      "cover": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=600&h=400&fit=crop",
+      "readtime": 12,
+      "views": 0
+    },
+    {
       "slug": "zig-build-system-rework-2026",
       "title": "Zig 构建系统的双进程革命：从 150ms 到 14ms 的 10 倍提速之路",
       "date": "2026-05-31",
