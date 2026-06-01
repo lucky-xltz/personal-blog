@@ -1,6 +1,24 @@
 {
   "articles": [
     {
+      "slug": "ai-news-2026-06-01",
+      "title": "AI 日报：2026年6月1日 | AI安全防线全面告急，本地推理迈入手机时代",
+      "date": "2026-06-01",
+      "category": "技术",
+      "tags": [
+        "AI日报",
+        "AI安全",
+        "本地推理",
+        "提示词注入",
+        "开源模型",
+        "图像生成"
+      ],
+      "excerpt": "ChatGPT Sheets插件曝严重漏洞可窃取全账户数据，1-bit量化让图像生成首次跑上手机，开源库维护者埋入反AI炸弹，Anthropic分享Agent遏制工程实践，开源模型护栏拆除运动加速——AI安全正从模型问题演变为系统问题。",
+      "cover": "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=600&h=400&fit=crop",
+      "readtime": 12,
+      "views": 0
+    },
+    {
       "slug": "openrsync-macos-replacement-2026",
       "title": "从 rsync 到 openrsync：一个工具替换背后的许可证战争、安全哲学与协议困境",
       "date": "2026-05-31",
