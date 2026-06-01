@@ -1,6 +1,25 @@
 {
   "articles": [
     {
+      "slug": "restartable-sequences-lock-free-without-atomics-2026",
+      "title": "Restartable Sequences：不用原子操作也能实现无锁数据结构的 Linux 黑科技",
+      "date": "2026-06-01",
+      "category": "技术",
+      "tags": [
+        "Linux内核",
+        "无锁编程",
+        "系统编程",
+        "性能优化",
+        "并发",
+        "x86",
+        "ARM"
+      ],
+      "excerpt": "Linux 4.18 引入的 Restartable Sequences（rseq）通过内核与用户态的共享内存通信，让你在不使用锁和原子操作的情况下构建真正可扩展的线程安全数据结构。本文深入解析 rseq 的工作原理、性能对比（34x 提速），以及它对高核心数时代系统编程范式的影响。",
+      "cover": "https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&h=400&fit=crop",
+      "readtime": 14,
+      "views": 0
+    },
+    {
       "slug": "backpressure-ai-coding-agents-2026",
       "title": "反压（Backpressure）：让 AI 编码代理自我纠错的系统工程思维",
       "date": "2026-06-01",
