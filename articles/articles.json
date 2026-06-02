@@ -1,6 +1,26 @@
 {
   "articles": [
     {
+      "slug": "tui-renaissance-bonsai-term-ai-agents-2026",
+      "title": "TUI 复兴：为什么终端界面成了 AI 时代最有前途的开发平台",
+      "date": "2026-06-02",
+      "category": "技术",
+      "tags": [
+        "TUI",
+        "OCaml",
+        "Jane Street",
+        "AI编程",
+        "终端",
+        "Bonsai",
+        "函数式编程",
+        "开发工具"
+      ],
+      "excerpt": "Jane Street 发布了 strace-ui 和 Bonsai_term 框揭，揭示了一个深层趋势：终端界面正在成为 AI 辅助开发的最佳平台。本文深入分析 Bonsai 的增量计算引擎、截图测试如何让 AI Agent 自检闭环，以及 TUI 复兴背后的技术逻辑。",
+      "cover": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&h=400&fit=crop",
+      "readtime": 12,
+      "views": 0
+    },
+    {
       "slug": "rgb-normalization-255-vs-256-deep-dive-2026",
       "title": "RGB 归一化之争：除以 255 还是 256？一个看似简单的问题背后的量化理论",
       "date": "2026-06-02",
