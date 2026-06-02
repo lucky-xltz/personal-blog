@@ -1,6 +1,25 @@
 {
   "articles": [
     {
+      "slug": "rgb-normalization-255-vs-256-deep-dive-2026",
+      "title": "RGB 归一化之争：除以 255 还是 256？一个看似简单的问题背后的量化理论",
+      "date": "2026-06-02",
+      "category": "技术",
+      "tags": [
+        "图像处理",
+        "浮点精度",
+        "量化理论",
+        "Python",
+        "NumPy",
+        "计算机图形学",
+        "性能优化"
+      ],
+      "excerpt": "每个写过图像处理代码的人都见过 pixel/255.0，但你有没有想过为什么不是除以 256？这个看似微不足道的选择背后藏着量化理论、浮点精度和信号处理的深层问题。本文从数轴可视化、mid-riser/mid-tread 量化器、音频类比等多个角度深入分析，给出工程实践中的明确建议。",
+      "cover": "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=600&h=400&fit=crop",
+      "readtime": 12,
+      "views": 0
+    },
+    {
       "slug": "restartable-sequences-lock-free-without-atomics-2026",
       "title": "Restartable Sequences：不用原子操作也能实现无锁数据结构的 Linux 黑科技",
       "date": "2026-06-01",
