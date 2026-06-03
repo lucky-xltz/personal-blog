@@ -335,6 +335,67 @@
         .ai-log .log-action { color: var(--accent); }
         .ai-log .log-success { color: var(--safe); }
         .ai-log .log-error { color: var(--danger); }
+
+        /* Confirm Modal */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+            z-index: 10001; display: none; align-items: center; justify-content: center;
+        }
+        .modal-overlay.show { display: flex; }
+        .modal-box {
+            background: var(--bg-raised); border-radius: var(--radius-md);
+            padding: 28px; max-width: 380px; width: 90vw;
+            box-shadow: 0 12px 48px rgba(0,0,0,0.5); border: 1px solid var(--border);
+            animation: modalIn 0.2s ease;
+        }
+        @keyframes modalIn { from { transform: scale(0.92); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .modal-box h3 { font-size: 16px; font-weight: 600; margin-bottom: 12px; }
+        .modal-box p { color: var(--text-dim); font-size: 13px; margin-bottom: 20px; line-height: 1.6; }
+        .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+
+        /* Performance Metrics */
+        .perf-grid {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px;
+        }
+        @media (max-width: 640px) { .perf-grid { grid-template-columns: repeat(2, 1fr); } }
+        .perf-card {
+            background: var(--bg-raised); border-radius: var(--radius-sm);
+            padding: 14px; box-shadow: var(--neu-raised-sm); border: 1px solid var(--border);
+            text-align: center;
+        }
+        .perf-card .perf-label { font-size: 11px; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .perf-card .perf-value { font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+        /* Trailing Stop Badge */
+        .trailing-stop {
+            display: inline-block; padding: 2px 8px; border-radius: 6px;
+            font-size: 10px; font-weight: 600; margin-left: 4px;
+            background: rgba(210, 153, 34, 0.15); color: var(--warn);
+        }
+
+        /* K-Line Mini Chart */
+        .kline-mini {
+            display: flex; align-items: flex-end; gap: 1px; height: 36px;
+            padding: 2px 0;
+        }
+        .kline-bar {
+            width: 5px; min-width: 2px; border-radius: 1px; position: relative; flex-shrink: 0;
+        }
+        .kline-bar.up { background: var(--up); }
+        .kline-bar.down { background: var(--down); }
+
+        /* Indicator Badges */
+        .indicators { display: flex; gap: 3px; flex-wrap: wrap; }
+        .ind-badge {
+            padding: 2px 5px; border-radius: 4px; font-size: 9px; font-weight: 600;
+        }
+        .ind-buy { background: rgba(46,160,67,0.2); color: var(--safe); }
+        .ind-sell { background: rgba(248,81,73,0.2); color: var(--danger); }
+        .ind-neutral { background: rgba(122,132,148,0.2); color: var(--text-muted); }
+
+        /* Score indicator in log */
+        .log-score { color: var(--warn); }
     </style>
 </head>
 <body>
@@ -423,6 +484,26 @@
         </div>
     </div>
 
+
+    <!-- Performance Metrics -->
+    <div class="perf-grid">
+        <div class="perf-card">
+            <div class="perf-label">胜率</div>
+            <div class="perf-value" id="winRate">--</div>
+        </div>
+        <div class="perf-card">
+            <div class="perf-label">最大回撤</div>
+            <div class="perf-value" id="maxDrawdown">--</div>
+        </div>
+        <div class="perf-card">
+            <div class="perf-label">夏普比率</div>
+            <div class="perf-value" id="sharpeRatio">--</div>
+        </div>
+        <div class="perf-card">
+            <div class="perf-label">盈亏比</div>
+            <div class="perf-value" id="profitFactor">--</div>
+        </div>
+    </div>
     <!-- Equity Chart -->
     <div class="chart-area">
         <div class="card-title">
@@ -449,6 +530,7 @@
                         <th>现价</th>
                         <th>盈亏</th>
                         <th>盈亏率</th>
+                        <th>信号</th>
                         <th>操作</th>
                     </tr>
                 </thead>
@@ -487,6 +569,17 @@
     <p style="margin-top:8px"><a href="stock-tools.html">← 返回工具箱</a></p>
 </footer>
 
+
+<div class="modal-overlay" id="modalOverlay">
+    <div class="modal-box">
+        <h3 id="modalTitle">确认操作</h3>
+        <p id="modalMessage">确定要执行此操作吗？</p>
+        <div class="modal-actions">
+            <button class="btn btn-outline" id="modalCancel">取消</button>
+            <button class="btn btn-danger" id="modalConfirm">确认</button>
+        </div>
+    </div>
+</div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -520,6 +613,8 @@ const STOCK_POOL = [
 
 // ============ 实时行情获取 ============
 let realtimeQuotes = {};
+let priceHistory = {};  // { code: [price1, price2, ...] } rolling window
+const HISTORY_MAX = 120;  // keep last 120 data points (~30 min at 15s intervals)
 
 function sinaCode(code) {
     if (/^(sh|sz|bj)\d{6}$/.test(code)) return code;
@@ -556,6 +651,18 @@ async function fetchRealtimeQuotes() {
     } catch (e) {
         console.warn('行情获取失败:', e);
     }
+    // Track price history for technical analysis
+    Object.keys(realtimeQuotes).forEach(sc => {
+        const q = realtimeQuotes[sc];
+        if (q.price <= 0) return;
+        // extract pure code (remove sh/sz prefix)
+        const pureCode = sc.replace(/^(sh|sz)/, '');
+        if (!priceHistory[pureCode]) priceHistory[pureCode] = [];
+        priceHistory[pureCode].push(q.price);
+        if (priceHistory[pureCode].length > HISTORY_MAX) {
+            priceHistory[pureCode] = priceHistory[pureCode].slice(-HISTORY_MAX);
+        }
+    });
 }
 
 function getStockPrice(code) {
@@ -606,12 +713,99 @@ function calcEMA(data, period) {
     return ema;
 }
 
+
+
+function calcBollingerBands(prices, period, stdDev) {
+    period = period || 20;
+    stdDev = stdDev || 2;
+    if (prices.length < period) return null;
+    const slice = prices.slice(-period);
+    const ma = slice.reduce((s, v) => s + v, 0) / period;
+    const variance = slice.reduce((s, v) => s + (v - ma) ** 2, 0) / period;
+    const sd = Math.sqrt(variance);
+    return { upper: ma + stdDev * sd, middle: ma, lower: ma - stdDev * sd, bandwidth: (2 * stdDev * sd / ma) * 100 };
+}
+
+function calcATR(prices, period) {
+    period = period || 14;
+    if (prices.length < period + 1) return 0;
+    let trSum = 0;
+    for (let i = prices.length - period; i < prices.length; i++) {
+        trSum += Math.abs(prices[i] - prices[i - 1]);
+    }
+    return trSum / period;
+}
+
+/**
+ * Compute composite signal score for a stock.
+ * Positive = bullish, Negative = bearish.
+ * Range roughly -6 to +6.
+ */
+function computeSignalScore(code, quote) {
+    const prices = priceHistory[code];
+    if (!prices || prices.length < 15) return { score: 0, signals: [], rsi: 50 };
+
+    const signals = [];
+    let score = 0;
+
+    // RSI
+    const rsi = calcRSI(prices, 14);
+    if (rsi < 25) { score += 2.5; signals.push({ label: 'RSI超卖', type: 'buy' }); }
+    else if (rsi < 35) { score += 1.5; signals.push({ label: 'RSI偏低', type: 'buy' }); }
+    else if (rsi > 75) { score -= 2.5; signals.push({ label: 'RSI超买', type: 'sell' }); }
+    else if (rsi > 65) { score -= 1.5; signals.push({ label: 'RSI偏高', type: 'sell' }); }
+
+    // MACD
+    if (prices.length >= 26) {
+        const ema12 = calcEMA(prices, 12);
+        const ema26 = calcEMA(prices, 26);
+        const dif = ema12[ema12.length - 1] - ema26[ema26.length - 1];
+        const difPrev = ema12[ema12.length - 2] - ema26[ema26.length - 2];
+        if (dif > 0 && difPrev <= 0) { score += 2; signals.push({ label: 'MACD金叉', type: 'buy' }); }
+        else if (dif > 0) { score += 0.5; }
+        else if (dif < 0 && difPrev >= 0) { score -= 2; signals.push({ label: 'MACD死叉', type: 'sell' }); }
+        else if (dif < 0) { score -= 0.5; }
+    }
+
+    // Bollinger Bands
+    const bb = calcBollingerBands(prices, 20, 2);
+    if (bb) {
+        const price = quote.price;
+        if (price < bb.lower) { score += 2; signals.push({ label: '突破下轨', type: 'buy' }); }
+        else if (price > bb.upper) { score -= 2; signals.push({ label: '突破上轨', type: 'sell' }); }
+        if (bb.bandwidth < 3) { signals.push({ label: '缩量收敛', type: 'neutral' }); }
+    }
+
+    // MA Cross (5/20)
+    if (prices.length >= 20) {
+        const ma5 = calcMA(prices, 5);
+        const ma20 = calcMA(prices, 20);
+        const ma5Prev = calcMA(prices.slice(0, -1), 5);
+        const ma20Prev = calcMA(prices.slice(0, -1), 20);
+        if (ma5 > ma20 && ma5Prev <= ma20Prev) { score += 1.5; signals.push({ label: 'MA金叉', type: 'buy' }); }
+        else if (ma5 < ma20 && ma5Prev >= ma20Prev) { score -= 1.5; signals.push({ label: 'MA死叉', type: 'sell' }); }
+    }
+
+    // Volume confirmation (use amount)
+    if (quote.amount > 5e8) {
+        score *= 1.2;  // amplify signal when volume is high
+        signals.push({ label: '放量', type: 'neutral' });
+    }
+
+    // Trend strength via ATR
+    const atr = calcATR(prices, 14);
+    const atrPct = quote.price > 0 ? (atr / quote.price) * 100 : 0;
+    if (atrPct > 3) signals.push({ label: '高波动', type: 'neutral' });
+
+    return { score: Math.round(score * 10) / 10, signals, rsi: Math.round(rsi), bb, atrPct: Math.round(atrPct * 10) / 10 };
+}
+
 // ============ 状态 ============
 let state = {
     mode: 'aggressive',
     isRunning: false,
     cash: INITIAL_CASH,
-    positions: {},  // { code: { name, quantity, avgCost } }
+    positions: {},  // { code: { name, quantity, avgCost, peakPrice, trailingStopPct } }
     trades: [],
     equityHistory: [],
     dailyTrades: 0,
@@ -646,6 +840,30 @@ function showToast(msg, type) {
     clearTimeout(el._timer);
     el._timer = setTimeout(() => { el.className = 'toast'; }, 2500);
 }
+
+
+
+let _modalResolve = null;
+
+function showConfirm(title, message) {
+    return new Promise(resolve => {
+        _modalResolve = resolve;
+        document.getElementById('modalTitle').textContent = title;
+        document.getElementById('modalMessage').textContent = message;
+        document.getElementById('modalOverlay').classList.add('show');
+    });
+}
+
+document.getElementById('modalConfirm').addEventListener('click', () => {
+    document.getElementById('modalOverlay').classList.remove('show');
+    if (_modalResolve) _modalResolve(true);
+    _modalResolve = null;
+});
+document.getElementById('modalCancel').addEventListener('click', () => {
+    document.getElementById('modalOverlay').classList.remove('show');
+    if (_modalResolve) _modalResolve(false);
+    _modalResolve = null;
+});
 
 function formatMoney(amount) {
     return '¥' + amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
@@ -699,7 +917,9 @@ function executeBuy(stockCode, stockName, quantity, price) {
         state.positions[stockCode] = {
             name: stockName,
             quantity: quantity,
-            avgCost: price
+            avgCost: price,
+            peakPrice: price,
+            trailingStopPct: state.mode === 'aggressive' ? 0.04 : state.mode === 'balanced' ? 0.025 : 0.015
         };
     }
 
@@ -782,39 +1002,68 @@ async function aiDecide() {
     const mode = MODES[state.mode];
     const today = new Date().toDateString();
 
-    // 重置每日交易计数
+    // Reset daily trade count
     if (state.lastTradeDate !== today) {
         state.dailyTrades = 0;
         state.lastTradeDate = today;
     }
 
-    // 检查每日交易限制
+    // Check daily limit
     if (state.dailyTrades >= mode.maxDailyTrades) {
         addLog('今日交易次数已达上限 (' + mode.maxDailyTrades + '次)', 'action');
         return;
     }
 
-    // 获取实时行情
+    // Fetch realtime quotes
     await fetchRealtimeQuotes();
 
-    // 检查持仓止损止盈
+    // ========== SELL LOGIC: check positions for stop loss / trailing stop / signals ==========
     for (const code of Object.keys(state.positions)) {
         const pos = state.positions[code];
         const q = getStockPrice(code);
         if (!q) continue;
-        
-        const profitPct = (q.price - pos.avgCost) / pos.avgCost;
 
+        const currentPrice = q.price;
+        const profitPct = (currentPrice - pos.avgCost) / pos.avgCost;
+
+        // Update peak price for trailing stop
+        if (!pos.peakPrice || currentPrice > pos.peakPrice) {
+            pos.peakPrice = currentPrice;
+        }
+
+        // 1) Hard stop loss
         if (profitPct <= -mode.stopLoss) {
-            addLog('止损触发: ' + pos.name + ' 亏损 ' + (profitPct * 100).toFixed(2) + '%', 'error');
-            executeSell(code, pos.quantity, q.price);
-        } else if (profitPct >= mode.takeProfit) {
-            addLog('止盈触发: ' + pos.name + ' 盈利 ' + (profitPct * 100).toFixed(2) + '%', 'success');
-            executeSell(code, pos.quantity, q.price);
+            addLog('🛑 止损触发: ' + pos.name + ' 亏损 ' + (profitPct * 100).toFixed(2) + '%', 'error');
+            executeSell(code, pos.quantity, currentPrice);
+            continue;
+        }
+
+        // 2) Take profit
+        if (profitPct >= mode.takeProfit) {
+            addLog('🎯 止盈触发: ' + pos.name + ' 盈利 ' + (profitPct * 100).toFixed(2) + '%', 'success');
+            executeSell(code, pos.quantity, currentPrice);
+            continue;
+        }
+
+        // 3) Trailing stop - sell if price dropped N% from peak
+        const trailingPct = pos.trailingStopPct || (mode.stopLoss * 0.7);
+        const dropFromPeak = (pos.peakPrice - currentPrice) / pos.peakPrice;
+        if (dropFromPeak >= trailingPct && profitPct > 0) {
+            addLog('📉 移动止损: ' + pos.name + ' 从高点回撤 ' + (dropFromPeak * 100).toFixed(2) + '% (峰值' + pos.peakPrice.toFixed(2) + ')', 'error');
+            executeSell(code, pos.quantity, currentPrice);
+            continue;
+        }
+
+        // 4) Signal-based sell
+        const signal = computeSignalScore(code, q);
+        if (signal.score <= -3 && profitPct > 0) {
+            addLog('📊 信号卖出: ' + pos.name + ' 综合评分 ' + signal.score + ' (RSI:' + signal.rsi + ')', 'action');
+            executeSell(code, pos.quantity, currentPrice);
+            continue;
         }
     }
 
-    // AI 选股决策
+    // ========== BUY LOGIC: score all candidates and pick the best ==========
     const candidates = STOCK_POOL.filter(s => {
         const q = getStockPrice(s.code);
         return q && q.price > 0 && !state.positions[s.code];
@@ -822,80 +1071,48 @@ async function aiDecide() {
 
     if (candidates.length === 0) return;
 
-    // 根据模式选择股票
-    let target = null;
-    let signal = '';
+    // Score each candidate
+    const scored = candidates.map(s => {
+        const q = getStockPrice(s.code);
+        const sig = computeSignalScore(s.code, q);
+        return { stock: s, quote: q, ...sig };
+    }).sort((a, b) => b.score - a.score);
 
-    if (state.mode === 'aggressive') {
-        // 激进：选涨幅最大的
-        candidates.sort((a, b) => {
-            const qa = getStockPrice(a.code);
-            const qb = getStockPrice(b.code);
-            return (qb ? qb.changePct : 0) - (qa ? qa.changePct : 0);
-        });
-        target = candidates[0];
-        signal = '追涨策略：选中当日涨幅最大的 ' + target.name;
-    } else if (state.mode === 'balanced') {
-        // 稳健：选涨幅适中且有成交量的
-        candidates.sort((a, b) => {
-            const qa = getStockPrice(a.code);
-            const qb = getStockPrice(b.code);
-            const scoreA = (qa ? Math.abs(qa.changePct) * 0.5 + (qa.amount / 1e8) * 0.5 : 0);
-            const scoreB = (qb ? Math.abs(qb.changePct) * 0.5 + (qb.amount / 1e8) * 0.5 : 0);
-            return scoreB - scoreA;
-        });
-        target = candidates[0];
-        signal = '量价策略：选中活跃度最高的 ' + target.name;
-    } else {
-        // 保守：选跌幅较小的（等待反弹）
-        candidates.sort((a, b) => {
-            const qa = getStockPrice(a.code);
-            const qb = getStockPrice(b.code);
-            return (qa ? qa.changePct : 0) - (qb ? qb.changePct : 0);
-        });
-        target = candidates[Math.floor(Math.random() * Math.min(3, candidates.length))];
-        signal = '价值策略：选中回调标的 ' + target.name;
+    // Log top 3 candidates
+    scored.slice(0, 3).forEach(s => {
+        addLog('📊 ' + s.stock.name + ' 评分:' + s.score + ' RSI:' + s.rsi + ' ' + s.signals.map(sig => sig.label).join('/'), 'score');
+    });
+
+    // Only buy if best score exceeds mode threshold
+    const buyThreshold = state.mode === 'aggressive' ? 1.5 : state.mode === 'balanced' ? 2.5 : 3.5;
+    const best = scored[0];
+
+    if (best.score < buyThreshold) {
+        addLog('⏸ 无强信号（最高评分 ' + best.score + ' < 阈值 ' + buyThreshold + '），观望中', 'action');
+        return;
     }
 
-    if (!target) return;
+    const q = best.quote;
+    const cashRatio = state.mode === 'aggressive' ? 0.25 : state.mode === 'balanced' ? 0.15 : 0.08;
+    const maxShares = Math.floor(state.cash * cashRatio / (q.price * 100));
 
-    const q = getStockPrice(target.code);
-    if (!q || q.price <= 0) return;
-
-    const rand = Math.random();
-    const hasPosition = state.positions[target.code];
-
-    // 决策买入/卖出
-    let buyChance = state.mode === 'aggressive' ? 0.6 : state.mode === 'balanced' ? 0.4 : 0.2;
-    let sellChance = state.mode === 'aggressive' ? 0.3 : state.mode === 'balanced' ? 0.2 : 0.1;
-
-    if (rand < buyChance && !hasPosition && state.cash > q.price * 100) {
-        const maxShares = Math.floor(state.cash * (state.mode === 'aggressive' ? 0.3 : state.mode === 'balanced' ? 0.2 : 0.1) / (q.price * 100));
-        if (maxShares > 0) {
-            addLog('AI 决策: ' + signal, 'action');
-            addLog('买入价: ' + q.price.toFixed(2) + ' 涨跌幅: ' + q.changePct.toFixed(2) + '%', 'action');
-            executeBuy(target.code, target.name, maxShares, q.price);
-        }
-    } else if (rand < buyChance + sellChance && hasPosition) {
-        addLog('AI 决策: 卖出 ' + target.name + ' 当前价: ' + q.price.toFixed(2), 'action');
-        executeSell(target.code, hasPosition.quantity, q.price);
+    if (maxShares > 0 && state.cash > q.price * 100) {
+        addLog('🤖 AI 买入信号: ' + best.stock.name + ' 评分 ' + best.score + ' [' + best.signals.map(s => s.label).join(', ') + ']', 'action');
+        addLog('买入价: ' + q.price.toFixed(2) + ' 涨跌: ' + q.changePct.toFixed(2) + '% RSI: ' + best.rsi, 'action');
+        executeBuy(best.stock.code, best.stock.name, maxShares, q.price);
     }
 
-    // 更新持仓现价
+    // Update position current prices
     Object.keys(state.positions).forEach(code => {
         const pq = getStockPrice(code);
         if (pq) state.positions[code].currentPrice = pq.price;
     });
 
-    // 记录资产曲线
+    // Record equity curve
     const totalAssets = calculateTotalAssets();
-    state.equityHistory.push({
-        time: new Date().toISOString(),
-        value: totalAssets
-    });
-    // 保留最近100个点
-    if (state.equityHistory.length > 100) {
-        state.equityHistory = state.equityHistory.slice(-100);
+    state.equityHistory.push({ time: new Date().toISOString(), value: totalAssets });
+    if (state.equityHistory.length > 200) {
+        state.equityHistory = state.equityHistory.slice(-200);
     }
 
     saveState();
@@ -932,8 +1149,8 @@ function stopAI() {
     renderAll();
 }
 
-function resetAccount() {
-    if (!confirm('确定要重置账户吗？所有持仓和交易记录将被清除。')) return;
+async function resetAccount() {
+    if (!await showConfirm('重置账户', '确定要重置账户吗？所有持仓和交易记录将被清除。此操作不可撤销。')) return;
     stopAI();
     state.cash = INITIAL_CASH;
     state.positions = {};
@@ -946,6 +1163,68 @@ function resetAccount() {
     showToast('账户已重置', 'success');
 }
 
+
+
+function renderPerformance() {
+    const trades = state.trades;
+    const closedTrades = [];
+    // Pair buy/sell trades
+    const buyMap = {};
+    for (let i = trades.length - 1; i >= 0; i--) {
+        const t = trades[i];
+        if (t.action === 'buy') {
+            buyMap[t.code] = buyMap[t.code] || [];
+            buyMap[t.code].push(t);
+        } else if (t.action === 'sell' && buyMap[t.code] && buyMap[t.code].length > 0) {
+            const buy = buyMap[t.code].shift();
+            closedTrades.push({ profit: t.amount - buy.amount, profitPct: (t.price - buy.price) / buy.price });
+        }
+    }
+
+    // Win rate
+    const wins = closedTrades.filter(t => t.profit > 0).length;
+    const winRate = closedTrades.length > 0 ? (wins / closedTrades.length * 100) : 0;
+    document.getElementById('winRate').textContent = closedTrades.length > 0 ? winRate.toFixed(0) + '%' : '--';
+    document.getElementById('winRate').className = 'perf-value ' + (winRate >= 50 ? 'up' : winRate > 0 ? 'down' : '');
+
+    // Max drawdown
+    let maxDD = 0;
+    let peak = 0;
+    state.equityHistory.forEach(e => {
+        if (e.value > peak) peak = e.value;
+        const dd = (peak - e.value) / peak;
+        if (dd > maxDD) maxDD = dd;
+    });
+    document.getElementById('maxDrawdown').textContent = maxDD > 0 ? '-' + (maxDD * 100).toFixed(1) + '%' : '--';
+    document.getElementById('maxDrawdown').className = 'perf-value ' + (maxDD > 0.1 ? 'up' : '');
+
+    // Sharpe ratio (simplified: using equity returns)
+    if (state.equityHistory.length >= 10) {
+        const returns = [];
+        for (let i = 1; i < state.equityHistory.length; i++) {
+            returns.push((state.equityHistory[i].value - state.equityHistory[i-1].value) / state.equityHistory[i-1].value);
+        }
+        const avgReturn = returns.reduce((s, v) => s + v, 0) / returns.length;
+        const stdReturn = Math.sqrt(returns.reduce((s, v) => s + (v - avgReturn) ** 2, 0) / returns.length);
+        const sharpe = stdReturn > 0 ? (avgReturn / stdReturn) * Math.sqrt(252 * 96) : 0;  // annualized
+        document.getElementById('sharpeRatio').textContent = sharpe.toFixed(2);
+        document.getElementById('sharpeRatio').className = 'perf-value ' + (sharpe > 1 ? 'down' : sharpe > 0 ? '' : 'up');
+    } else {
+        document.getElementById('sharpeRatio').textContent = '--';
+    }
+
+    // Profit factor
+    if (closedTrades.length > 0) {
+        const grossProfit = closedTrades.filter(t => t.profit > 0).reduce((s, t) => s + t.profit, 0);
+        const grossLoss = Math.abs(closedTrades.filter(t => t.profit < 0).reduce((s, t) => s + t.profit, 0));
+        const pf = grossLoss > 0 ? grossProfit / grossLoss : grossProfit > 0 ? 99 : 0;
+        document.getElementById('profitFactor').textContent = pf.toFixed(2);
+        document.getElementById('profitFactor').className = 'perf-value ' + (pf > 1 ? 'down' : 'up');
+    } else {
+        document.getElementById('profitFactor').textContent = '--';
+    }
+}
+
 // ============ 渲染 ============
 function renderAll() {
     renderMode();
@@ -954,6 +1233,7 @@ function renderAll() {
     renderTrades();
     renderChart();
     renderStatus();
+    renderPerformance();
 }
 
 function renderMode() {
@@ -1048,7 +1328,7 @@ function renderChart() {
 
     const data = state.equityHistory.map(e => e.value);
     if (data.length < 2) {
-        ctx.fillStyle = 'var(--text-muted)';
+        ctx.fillStyle = '#7a8494';
         ctx.font = '14px Inter';
         ctx.textAlign = 'center';
         ctx.fillText('等待数据...', w / 2, h / 2);
@@ -1059,15 +1339,19 @@ function renderChart() {
     const max = Math.max(...data) * 1.01;
     const range = max - min || 1;
 
-    // 画网格
+    // Grid + labels
     ctx.strokeStyle = 'rgba(255,255,255,0.05)';
     ctx.lineWidth = 1;
+    ctx.font = '10px Inter';
+    ctx.fillStyle = '#7a8494';
     for (let i = 0; i <= 4; i++) {
         const y = h - (i / 4) * h;
         ctx.beginPath();
         ctx.moveTo(0, y);
         ctx.lineTo(w, y);
         ctx.stroke();
+        const val = min + (i / 4) * range;
+        ctx.fillText(formatMoney(val), 4, y - 4);
     }
 
     // 画线
@@ -1146,7 +1430,19 @@ fetchRealtimeQuotes().then(() => {
     renderAll();
 });
 
+// Seed priceHistory from position data if available
+function seedPriceHistory() {
+    Object.keys(state.positions).forEach(code => {
+        const q = getStockPrice(code);
+        if (q && q.price > 0) {
+            if (!priceHistory[code]) priceHistory[code] = [];
+            priceHistory[code].push(q.price);
+        }
+    });
+}
+
 // 恢复运行状态
+seedPriceHistory();
 if (state.isRunning) {
     startAI();
 }
