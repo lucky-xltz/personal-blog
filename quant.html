@@ -637,6 +637,15 @@
         </div>
     </div>
 
+    <!-- Portfolio Sector Allocation -->
+    <div class="card" id="sectorAllocationCard">
+        <div class="card-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 10 10"/><path d="M12 2v10l7.07 7.07"/></svg>
+            板块配置
+        </div>
+        <div id="sectorAllocation" style="display: flex; flex-wrap: wrap; gap: 8px;"></div>
+    </div>
+
     <!-- Signal Strength Dashboard -->
     <div class="card" id="signalDashboardCard">
         <div class="card-title">
@@ -656,6 +665,8 @@
             <div class="signal-gauge"><div class="gauge-label">ADX</div><div class="gauge-value" id="gADX">--</div><div class="gauge-bar"><div class="gauge-fill" id="gADXbar"></div></div></div>
             <div class="signal-gauge"><div class="gauge-label">综合评分</div><div class="gauge-value" id="gScore">--</div><div class="gauge-bar"><div class="gauge-fill" id="gScorebar"></div></div></div>
             <div class="signal-gauge"><div class="gauge-label">Ichimoku</div><div class="gauge-value" id="gIchi">--</div><div class="gauge-bar"><div class="gauge-fill" id="gIchibar"></div></div></div>
+            <div class="signal-gauge"><div class="gauge-label">CCI</div><div class="gauge-value" id="gCCI">--</div><div class="gauge-bar"><div class="gauge-fill" id="gCCIbar"></div></div></div>
+            <div class="signal-gauge"><div class="gauge-label">MFI</div><div class="gauge-value" id="gMFI">--</div><div class="gauge-bar"><div class="gauge-fill" id="gMFIbar"></div></div></div>
         </div>
         <div id="signalDetails" style="margin-top: 12px; font-size: 12px; color: var(--text-dim); line-height: 1.8;"></div>
     </div>
@@ -1190,6 +1201,39 @@ function calcVolumeDivergence(prices, volumes) {
     return 'none';
 }
 
+function calcCCI(prices, period) {
+    period = period || 20;
+    if (prices.length < period) return 0;
+    var slice = prices.slice(-period);
+    var sum = 0;
+    for (var i = 0; i < slice.length; i++) sum += slice[i];
+    var sma = sum / period;
+    var meanDev = 0;
+    for (var j = 0; j < slice.length; j++) meanDev += Math.abs(slice[j] - sma);
+    meanDev /= period;
+    if (meanDev === 0) return 0;
+    var tp = prices[prices.length - 1];
+    return (tp - sma) / (0.015 * meanDev);
+}
+
+function calcMFI(prices, volumes, period) {
+    period = period || 14;
+    if (prices.length < period + 1 || !volumes || volumes.length < period + 1) return 50;
+    var posFlow = 0, negFlow = 0;
+    for (var i = prices.length - period; i < prices.length; i++) {
+        var tp = prices[i];
+        var prevTp = prices[i - 1];
+        var mf = tp * (volumes[i] || 1);
+        if (tp > prevTp) posFlow += mf;
+        else if (tp < prevTp) negFlow += mf;
+    }
+    if (negFlow === 0) return 100;
+    var mfr = posFlow / negFlow;
+    return 100 - 100 / (1 + mfr);
+}
+
+
+
 
 
 
@@ -1352,6 +1396,26 @@ function computeSignalScore(code, quote) {
         if (stochRSI.k < 20) { score += 1; signals.push({ label: 'StochRSI超卖', type: 'buy' }); }
         else if (stochRSI.k > 80) { score -= 1; signals.push({ label: 'StochRSI超买', type: 'sell' }); }
     }
+
+    // CCI (Commodity Channel Index)
+    if (prices.length >= 20) {
+        const cci = calcCCI(prices, 20);
+        if (cci < -100) { score += 1.5; signals.push({ label: 'CCI超卖', type: 'buy' }); }
+        else if (cci < -50) { score += 0.5; }
+        else if (cci > 100) { score -= 1.5; signals.push({ label: 'CCI超买', type: 'sell' }); }
+        else if (cci > 50) { score -= 0.5; }
+    }
+
+    // MFI (Money Flow Index)
+    const _mfiVols = volumeHistory[code];
+    if (prices.length >= 15 && _mfiVols && _mfiVols.length >= 15) {
+        const mfi = calcMFI(prices, _mfiVols, 14);
+        if (mfi < 20) { score += 1.5; signals.push({ label: 'MFI超卖', type: 'buy' }); }
+        else if (mfi < 30) { score += 0.5; }
+        else if (mfi > 80) { score -= 1.5; signals.push({ label: 'MFI超买', type: 'sell' }); }
+        else if (mfi > 70) { score -= 0.5; }
+    }
+
 
     // Support/Resistance levels
     const sr = calcSupportResistance(prices);
@@ -1985,6 +2049,31 @@ function updateSignalDashboard(code) {
         ichiBar.style.width = ichiVal + '%';
         ichiBar.style.background = ichi.aboveCloud ? 'var(--safe)' : ichi.belowCloud ? 'var(--danger)' : 'var(--text-muted)';
     }
+    // CCI
+    if (prices.length >= 20) {
+        var cci = calcCCI(prices, 20);
+        var cciEl = document.getElementById('gCCI');
+        var cciBar = document.getElementById('gCCIbar');
+        var cciNorm = Math.max(0, Math.min(100, (cci + 200) / 4));
+        cciEl.textContent = cci.toFixed(0);
+        cciEl.className = 'gauge-value ' + (cci < -100 ? 'gauge-buy' : cci > 100 ? 'gauge-sell' : 'gauge-neutral');
+        cciBar.style.width = cciNorm + '%';
+        cciBar.style.background = cci < -100 ? 'var(--safe)' : cci > 100 ? 'var(--danger)' : 'var(--text-muted)';
+    }
+    
+    // MFI
+    var _mfiVols = volumeHistory[code];
+    if (prices.length >= 15 && _mfiVols && _mfiVols.length >= 15) {
+        var mfi = calcMFI(prices, _mfiVols, 14);
+        var mfiEl = document.getElementById('gMFI');
+        var mfiBar = document.getElementById('gMFIbar');
+        mfiEl.textContent = mfi.toFixed(0);
+        mfiEl.className = 'gauge-value ' + (mfi < 20 ? 'gauge-buy' : mfi > 80 ? 'gauge-sell' : 'gauge-neutral');
+        mfiBar.style.width = mfi + '%';
+        mfiBar.style.background = mfi < 20 ? 'var(--safe)' : mfi > 80 ? 'var(--danger)' : 'var(--text-muted)';
+    }
+
+
     
     // Signal details text
     var details = sig.signals.map(function(s) {
@@ -2010,6 +2099,49 @@ if (signalSel) {
 populateSignalStocks();
 
 
+
+function renderSectorAllocation() {
+    var container = document.getElementById('sectorAllocation');
+    if (!container) return;
+    var codes = Object.keys(state.positions);
+    if (codes.length === 0) {
+        container.innerHTML = '<span style="color:var(--text-muted);font-size:13px;">暂无持仓</span>';
+        return;
+    }
+    var sectorMap = {};
+    var totalVal = 0;
+    codes.forEach(function(code) {
+        var pos = state.positions[code];
+        var q = getStockPrice(code);
+        var price = q ? q.price : (pos.currentPrice || pos.avgCost);
+        var val = pos.quantity * 100 * price;
+        var stockInfo = STOCK_POOL.find(function(s) { return s.code === code; });
+        var sector = stockInfo ? stockInfo.sector : '\u672a\u77e5';
+        sectorMap[sector] = (sectorMap[sector] || 0) + val;
+        totalVal += val;
+    });
+    var colors = ['#e67e22', '#7c83db', '#d4789b', '#5cc4b0', '#d4a857', '#f85149', '#2ea043', '#9b59b6', '#3498db', '#e74c3c'];
+    var colorIdx = 0;
+    var html = Object.entries(sectorMap).sort(function(a, b) { return b[1] - a[1]; }).map(function(entry) {
+        var sector = entry[0], val = entry[1];
+        var pct = totalVal > 0 ? (val / totalVal * 100) : 0;
+        var color = colors[colorIdx % colors.length];
+        colorIdx++;
+        return '<div style="background:var(--bg);border-radius:var(--radius-sm);padding:10px 14px;box-shadow:var(--neu-inset-sm);flex:1;min-width:100px;text-align:center;">' +
+            '<div style="font-size:11px;color:var(--text-muted);margin-bottom:4px;">' + sector + '</div>' +
+            '<div style="font-size:16px;font-weight:700;color:' + color + ';">' + pct.toFixed(1) + '%</div>' +
+            '<div style="font-size:11px;color:var(--text-dim);">\u00a5' + (val/10000).toFixed(1) + '\u4e07</div>' +
+        '</div>';
+    }).join('');
+    var cashPct = state.cash / calculateTotalAssets() * 100;
+    html += '<div style="background:var(--bg);border-radius:var(--radius-sm);padding:10px 14px;box-shadow:var(--neu-inset-sm);flex:1;min-width:100px;text-align:center;">' +
+        '<div style="font-size:11px;color:var(--text-muted);margin-bottom:4px;">\u73b0\u91d1</div>' +
+        '<div style="font-size:16px;font-weight:700;color:var(--text-dim);">' + cashPct.toFixed(1) + '%</div>' +
+        '<div style="font-size:11px;color:var(--text-dim);">\u00a5' + (state.cash/10000).toFixed(1) + '\u4e07</div>' +
+    '</div>';
+    container.innerHTML = html;
+}
+
 // ============ 渲染 ============
 function renderAll() {
     renderMode();
@@ -2019,6 +2151,7 @@ function renderAll() {
     renderChart();
     renderStatus();
     renderPerformance();
+    renderSectorAllocation();
     // Auto-select first position in signal dashboard
     var sigSel = document.getElementById('signalStockSelect');
     if (sigSel && sigSel.value === '') {
@@ -2727,6 +2860,47 @@ document.getElementById('btBatchBtn').addEventListener('click', async function()
             }
             var trend = calcTrendFilter(sl);
             if (trend === 'down') sigScore *= 0.7; else if (trend === 'up') sigScore *= 1.15;
+
+            // ADX Trend Strength
+            if (sl.length >= 28) {
+                var btADX = calcADX(sl, 14);
+                if (btADX.adx > 25 && btADX.pdi > btADX.mdi) sigScore *= 1.1;
+                else if (btADX.adx > 25 && btADX.pdi < btADX.mdi) sigScore *= 0.85;
+            }
+
+            // Stochastic RSI
+            if (sl.length >= 30) {
+                var btSRSI = calcStochRSI(sl, 14, 14);
+                if (btSRSI.k < 20) sigScore += 1;
+                else if (btSRSI.k > 80) sigScore -= 1;
+            }
+
+            // Ichimoku Cloud
+            if (sl.length >= 52) {
+                var btIchi = calcIchimoku(sl);
+                if (btIchi && btIchi.aboveCloud && btIchi.cloudBullish) sigScore += 1;
+                else if (btIchi && btIchi.belowCloud && !btIchi.cloudBullish) sigScore -= 1;
+            }
+
+            // RSI Divergence
+            var btRSIDiv = calcRSIDivergence(sl, 14);
+            if (btRSIDiv.type === 'bullish') sigScore += 1.5 * btRSIDiv.strength;
+            else if (btRSIDiv.type === 'bearish') sigScore -= 1.5 * btRSIDiv.strength;
+
+            // CCI
+            if (sl.length >= 20) {
+                var btCCI = calcCCI(sl, 20);
+                if (btCCI < -100) sigScore += 1.5;
+                else if (btCCI > 100) sigScore -= 1.5;
+            }
+
+            // MFI (simplified - using price as volume proxy)
+            if (sl.length >= 15) {
+                var btMFI = calcMFI(sl, sl.map(function(){return 1;}), 14);
+                if (btMFI < 20) sigScore += 1.5;
+                else if (btMFI > 80) sigScore -= 1.5;
+            }
+
             var btATR = calcATR(sl, 14);
             var btATRPct = price > 0 ? btATR / price : 0;
             var btATRMult = modeKey === 'aggressive' ? 2.5 : modeKey === 'balanced' ? 2 : 1.5;
