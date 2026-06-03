@@ -498,17 +498,113 @@ const MODES = {
     conservative: { stopLoss: 0.02, takeProfit: 0.05, maxDailyTrades: 2, name: '保守' }
 };
 
-// 模拟股票池
+// ============ API 接口配置 ============
+const API_BASE = 'https://analytics.blog.xltz.qzz.io';
+const CORS_PROXY = 'https://api.codetabs.com/v1/proxy/?quest=';
+
+// ============ 股票池（含实时行情） ============
 const STOCK_POOL = [
-    { code: '601991', name: '大唐发电' },
-    { code: '600396', name: '华电辽能' },
-    { code: '603629', name: '利通电子' },
-    { code: '600519', name: '贵州茅台' },
-    { code: '000858', name: '五粮液' },
-    { code: '300750', name: '宁德时代' },
-    { code: '601318', name: '中国平安' },
-    { code: '600036', name: '招商银行' }
+    { code: '601991', name: '大唐发电', sector: '电力' },
+    { code: '600396', name: '华电辽能', sector: '电力' },
+    { code: '603629', name: '利通电子', sector: '电子' },
+    { code: '600519', name: '贵州茅台', sector: '白酒' },
+    { code: '000858', name: '五粮液', sector: '白酒' },
+    { code: '300750', name: '宁德时代', sector: '新能源' },
+    { code: '601318', name: '中国平安', sector: '保险' },
+    { code: '600036', name: '招商银行', sector: '银行' },
+    { code: '002594', name: '比亚迪', sector: '汽车' },
+    { code: '601688', name: '华泰证券', sector: '证券' },
+    { code: '000333', name: '美的集团', sector: '家电' },
+    { code: '002415', name: '海康威视', sector: '安防' }
 ];
+
+// ============ 实时行情获取 ============
+let realtimeQuotes = {};
+
+function sinaCode(code) {
+    if (/^(sh|sz|bj)\d{6}$/.test(code)) return code;
+    if (/^6[0-9]\d{4}$/.test(code)) return 'sh' + code;
+    if (/^(0[0-2]|3[0-2])\d{4}$/.test(code)) return 'sz' + code;
+    return 'sh' + code;
+}
+
+async function fetchRealtimeQuotes() {
+    try {
+        const codes = STOCK_POOL.map(s => sinaCode(s.code)).join(',');
+        const url = CORS_PROXY + encodeURIComponent('https://qt.gtimg.cn/q=' + codes);
+        const resp = await fetch(url, { cache: 'no-store' });
+        const buf = await resp.arrayBuffer();
+        const raw = new TextDecoder('gbk').decode(buf);
+        raw.split(';').forEach(line => {
+            const m = line.match(/v_(\w+)="([^"]+)"/);
+            if (m) {
+                const f = m[2].split('~');
+                realtimeQuotes[m[1]] = {
+                    name: f[1] || '',
+                    code: f[2] || '',
+                    price: parseFloat(f[3]) || 0,
+                    prevClose: parseFloat(f[4]) || 0,
+                    open: parseFloat(f[5]) || 0,
+                    high: parseFloat(f[33]) || 0,
+                    low: parseFloat(f[34]) || 0,
+                    changePct: parseFloat(f[32]) || 0,
+                    volume: parseFloat(f[6]) || 0,
+                    amount: parseFloat(f[37]) || 0
+                };
+            }
+        });
+    } catch (e) {
+        console.warn('行情获取失败:', e);
+    }
+}
+
+function getStockPrice(code) {
+    const sc = sinaCode(code);
+    const q = realtimeQuotes[sc];
+    if (q && q.price > 0) return q;
+    return null;
+}
+
+// ============ 技术指标计算 ============
+function calcMA(data, period) {
+    if (data.length < period) return null;
+    const slice = data.slice(-period);
+    return slice.reduce((s, v) => s + v, 0) / period;
+}
+
+function calcRSI(prices, period) {
+    period = period || 14;
+    if (prices.length < period + 1) return 50;
+    let gains = 0, losses = 0;
+    for (let i = prices.length - period; i < prices.length; i++) {
+        const change = prices[i] - prices[i - 1];
+        if (change > 0) gains += change;
+        else losses -= change;
+    }
+    const avgGain = gains / period;
+    const avgLoss = losses / period;
+    if (avgLoss === 0) return 100;
+    const rs = avgGain / avgLoss;
+    return 100 - 100 / (1 + rs);
+}
+
+function calcMACD(prices) {
+    if (prices.length < 26) return { dif: 0, dea: 0, macd: 0 };
+    const ema12 = calcEMA(prices, 12);
+    const ema26 = calcEMA(prices, 26);
+    const dif = ema12[ema12.length - 1] - ema26[ema26.length - 1];
+    // 简化 DEA 计算
+    return { dif, dea: dif * 0.8, macd: dif * 0.4 };
+}
+
+function calcEMA(data, period) {
+    const k = 2 / (period + 1);
+    const ema = [data[0]];
+    for (let i = 1; i < data.length; i++) {
+        ema.push(data[i] * k + ema[i - 1] * (1 - k));
+    }
+    return ema;
+}
 
 // ============ 状态 ============
 let state = {
@@ -680,7 +776,7 @@ function getRandomPrice(basePrice) {
     return basePrice * (1 + change);
 }
 
-function aiDecide() {
+async function aiDecide() {
     if (!state.isRunning) return;
 
     const mode = MODES[state.mode];
@@ -698,64 +794,98 @@ function aiDecide() {
         return;
     }
 
-    // 随机选择一个股票
-    const stock = STOCK_POOL[Math.floor(Math.random() * STOCK_POOL.length)];
-    const basePrice = 10 + Math.random() * 90; // 模拟价格 10-100
-    const currentPrice = getRandomPrice(basePrice);
+    // 获取实时行情
+    await fetchRealtimeQuotes();
 
     // 检查持仓止损止盈
-    Object.keys(state.positions).forEach(code => {
+    for (const code of Object.keys(state.positions)) {
         const pos = state.positions[code];
-        const posPrice = getRandomPrice(pos.avgCost);
-        const profitPct = (posPrice - pos.avgCost) / pos.avgCost;
+        const q = getStockPrice(code);
+        if (!q) continue;
+        
+        const profitPct = (q.price - pos.avgCost) / pos.avgCost;
 
         if (profitPct <= -mode.stopLoss) {
             addLog('止损触发: ' + pos.name + ' 亏损 ' + (profitPct * 100).toFixed(2) + '%', 'error');
-            executeSell(code, pos.quantity, posPrice);
+            executeSell(code, pos.quantity, q.price);
         } else if (profitPct >= mode.takeProfit) {
             addLog('止盈触发: ' + pos.name + ' 盈利 ' + (profitPct * 100).toFixed(2) + '%', 'success');
-            executeSell(code, pos.quantity, posPrice);
-        }
-    });
-
-    // AI 决策：买入或卖出
-    const rand = Math.random();
-    const hasPosition = state.positions[stock.code];
-
-    if (state.mode === 'aggressive') {
-        // 激进：频繁交易
-        if (rand < 0.6 && !hasPosition && state.cash > currentPrice * 100) {
-            const qty = Math.floor(state.cash * 0.3 / (currentPrice * 100));
-            if (qty > 0) {
-                addLog('AI 决策: 激进买入 ' + stock.name, 'action');
-                executeBuy(stock.code, stock.name, qty, currentPrice);
-            }
-        } else if (rand < 0.8 && hasPosition) {
-            addLog('AI 决策: 激进卖出 ' + stock.name, 'action');
-            executeSell(stock.code, hasPosition.quantity, currentPrice);
-        }
-    } else if (state.mode === 'balanced') {
-        // 稳健：波段操作
-        if (rand < 0.4 && !hasPosition && state.cash > currentPrice * 100) {
-            const qty = Math.floor(state.cash * 0.2 / (currentPrice * 100));
-            if (qty > 0) {
-                addLog('AI 决策: 稳健买入 ' + stock.name, 'action');
-                executeBuy(stock.code, stock.name, qty, currentPrice);
-            }
-        } else if (rand < 0.6 && hasPosition) {
-            addLog('AI 决策: 稳健卖出 ' + stock.name, 'action');
-            executeSell(stock.code, hasPosition.quantity, currentPrice);
-        }
-    } else {
-        // 保守：低频交易
-        if (rand < 0.2 && !hasPosition && state.cash > currentPrice * 100) {
-            const qty = Math.floor(state.cash * 0.1 / (currentPrice * 100));
-            if (qty > 0) {
-                addLog('AI 决策: 保守买入 ' + stock.name, 'action');
-                executeBuy(stock.code, stock.name, qty, currentPrice);
-            }
+            executeSell(code, pos.quantity, q.price);
         }
     }
+
+    // AI 选股决策
+    const candidates = STOCK_POOL.filter(s => {
+        const q = getStockPrice(s.code);
+        return q && q.price > 0 && !state.positions[s.code];
+    });
+
+    if (candidates.length === 0) return;
+
+    // 根据模式选择股票
+    let target = null;
+    let signal = '';
+
+    if (state.mode === 'aggressive') {
+        // 激进：选涨幅最大的
+        candidates.sort((a, b) => {
+            const qa = getStockPrice(a.code);
+            const qb = getStockPrice(b.code);
+            return (qb ? qb.changePct : 0) - (qa ? qa.changePct : 0);
+        });
+        target = candidates[0];
+        signal = '追涨策略：选中当日涨幅最大的 ' + target.name;
+    } else if (state.mode === 'balanced') {
+        // 稳健：选涨幅适中且有成交量的
+        candidates.sort((a, b) => {
+            const qa = getStockPrice(a.code);
+            const qb = getStockPrice(b.code);
+            const scoreA = (qa ? Math.abs(qa.changePct) * 0.5 + (qa.amount / 1e8) * 0.5 : 0);
+            const scoreB = (qb ? Math.abs(qb.changePct) * 0.5 + (qb.amount / 1e8) * 0.5 : 0);
+            return scoreB - scoreA;
+        });
+        target = candidates[0];
+        signal = '量价策略：选中活跃度最高的 ' + target.name;
+    } else {
+        // 保守：选跌幅较小的（等待反弹）
+        candidates.sort((a, b) => {
+            const qa = getStockPrice(a.code);
+            const qb = getStockPrice(b.code);
+            return (qa ? qa.changePct : 0) - (qb ? qb.changePct : 0);
+        });
+        target = candidates[Math.floor(Math.random() * Math.min(3, candidates.length))];
+        signal = '价值策略：选中回调标的 ' + target.name;
+    }
+
+    if (!target) return;
+
+    const q = getStockPrice(target.code);
+    if (!q || q.price <= 0) return;
+
+    const rand = Math.random();
+    const hasPosition = state.positions[target.code];
+
+    // 决策买入/卖出
+    let buyChance = state.mode === 'aggressive' ? 0.6 : state.mode === 'balanced' ? 0.4 : 0.2;
+    let sellChance = state.mode === 'aggressive' ? 0.3 : state.mode === 'balanced' ? 0.2 : 0.1;
+
+    if (rand < buyChance && !hasPosition && state.cash > q.price * 100) {
+        const maxShares = Math.floor(state.cash * (state.mode === 'aggressive' ? 0.3 : state.mode === 'balanced' ? 0.2 : 0.1) / (q.price * 100));
+        if (maxShares > 0) {
+            addLog('AI 决策: ' + signal, 'action');
+            addLog('买入价: ' + q.price.toFixed(2) + ' 涨跌幅: ' + q.changePct.toFixed(2) + '%', 'action');
+            executeBuy(target.code, target.name, maxShares, q.price);
+        }
+    } else if (rand < buyChance + sellChance && hasPosition) {
+        addLog('AI 决策: 卖出 ' + target.name + ' 当前价: ' + q.price.toFixed(2), 'action');
+        executeSell(target.code, hasPosition.quantity, q.price);
+    }
+
+    // 更新持仓现价
+    Object.keys(state.positions).forEach(code => {
+        const pq = getStockPrice(code);
+        if (pq) state.positions[code].currentPrice = pq.price;
+    });
 
     // 记录资产曲线
     const totalAssets = calculateTotalAssets();
@@ -774,10 +904,10 @@ function aiDecide() {
 
 function calculateTotalAssets() {
     let total = state.cash;
-    Object.values(state.positions).forEach(pos => {
-        // 模拟当前价格
-        const currentPrice = getRandomPrice(pos.avgCost);
-        total += pos.quantity * 100 * currentPrice;
+    Object.entries(state.positions).forEach(([code, pos]) => {
+        const q = getStockPrice(code);
+        const price = q ? q.price : (pos.currentPrice || pos.avgCost);
+        total += pos.quantity * 100 * price;
     });
     return total;
 }
@@ -787,7 +917,7 @@ function startAI() {
     state.isRunning = true;
     saveState();
     addLog('AI 交易引擎启动 [' + MODES[state.mode].name + '模式]', 'success');
-    aiTimer = setInterval(aiDecide, 5000); // 每5秒决策一次
+    aiTimer = setInterval(aiDecide, 15000); // 每15秒决策一次（真实行情）
     renderAll();
 }
 
@@ -862,7 +992,8 @@ function renderPositions() {
 
     body.innerHTML = codes.map(code => {
         const pos = state.positions[code];
-        const currentPrice = getRandomPrice(pos.avgCost);
+        const q = getStockPrice(code);
+        const currentPrice = q ? q.price : (pos.currentPrice || pos.avgCost);
         const profit = (currentPrice - pos.avgCost) * pos.quantity * 100;
         const profitPct = (currentPrice - pos.avgCost) / pos.avgCost * 100;
         const cls = profit >= 0 ? 'up' : 'down';
@@ -985,7 +1116,8 @@ function renderStatus() {
 function manualSell(code) {
     const pos = state.positions[code];
     if (!pos) return;
-    const price = getRandomPrice(pos.avgCost);
+    const q = getStockPrice(code);
+    const price = q ? q.price : pos.avgCost;
     executeSell(code, pos.quantity, price);
     renderAll();
 }
@@ -1010,12 +1142,20 @@ document.getElementById('resetBtn').addEventListener('click', resetAccount);
 
 // ============ 启动 ============
 loadState();
-renderAll();
+fetchRealtimeQuotes().then(() => {
+    renderAll();
+});
 
 // 恢复运行状态
 if (state.isRunning) {
     startAI();
 }
+
+// 定期刷新行情（30秒）
+setInterval(async () => {
+    await fetchRealtimeQuotes();
+    renderAll();
+}, 30000);
 </script>
 </body>
 </html>
