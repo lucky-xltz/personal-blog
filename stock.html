@@ -376,6 +376,10 @@
             transform: translateY(0);
             box-shadow: var(--neu-inset-sm);
         }
+        .watch-item.active {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 1px var(--accent), var(--neu-raised-sm);
+        }
         .watch-item .left .name { font-size: 14px; font-weight: 500; }
         .watch-item .left .code { font-size: 11px; color: var(--text-muted); margin-left: 6px; }
         .watch-item .right {
@@ -444,6 +448,151 @@
             .stock-header .price { font-size: 24px; }
             .stock-header h2 { font-size: 18px; }
         }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-20px);
+            background: var(--bg-raised);
+            color: var(--text);
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+            z-index: 10000;
+            opacity: 0;
+            transition: all 0.3s ease;
+            pointer-events: none;
+            max-width: 90vw;
+            text-align: center;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+        .toast.error {
+            border-left: 3px solid var(--danger);
+        }
+        .toast.success {
+            border-left: 3px solid var(--safe);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+            z-index: 10001;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+        .modal-overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .modal {
+            background: var(--bg-raised);
+            border-radius: 18px;
+            padding: 24px;
+            max-width: 360px;
+            width: 90vw;
+            box-shadow: 0 16px 48px rgba(0,0,0,0.5);
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+        .modal-overlay.show .modal {
+            transform: scale(1);
+        }
+        .modal-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--text);
+        }
+        .modal-body {
+            font-size: 14px;
+            color: var(--text-dim);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        .modal-input {
+            width: 100%;
+            background: var(--bg);
+            border: none;
+            border-radius: 10px;
+            padding: 12px 16px;
+            color: var(--text);
+            font-size: 14px;
+            outline: none;
+            box-shadow: var(--neu-inset-sm);
+            margin-bottom: 16px;
+        }
+        .modal-input:focus {
+            box-shadow: 0 0 0 2px var(--accent), var(--neu-inset-sm);
+        }
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+        .modal-btn {
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: none;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+        .modal-btn-primary {
+            background: var(--accent);
+            color: #fff;
+            box-shadow: var(--neu-raised-sm);
+        }
+        .modal-btn-primary:hover {
+            transform: translateY(-1px);
+        }
+        .modal-btn-primary:active {
+            transform: translateY(0);
+            box-shadow: var(--neu-inset-sm);
+        }
+        .modal-btn-secondary {
+            background: var(--bg);
+            color: var(--text-dim);
+            box-shadow: var(--neu-raised-sm);
+        }
+        .modal-btn-secondary:hover {
+            color: var(--text);
+        }
+        .stock-pick-list {
+            max-height: 200px;
+            overflow-y: auto;
+            margin-bottom: 16px;
+        }
+        .stock-pick-item {
+            padding: 10px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background var(--transition);
+            margin-bottom: 4px;
+        }
+        .stock-pick-item:hover {
+            background: var(--bg);
+        }
+        .stock-pick-item .code {
+            color: var(--text-muted);
+            font-size: 13px;
+        }
     </style>
 </head>
 <body>
@@ -505,7 +654,134 @@
     <p style="margin-top:8px"><a href="index.html">← 返回博客首页</a></p>
 </footer>
 
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+        <div class="modal-title" id="modalTitle"></div>
+        <div class="modal-body" id="modalBody"></div>
+        <div class="modal-actions" id="modalActions"></div>
+    </div>
+</div>
+
 <script>
+// ============ Toast & Modal 工具 ============
+function showToast(msg, type) {
+  type = type || 'info';
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast ' + type + ' show';
+  clearTimeout(el._timer);
+  el._timer = setTimeout(() => { el.className = 'toast'; }, 2500);
+}
+
+function showModal(opts) {
+  return new Promise(resolve => {
+    const overlay = document.getElementById('modalOverlay');
+    document.getElementById('modalTitle').textContent = opts.title || '';
+    const body = document.getElementById('modalBody');
+    const actions = document.getElementById('modalActions');
+    body.innerHTML = opts.bodyHtml || opts.body || '';
+    actions.innerHTML = '';
+    (opts.buttons || []).forEach(btn => {
+      const el = document.createElement('button');
+      el.className = 'modal-btn ' + (btn.primary ? 'modal-btn-primary' : 'modal-btn-secondary');
+      el.textContent = btn.text;
+      el.onclick = () => {
+        overlay.classList.remove('show');
+        resolve(btn.value !== undefined ? btn.value : btn.text);
+      };
+      actions.appendChild(el);
+    });
+    overlay.classList.add('show');
+    if (opts.input) {
+      const inp = body.querySelector('input');
+      if (inp) { setTimeout(() => inp.focus(), 100); }
+    }
+  });
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('show');
+}
+
+async function alertModal(msg, title) {
+  await showModal({
+    title: title || '提示',
+    body: msg,
+    buttons: [{ text: '确定', primary: true }]
+  });
+}
+
+async function confirmModal(msg, title) {
+  const result = await showModal({
+    title: title || '确认',
+    body: msg,
+    buttons: [
+      { text: '取消', value: false },
+      { text: '确定', value: true, primary: true }
+    ]
+  });
+  return result;
+}
+
+async function promptModal(msg, defaultVal, title) {
+  const result = await showModal({
+    title: title || '输入',
+    bodyHtml: '<div>' + msg + '</div><input class="modal-input" value="' + (defaultVal || '') + '" />',
+    input: true,
+    buttons: [
+      { text: '取消', value: null },
+      { text: '确定', value: '__input__', primary: true }
+    ]
+  });
+  if (result === '__input__') {
+    return document.querySelector('.modal-input').value;
+  }
+  return null;
+}
+
+async function pickStockModal(matches) {
+  return new Promise(resolve => {
+    const listHtml = '<div class="stock-pick-list">' +
+      matches.map(([c, n]) =>
+        '<div class="stock-pick-item" data-pick-code="' + c + '">' +
+          '<span>' + n + '</span>' +
+          '<span class="code">' + c + '</span>' +
+        '</div>'
+      ).join('') + '</div>';
+    
+    const overlay = document.getElementById('modalOverlay');
+    document.getElementById('modalTitle').textContent = '选择股票';
+    document.getElementById('modalBody').innerHTML = 
+      '<div style="margin-bottom:12px;color:var(--text-dim)">找到多只股票，请选择：</div>' + listHtml;
+    document.getElementById('modalActions').innerHTML = '';
+    
+    // 添加取消按钮
+    const cancelBtn = document.createElement('button');
+    cancelBtn.className = 'modal-btn modal-btn-secondary';
+    cancelBtn.textContent = '取消';
+    cancelBtn.onclick = () => {
+      overlay.classList.remove('show');
+      resolve(null);
+    };
+    document.getElementById('modalActions').appendChild(cancelBtn);
+    
+    // 点击股票项
+    overlay.querySelector('.stock-pick-list').addEventListener('click', function(e) {
+      const item = e.target.closest('[data-pick-code]');
+      if (item) {
+        overlay.classList.remove('show');
+        resolve(item.dataset.pickCode);
+      }
+    });
+    
+    overlay.classList.add('show');
+  });
+}
+
 // ============ 配置:交易所异动规则 ============
 function getThresholds(boardKey) {
   if (boardKey === "gem" || boardKey === "star") {
@@ -879,7 +1155,8 @@ function renderWatchlist() {
     const prev = q ? q.prevClose : (series[series.length - 2] || today);
     const pct = q && q.changePct != null ? q.changePct / 100 : (prev ? (today - prev) / prev : 0);
     const pctClass = pct >= 0 ? "up" : "down";
-    return '<div class="watch-item" data-code="' + s.code + '">' +
+    const isActive = s.code === activeCode;
+    return '<div class="watch-item' + (isActive ? ' active' : '') + '" data-code="' + s.code + '">' +
       '<div class="left">' +
         '<span class="name">' + (s.name || getName(s.code)) + '</span>' +
         '<span class="code">' + s.code + '</span>' +
@@ -929,10 +1206,41 @@ function renderDetail() {
   const dailyPct = q && q.changePct != null
     ? q.changePct / 100
     : (prev ? (today - prev) / prev : 0);
+  
+  // 计算指数当日涨跌幅
+  const idxSeries = item.idxSeries || [];
+  const idxToday = idxSeries[idxSeries.length - 1] || 0;
+  const idxPrev = idxSeries[idxSeries.length - 2] || idxToday;
+  const idxDailyPct = idxPrev ? (idxToday - idxPrev) / idxPrev : 0;
+  
+  // 当日偏离值 = 个股涨跌幅 - 指数涨跌幅
+  const dailyDeviation = dailyPct - idxDailyPct;
+  
   const board = detectBoard(item.code);
   const dailyLimit = DAILY_LIMIT[board.key] || 0.10;
 
   const pctClass = dailyPct >= 0 ? "up" : "down";
+  
+  // 涨跌停提醒
+  const limitPct = dailyLimit * 100;
+  const currentPct = dailyPct * 100;
+  const nearLimit = Math.abs(currentPct) >= (limitPct - 2);
+  const atLimit = Math.abs(currentPct) >= (limitPct - 0.1);
+  
+  // 生成涨跌停提醒HTML
+  let limitWarningHtml = '';
+  if (atLimit) {
+    limitWarningHtml = '<div class="warning-block danger">' +
+      '<div class="title">⚠ ' + (dailyPct >= 0 ? '涨停' : '跌停') + '</div>' +
+      '<div class="desc">当前涨幅 ' + fmtPct(dailyPct) + '，已' + (dailyPct >= 0 ? '涨停' : '跌停') + '</div>' +
+    '</div>';
+  } else if (nearLimit) {
+    const remain = limitPct - Math.abs(currentPct);
+    limitWarningHtml = '<div class="warning-block">' +
+      '<div class="title">⚠ 接近' + (dailyPct >= 0 ? '涨停' : '跌停') + '</div>' +
+      '<div class="desc">当前涨幅 ' + fmtPct(dailyPct) + '，距离' + (dailyPct >= 0 ? '涨停' : '跌停') + '还有 ' + remain.toFixed(2) + '%</div>' +
+    '</div>';
+  }
 
   const accums = getAccumRules(board.key).map(rule => {
     const pct = calcAccum(series, item.idxSeries, rule.days, rule.method) || 0;
@@ -940,27 +1248,51 @@ function renderDetail() {
     return { pct: pct, status: status, label: rule.label, thresholds: rule.thresholds };
   });
 
-  const maxRange = calcMaxRange(series);
+  // 计算区间最大偏离值（3-29天窗口中偏离值最大的）
+  function calcMaxRange(stockSeries, idxSeries) {
+    if (stockSeries.length < 2) return { pct: 0, days: 0 };
+    const maxWindow = Math.min(29, stockSeries.length - 1); // 最大29天
+    let max = -Infinity, maxDays = 0;
+    for (let window = 3; window <= maxWindow; window++) {
+      const today = stockSeries[stockSeries.length - 1];
+      const past = stockSeries[stockSeries.length - 1 - window];
+      if (!past) continue;
+      let stockPct = (today - past) / past;
+      let idxPct = 0;
+      if (idxSeries && idxSeries.length >= window + 1) {
+        const iToday = idxSeries[idxSeries.length - 1];
+        const iPast = idxSeries[idxSeries.length - 1 - window];
+        if (iPast) idxPct = (iToday - iPast) / iPast;
+      }
+      const dev = stockPct - idxPct;
+      if (dev > max) { max = dev; maxDays = window; }
+    }
+    return { pct: max || 0, days: maxDays };
+  }
 
-  const triggered30 = accums.find(a => a.label.indexOf("30") >= 0) && accums[2].status === "triggered";
-  const triggered10 = accums.find(a => a.label.indexOf("10") >= 0) && accums[1].status === "triggered";
+  const maxRange = calcMaxRange(series, item.idxSeries);
+
+  const triggered30 = accums[2] && accums[2].status === "triggered";
+  const triggered10 = accums[1] && accums[1].status === "triggered";
 
   let warningHtml = "";
   if (triggered30 || triggered10) {
-    const remain = (() => {
-      if (triggered30) return 2.00 - accums[2].pct;
-      return 1.00 - accums[1].pct;
-    })();
-    const nextNeed = (remain * 100).toFixed(2);
+    const a = triggered30 ? accums[2] : accums[1];
     warningHtml = '<div class="warning-block danger">' +
-      '<div class="title">⚠ 风险提示</div>' +
-      '<div class="desc">区间最大:' + maxRange.days + '日累计偏离值 ' + fmtPct(maxRange.pct) + '</div>' +
-      '<div class="desc" style="margin-top:4px">次日涨幅偏离值达到 +' + nextNeed + '% 将触发严重异动</div>' +
+      '<div class="title">⚠ 已触发异动</div>' +
+      '<div class="desc">' + a.label + '累计偏离值 ' + fmtPct(a.pct) + '</div>' +
     '</div>';
   } else if (maxRange.pct >= 0.5) {
+    // 区间最大偏离值接近阈值时显示预警
+    // 使用30日阈值计算次日触发涨幅
+    const threshold = maxRange.pct >= 0 ? 2.00 : -0.70;
+    const triggerPct = ((1 + threshold) / (1 + maxRange.pct) - 1) * 100;
+    const triggerPctStr = triggerPct.toFixed(2);
+    const dirText = maxRange.pct >= 0 ? '涨幅' : '跌幅';
     warningHtml = '<div class="warning-block">' +
       '<div class="title">⚠ 区间最大</div>' +
-      '<div class="desc">' + maxRange.days + '日累计偏离值 ' + fmtPct(maxRange.pct) + '，接近异动阈值</div>' +
+      '<div class="desc">' + maxRange.days + '日累计偏离值 ' + fmtPct(maxRange.pct) + '</div>' +
+      '<div class="desc" style="margin-top:4px">次日' + dirText + '偏离值达到+' + triggerPctStr + '%将触发严重异动</div>' +
     '</div>';
   }
 
@@ -1009,9 +1341,13 @@ function renderDetail() {
         '<span class="label">成交量</span>' +
         '<span class="value" style="font-size:13px">' + (q && q.volume ? (q.volume / 10000).toFixed(2) + ' 万手' : '—') + '</span>' +
       '</div>' +
-      '<div class="row' + (Math.abs(dailyPct) >= dailyLimit ? ' alert' : '') + '">' +
+      '<div class="row">' +
+        '<span class="label">指数涨跌幅</span>' +
+        '<span class="value" style="font-size:13px">' + fmtPct(idxDailyPct) + '</span>' +
+      '</div>' +
+      '<div class="row' + (Math.abs(dailyDeviation) >= dailyLimit ? ' alert' : '') + '">' +
         '<span class="label">当日偏离值</span>' +
-        '<span class="value">' + (dailyPct * 100).toFixed(2) + '%</span>' +
+        '<span class="value">' + (dailyDeviation * 100).toFixed(2) + '%</span>' +
       '</div>' +
     '</div>' +
 
@@ -1021,6 +1357,7 @@ function renderDetail() {
         const v = a.pct * 100;
         const cls = v >= 0 ? "up" : "down";
         const displayStatus = shouldWarnAbsolute(a.pct) && a.status === "safe" ? "near" : a.status;
+        // 每行只显示偏离值和状态，不显示次日触发提示
         return '<div class="row">' +
           '<div class="label-block">' +
             '<div class="main">' + a.label + '</div>' +
@@ -1034,6 +1371,7 @@ function renderDetail() {
       }).join("") +
     '</div>' +
 
+    limitWarningHtml +
     warningHtml;
 }
 
@@ -1052,7 +1390,7 @@ async function addStock() {
   const input = document.getElementById("stockInput");
   let q = input.value.trim();
   if (!q) {
-    alert("请输入股票代码或名称");
+    showToast("请输入股票代码或名称", "error");
     return;
   }
 
@@ -1065,8 +1403,8 @@ async function addStock() {
     if (typeof result === "string") {
       code = result;
     } else if (Array.isArray(result) && result.length > 1) {
-      const list = result.map(([c, n]) => c + " " + n).join("\n");
-      const pick = prompt("找到多只股票，请输入代码选择:\n" + list, result[0][0]);
+      // 弹出选择框
+      const pick = await pickStockModal(result);
       if (pick && /^\d{6}$/.test(pick)) {
         code = pick;
       } else {
@@ -1074,11 +1412,12 @@ async function addStock() {
       }
     } else {
       if (/^[a-zA-Z0-9]{1,6}$/.test(q)) {
-        if (confirm('未在名称表中找到 "' + q + '"，仍要尝试添加吗?')) {
+        const ok = await confirmModal('未在名称表中找到 "' + q + '"，仍要尝试添加吗?');
+        if (ok) {
           code = q.toUpperCase();
         }
       } else {
-        alert('找不到 "' + q + '"。\n提示：可以输入6位股票代码（如 601991），或在名称表中的股票名（如 宁德时代）。');
+        await alertModal('找不到 "' + q + '"。\n提示：可以输入6位股票代码（如 601991），或在名称表中的股票名（如 宁德时代）。', '未找到');
         return;
       }
     }
