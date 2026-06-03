@@ -1249,12 +1249,16 @@ function computeSignalScore(code, quote) {
     const signals = [];
     let score = 0;
 
-    // RSI
+    // RSI (multi-timeframe: 14-period + 6-period agreement)
     const rsi = calcRSI(prices, 14);
+    const rsi6 = prices.length >= 7 ? calcRSI(prices, 6) : 50;
     if (rsi < 25) { score += 2.5; signals.push({ label: 'RSI超卖', type: 'buy' }); }
     else if (rsi < 35) { score += 1.5; signals.push({ label: 'RSI偏低', type: 'buy' }); }
     else if (rsi > 75) { score -= 2.5; signals.push({ label: 'RSI超买', type: 'sell' }); }
     else if (rsi > 65) { score -= 1.5; signals.push({ label: 'RSI偏高', type: 'sell' }); }
+    // Multi-timeframe RSI confirmation: short+long agree amplifies signal
+    if (rsi < 35 && rsi6 < 30) { score += 0.8; signals.push({ label: 'RSI双周期确认↑', type: 'buy' }); }
+    else if (rsi > 65 && rsi6 > 70) { score -= 0.8; signals.push({ label: 'RSI双周期确认↓', type: 'sell' }); }
 
     // MACD
     if (prices.length >= 26) {
@@ -1307,15 +1311,20 @@ function computeSignalScore(code, quote) {
         else if (kdj.k < kdj.d && kdj.j < kdj.k) { score -= 0.5; signals.push({ label: 'KDJ死叉', type: 'sell' }); }
     }
 
-    // MACD histogram momentum (enhanced)
-    if (prices.length >= 26) {
+    // MACD histogram momentum (enhanced: detect acceleration)
+    if (prices.length >= 27) {
         const macdData = calcMACD(prices);
-        if (macdData.macd > 0 && macdData.dif > macdData.dea) {
-            score += 0.5;
-            if (macdData.macd > 0.5) signals.push({ label: 'MACD柱增长', type: 'buy' });
-        } else if (macdData.macd < 0 && macdData.dif < macdData.dea) {
-            score -= 0.5;
-            if (macdData.macd < -0.5) signals.push({ label: 'MACD柱缩减', type: 'sell' });
+        const prevPrices = prices.slice(0, -1);
+        const prevMacd = calcMACD(prevPrices);
+        const histDelta = macdData.macd - prevMacd.macd;
+        if (macdData.macd > 0 && histDelta > 0) {
+            score += 0.8; signals.push({ label: 'MACD柱加速↑', type: 'buy' });
+        } else if (macdData.macd > 0 && histDelta < 0) {
+            score += 0.2; // decelerating but still positive
+        } else if (macdData.macd < 0 && histDelta < 0) {
+            score -= 0.8; signals.push({ label: 'MACD柱加速↓', type: 'sell' });
+        } else if (macdData.macd < 0 && histDelta > 0) {
+            score -= 0.2; // decelerating negative
         }
     }
 
@@ -1702,8 +1711,10 @@ async function aiDecide() {
             continue;
         }
 
-        // 3) Trailing stop - sell if price dropped N% from peak
-        const trailingPct = pos.trailingStopPct || (mode.stopLoss * 0.7);
+        // 3) Trailing stop - dynamic: tighten when profitable, standard when not
+        let trailingPct = pos.trailingStopPct || (mode.stopLoss * 0.7);
+        if (profitPct > 0.10) trailingPct = Math.min(trailingPct, 0.015);      // 10%+ profit: very tight 1.5%
+        else if (profitPct > 0.05) trailingPct = Math.min(trailingPct, 0.02);   // 5%+ profit: tighten 2%
         const dropFromPeak = (pos.peakPrice - currentPrice) / pos.peakPrice;
         if (dropFromPeak >= trailingPct && profitPct > 0) {
             addLog('📉 移动止损: ' + pos.name + ' 从高点回撤 ' + (dropFromPeak * 100).toFixed(2) + '% (峰值' + pos.peakPrice.toFixed(2) + ')', 'error');
@@ -1720,6 +1731,26 @@ async function aiDecide() {
             executeSell(code, pos.quantity, currentPrice);
             continue;
         }
+    }
+
+    // ========== PORTFOLIO EXPOSURE CHECK ==========
+    let totalAssetsCheck = calculateTotalAssets();
+    const investedValue = totalAssetsCheck - state.cash;
+    const exposurePct = totalAssetsCheck > 0 ? investedValue / totalAssetsCheck : 0;
+    const maxExposure = 0.80; // Max 80% invested
+    if (exposurePct >= maxExposure) {
+        addLog('⚠️ 仓位已达 ' + (exposurePct * 100).toFixed(0) + '%，超过 ' + (maxExposure * 100) + '% 上限，暂停买入', 'action');
+        // Still update equity curve
+        Object.keys(state.positions).forEach(code => {
+            const pq = getStockPrice(code);
+            if (pq) state.positions[code].currentPrice = pq.price;
+        });
+        totalAssetsCheck = calculateTotalAssets();
+        state.equityHistory.push({ time: new Date().toISOString(), value: totalAssetsCheck });
+        if (state.equityHistory.length > 200) state.equityHistory = state.equityHistory.slice(-200);
+        saveState();
+        renderAll();
+        return;
     }
 
     // ========== BUY LOGIC: score all candidates and pick the best ==========
@@ -1742,12 +1773,20 @@ async function aiDecide() {
         addLog('📊 ' + s.stock.name + ' 评分:' + s.score + ' RSI:' + s.rsi + ' ' + s.signals.map(sig => sig.label).join('/'), 'score');
     });
 
-    // Only buy if best score exceeds mode threshold
-    const buyThreshold = state.mode === 'aggressive' ? 1.5 : state.mode === 'balanced' ? 2.5 : 3.5;
+    // Only buy if best score exceeds mode threshold (adaptive: lower in strong trends)
+    let buyThreshold = state.mode === 'aggressive' ? 1.5 : state.mode === 'balanced' ? 2.5 : 3.5;
     const best = scored[0];
 
+    // Adaptive threshold: check if market is trending (use best candidate's ADX)
+    if (best && best.signals) {
+        const hasStrongTrend = best.signals.some(s => s.label.includes('强趋势'));
+        const hasChoppy = best.signals.some(s => s.label.includes('震荡'));
+        if (hasStrongTrend) buyThreshold *= 0.85; // easier to buy in strong trends
+        if (hasChoppy) buyThreshold *= 1.2; // harder to buy in choppy markets
+    }
+
     if (best.score < buyThreshold) {
-        addLog('⏸ 无强信号（最高评分 ' + best.score + ' < 阈值 ' + buyThreshold + '），观望中', 'action');
+        addLog('⏸ 无强信号（最高评分 ' + best.score + ' < 阈值 ' + buyThreshold.toFixed(1) + '），观望中', 'action');
         return;
     }
 
@@ -2546,6 +2585,134 @@ document.getElementById('importBtn').addEventListener('click', function() {
     });
 })();
 
+
+// ============ Shared Signal Scoring for Backtest ============
+function calcBacktestSignalScore(prices, price, modeKey) {
+    if (prices.length < 15) return 0;
+    var score = 0;
+    var rsi = calcRSI(prices, 14);
+
+    // RSI
+    if (rsi < 25) score += 2.5;
+    else if (rsi < 35) score += 1.5;
+    else if (rsi > 75) score -= 2.5;
+    else if (rsi > 65) score -= 1.5;
+
+    // Multi-timeframe RSI
+    if (prices.length >= 7) {
+        var rsi6 = calcRSI(prices, 6);
+        if (rsi < 35 && rsi6 < 30) score += 0.8;
+        else if (rsi > 65 && rsi6 > 70) score -= 0.8;
+    }
+
+    // Bollinger Bands
+    var bb = calcBollingerBands(prices, 20, 2);
+    if (bb && price < bb.lower) score += 2;
+    else if (bb && price > bb.upper) score -= 2;
+
+    // Williams %R
+    var wr = calcWilliamsR(prices, 14);
+    if (wr < -80) score += 1.5;
+    else if (wr > -20) score -= 1.5;
+
+    // KDJ
+    var kdj = calcKDJ(prices, 9);
+    if (kdj.j < 20 && kdj.k < 30) score += 1.5;
+    else if (kdj.j > 80 && kdj.k > 70) score -= 1.5;
+    if (kdj.k > kdj.d && kdj.j > kdj.k) score += 0.5;
+    else if (kdj.k < kdj.d && kdj.j < kdj.k) score -= 0.5;
+
+    // MACD (with histogram acceleration)
+    if (prices.length >= 27) {
+        var macd = calcMACD(prices);
+        var prevMacd = calcMACD(prices.slice(0, -1));
+        var histDelta = macd.macd - prevMacd.macd;
+        if (macd.macd > 0 && histDelta > 0) score += 0.8;
+        else if (macd.macd > 0 && histDelta < 0) score += 0.2;
+        else if (macd.macd < 0 && histDelta < 0) score -= 0.8;
+        else if (macd.macd < 0 && histDelta > 0) score -= 0.2;
+        // Cross detection
+        if (prices.length >= 27) {
+            var ema12p = calcEMA(prices.slice(0, -1), 12);
+            var ema26p = calcEMA(prices.slice(0, -1), 26);
+            var difPrev = ema12p[ema12p.length - 1] - ema26p[ema26p.length - 1];
+            if (macd.dif > 0 && difPrev <= 0) score += 2;
+            else if (macd.dif < 0 && difPrev >= 0) score -= 2;
+        }
+    } else if (prices.length >= 26) {
+        var btMacd = calcMACD(prices);
+        if (btMacd.macd > 0 && btMacd.dif > btMacd.dea) score += 0.5;
+        else if (btMacd.macd < 0 && btMacd.dif < btMacd.dea) score -= 0.5;
+    }
+
+    // MA Cross (5/20)
+    if (prices.length >= 20) {
+        var ma5 = calcMA(prices, 5), ma20 = calcMA(prices, 20);
+        var ma5p = calcMA(prices.slice(0, -1), 5), ma20p = calcMA(prices.slice(0, -1), 20);
+        if (ma5 > ma20 && ma5p <= ma20p) score += 1.5;
+        else if (ma5 < ma20 && ma5p >= ma20p) score -= 1.5;
+    }
+
+    // Short-term momentum
+    if (prices.length >= 5) {
+        var mom5 = (prices[prices.length - 1] - prices[prices.length - 5]) / prices[prices.length - 5] * 100;
+        if (mom5 > 3) score -= 0.5;
+        else if (mom5 < -3) score += 0.5;
+    }
+
+    // ADX Trend Strength
+    if (prices.length >= 28) {
+        var adx = calcADX(prices, 14);
+        if (adx.adx > 25 && adx.pdi > adx.mdi) score *= 1.1;
+        else if (adx.adx > 25 && adx.pdi < adx.mdi) score *= 0.85;
+    }
+
+    // Stochastic RSI
+    if (prices.length >= 30) {
+        var srsi = calcStochRSI(prices, 14, 14);
+        if (srsi.k < 20) score += 1;
+        else if (srsi.k > 80) score -= 1;
+    }
+
+    // Ichimoku Cloud
+    if (prices.length >= 52) {
+        var ichi = calcIchimoku(prices);
+        if (ichi && ichi.aboveCloud && ichi.cloudBullish) score += 1;
+        else if (ichi && ichi.belowCloud && !ichi.cloudBullish) score -= 1;
+    }
+
+    // RSI Divergence
+    var rsiDiv = calcRSIDivergence(prices, 14);
+    if (rsiDiv.type === 'bullish') score += 1.5 * rsiDiv.strength;
+    else if (rsiDiv.type === 'bearish') score -= 1.5 * rsiDiv.strength;
+
+    // CCI
+    if (prices.length >= 20) {
+        var cci = calcCCI(prices, 20);
+        if (cci < -100) score += 1.5;
+        else if (cci > 100) score -= 1.5;
+    }
+
+    // MFI (simplified - using uniform volume)
+    if (prices.length >= 15) {
+        var mfi = calcMFI(prices, prices.map(function(){return 1;}), 14);
+        if (mfi < 20) score += 1.5;
+        else if (mfi > 80) score -= 1.5;
+    }
+
+    // Trend filter
+    var trend = calcTrendFilter(prices);
+    if (trend === 'down') score *= 0.7;
+    else if (trend === 'up') score *= 1.15;
+
+    // Adaptive threshold for strong trends / choppy
+    if (prices.length >= 28) {
+        var adxData = calcADX(prices, 14);
+        // no additional score change, threshold adapts externally
+    }
+
+    return score;
+}
 // ============ 策略回测 ============
 function populateBacktestStocks() {
     var sel = document.getElementById('btStock');
@@ -2604,97 +2771,7 @@ async function runBacktest() {
     for (var i = 20; i < testPrices.length; i++) {
         var sl = testPrices.slice(0, i + 1);
         var price = testPrices[i];
-        var rsi = calcRSI(sl, 14);
-        var bb = calcBollingerBands(sl, 20, 2);
-        var wr = calcWilliamsR(sl, 14);
-        var sigScore = 0;
-
-        // RSI
-        if (rsi < 25) sigScore += 2.5;
-        else if (rsi < 35) sigScore += 1.5;
-        else if (rsi > 75) sigScore -= 2.5;
-        else if (rsi > 65) sigScore -= 1.5;
-
-        // Bollinger Bands
-        if (bb && price < bb.lower) sigScore += 2;
-        else if (bb && price > bb.upper) sigScore -= 2;
-
-        // Williams %R
-        if (wr < -80) sigScore += 1.5;
-        else if (wr > -20) sigScore -= 1.5;
-
-        // KDJ
-        var kdj = calcKDJ(sl, 9);
-        if (kdj.j < 20 && kdj.k < 30) sigScore += 1.5;
-        else if (kdj.j > 80 && kdj.k > 70) sigScore -= 1.5;
-        if (kdj.k > kdj.d && kdj.j > kdj.k) sigScore += 0.5;
-        else if (kdj.k < kdj.d && kdj.j < kdj.k) sigScore -= 0.5;
-
-        // MACD
-        if (sl.length >= 26) {
-            var btMacd = calcMACD(sl);
-            if (btMacd.dif > 0 && sl.length >= 27) {
-                var ema12p = calcEMA(sl.slice(0,-1), 12);
-                var ema26p = calcEMA(sl.slice(0,-1), 26);
-                var difPrev = ema12p[ema12p.length-1] - ema26p[ema26p.length-1];
-                if (difPrev <= 0) sigScore += 2; // golden cross
-            } else if (btMacd.dif < 0 && sl.length >= 27) {
-                var ema12p2 = calcEMA(sl.slice(0,-1), 12);
-                var ema26p2 = calcEMA(sl.slice(0,-1), 26);
-                var difPrev2 = ema12p2[ema12p2.length-1] - ema26p2[ema26p2.length-1];
-                if (difPrev2 >= 0) sigScore -= 2; // death cross
-            }
-            if (btMacd.macd > 0 && btMacd.dif > btMacd.dea) sigScore += 0.5;
-            else if (btMacd.macd < 0 && btMacd.dif < btMacd.dea) sigScore -= 0.5;
-        }
-
-        // MA Cross (5/20)
-        if (sl.length >= 20) {
-            var btMA5 = calcMA(sl, 5);
-            var btMA20 = calcMA(sl, 20);
-            var btMA5P = calcMA(sl.slice(0,-1), 5);
-            var btMA20P = calcMA(sl.slice(0,-1), 20);
-            if (btMA5 > btMA20 && btMA5P <= btMA20P) sigScore += 1.5;
-            else if (btMA5 < btMA20 && btMA5P >= btMA20P) sigScore -= 1.5;
-        }
-
-        // Momentum (short-term)
-        if (sl.length >= 5) {
-            var mom5 = (sl[sl.length-1] - sl[sl.length-5]) / sl[sl.length-5] * 100;
-            if (mom5 > 3) sigScore -= 0.5;
-            else if (mom5 < -3) sigScore += 0.5;
-        }
-
-        // ADX Trend Strength
-        if (sl.length >= 28) {
-            var btADX = calcADX(sl, 14);
-            if (btADX.adx > 25 && btADX.pdi > btADX.mdi) sigScore *= 1.1;
-            else if (btADX.adx > 25 && btADX.pdi < btADX.mdi) sigScore *= 0.85;
-        }
-
-        // Stochastic RSI
-        if (sl.length >= 30) {
-            var btSRSI = calcStochRSI(sl, 14, 14);
-            if (btSRSI.k < 20) sigScore += 1;
-            else if (btSRSI.k > 80) sigScore -= 1;
-        }
-
-        // Ichimoku Cloud
-        if (sl.length >= 52) {
-            var btIchi = calcIchimoku(sl);
-            if (btIchi && btIchi.aboveCloud && btIchi.cloudBullish) sigScore += 1;
-            else if (btIchi && btIchi.belowCloud && !btIchi.cloudBullish) sigScore -= 1;
-        }
-
-        // RSI Divergence
-        var btRSIDiv = calcRSIDivergence(sl, 14);
-        if (btRSIDiv.type === 'bullish') sigScore += 1.5 * btRSIDiv.strength;
-        else if (btRSIDiv.type === 'bearish') sigScore -= 1.5 * btRSIDiv.strength;
-
-        // Trend filter
-        var trend = calcTrendFilter(sl);
-        if (trend === 'down') sigScore *= 0.7;
-        else if (trend === 'up') sigScore *= 1.15;
+        var sigScore = calcBacktestSignalScore(sl, price, modeKey);
 
         // ATR-based dynamic stop loss
         var btATR = calcATR(sl, 14);
@@ -2843,63 +2920,7 @@ document.getElementById('btBatchBtn').addEventListener('click', async function()
         for (var i = 20; i < testPrices.length; i++) {
             var sl = testPrices.slice(0, i + 1);
             var price = testPrices[i];
-            var rsi = calcRSI(sl, 14);
-            var bb = calcBollingerBands(sl, 20, 2);
-            var wr = calcWilliamsR(sl, 14);
-            var sigScore = 0;
-            if (rsi < 25) sigScore += 2.5; else if (rsi < 35) sigScore += 1.5;
-            else if (rsi > 75) sigScore -= 2.5; else if (rsi > 65) sigScore -= 1.5;
-            if (bb && price < bb.lower) sigScore += 2; else if (bb && price > bb.upper) sigScore -= 2;
-            if (wr < -80) sigScore += 1.5; else if (wr > -20) sigScore -= 1.5;
-            var kdj = calcKDJ(sl, 9);
-            if (kdj.j < 20 && kdj.k < 30) sigScore += 1.5; else if (kdj.j > 80 && kdj.k > 70) sigScore -= 1.5;
-            if (sl.length >= 26) {
-                var btM = calcMACD(sl);
-                if (btM.macd > 0 && btM.dif > btM.dea) sigScore += 0.5;
-                else if (btM.macd < 0 && btM.dif < btM.dea) sigScore -= 0.5;
-            }
-            var trend = calcTrendFilter(sl);
-            if (trend === 'down') sigScore *= 0.7; else if (trend === 'up') sigScore *= 1.15;
-
-            // ADX Trend Strength
-            if (sl.length >= 28) {
-                var btADX = calcADX(sl, 14);
-                if (btADX.adx > 25 && btADX.pdi > btADX.mdi) sigScore *= 1.1;
-                else if (btADX.adx > 25 && btADX.pdi < btADX.mdi) sigScore *= 0.85;
-            }
-
-            // Stochastic RSI
-            if (sl.length >= 30) {
-                var btSRSI = calcStochRSI(sl, 14, 14);
-                if (btSRSI.k < 20) sigScore += 1;
-                else if (btSRSI.k > 80) sigScore -= 1;
-            }
-
-            // Ichimoku Cloud
-            if (sl.length >= 52) {
-                var btIchi = calcIchimoku(sl);
-                if (btIchi && btIchi.aboveCloud && btIchi.cloudBullish) sigScore += 1;
-                else if (btIchi && btIchi.belowCloud && !btIchi.cloudBullish) sigScore -= 1;
-            }
-
-            // RSI Divergence
-            var btRSIDiv = calcRSIDivergence(sl, 14);
-            if (btRSIDiv.type === 'bullish') sigScore += 1.5 * btRSIDiv.strength;
-            else if (btRSIDiv.type === 'bearish') sigScore -= 1.5 * btRSIDiv.strength;
-
-            // CCI
-            if (sl.length >= 20) {
-                var btCCI = calcCCI(sl, 20);
-                if (btCCI < -100) sigScore += 1.5;
-                else if (btCCI > 100) sigScore -= 1.5;
-            }
-
-            // MFI (simplified - using price as volume proxy)
-            if (sl.length >= 15) {
-                var btMFI = calcMFI(sl, sl.map(function(){return 1;}), 14);
-                if (btMFI < 20) sigScore += 1.5;
-                else if (btMFI > 80) sigScore -= 1.5;
-            }
+            var sigScore = calcBacktestSignalScore(sl, price, modeKey);
 
             var btATR = calcATR(sl, 14);
             var btATRPct = price > 0 ? btATR / price : 0;
