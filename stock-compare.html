@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>多股对比 | 林小白的数字花园</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root{--bg:#1f1a16;--bg-raised:#2a231c;--shadow-dark:rgba(0,0,0,.55);--shadow-light:rgba(255,255,255,.04);--accent:#e67e22;--text:#e0e5ec;--text-dim:#a0a8b8;--text-muted:#7a8494;--border:rgba(255,255,255,.06);--up:#f85149;--down:#2ea043;--radius-md:18px;--radius-sm:12px;--neu-raised:6px 6px 14px var(--shadow-dark),-6px -6px 14px var(--shadow-light);--neu-raised-sm:3px 3px 8px var(--shadow-dark),-3px -3px 8px var(--shadow-light);--neu-inset-sm:inset 2px 2px 5px var(--shadow-dark),inset -2px -2px 5px var(--shadow-light);--transition:.3s cubic-bezier(.4,0,.2,1)}
+        *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+        html,body{font-family:'Inter',-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);font-size:14px;min-height:100vh}
+        body{padding-bottom:calc(20px + env(safe-area-inset-bottom))}
+        .nav{background:rgba(31,26,22,.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+        .nav-logo{font-family:'Outfit',sans-serif;font-size:1.2rem;font-weight:700;color:var(--accent);text-decoration:none}
+        .nav-links{display:flex;gap:24px;list-style:none}
+        .nav-links a{color:var(--text-dim);text-decoration:none;font-size:.9rem;transition:color var(--transition)}
+        .nav-links a:hover,.nav-links a.active{color:var(--accent)}
+        .container{max-width:640px;margin:0 auto;padding:24px 16px}
+        .page-title{text-align:center;margin-bottom:24px}
+        .page-title h1{font-family:'Outfit',sans-serif;font-size:1.8rem;font-weight:700;background:linear-gradient(135deg,var(--accent),#f39c12);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+        .page-title p{color:var(--text-dim);font-size:.85rem;margin-top:8px}
+        .up{color:var(--up)}.down{color:var(--down)}
+        .toolbar{display:flex;gap:10px;align-items:center;margin-bottom:16px}
+        .toolbar input{background:var(--bg-raised);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;color:var(--text);font-size:14px;outline:none;flex:1}
+        .toolbar input:focus{border-color:var(--accent)}
+        .btn{background:var(--accent);color:#fff;border:none;padding:10px 20px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;transition:all var(--transition);box-shadow:var(--neu-raised-sm)}
+        .btn:hover{transform:translateY(-1px)}.btn:active{transform:translateY(0)}
+        .btn-outline{background:transparent;border:1px solid var(--border);color:var(--text-dim)}
+        .tag-list{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+        .tag-item{display:flex;align-items:center;gap:6px;background:var(--bg-raised);border:1px solid var(--border);border-radius:8px;padding:6px 12px;font-size:13px}
+        .tag-item .remove{background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:16px;padding:0 2px}
+        .tag-item .remove:hover{color:var(--up)}
+        .chart-area{background:var(--bg-raised);border-radius:var(--radius-md);padding:20px;box-shadow:var(--neu-raised);border:1px solid var(--border);margin-bottom:16px;min-height:200px;position:relative}
+        .chart-area canvas{width:100%!important;height:200px!important}
+        .status-bar{text-align:center;font-size:11px;color:var(--text-muted);padding:8px 0}
+        .compare-table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px}
+        .compare-table th{background:var(--bg);color:var(--text-dim);font-weight:500;padding:10px 12px;text-align:left;white-space:nowrap;position:sticky;top:0}
+        .compare-table td{padding:10px 12px;border-bottom:1px solid var(--border);font-variant-numeric:tabular-nums;white-space:nowrap}
+        .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;background:var(--bg-raised);border-radius:var(--radius-md);box-shadow:var(--neu-raised);border:1px solid var(--border)}
+        .legend{display:flex;gap:16px;justify-content:center;margin:12px 0;flex-wrap:wrap}
+        .legend-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-dim)}
+        .legend-dot{width:10px;height:10px;border-radius:50%}
+        .footer{text-align:center;padding:32px 16px;color:var(--text-muted);font-size:.8rem}
+        .footer a{color:var(--accent);text-decoration:none}
+        .toast{position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-20px);background:var(--bg-raised);color:var(--text);padding:12px 24px;border-radius:12px;font-size:14px;box-shadow:0 8px 32px rgba(0,0,0,.4);z-index:10000;opacity:0;transition:all .3s;pointer-events:none;max-width:90vw;text-align:center}
+        .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+    </style>
+</head>
+<body>
+
+<nav class="nav">
+    <a href="index.html" class="nav-logo">林小白</a>
+    <ul class="nav-links">
+        <li><a href="index.html">首页</a></li>
+        <li><a href="stock-tools.html" class="active">股票工具</a></li>
+    </ul>
+</nav>
+
+<div class="container">
+    <div class="page-title">
+        <h1>多股对比</h1>
+        <p>对比多只股票的K线走势 · 涨跌幅叠加</p>
+    </div>
+
+    <div class="toolbar">
+        <input id="stockInput" placeholder="输入股票代码，如 601991" />
+        <button class="btn" id="addBtn">添加</button>
+        <button class="btn btn-outline" id="clearBtn">清空</button>
+    </div>
+
+    <div class="tag-list" id="tagList"></div>
+
+    <div class="chart-area">
+        <canvas id="chart"></canvas>
+    </div>
+    <div class="legend" id="legend"></div>
+
+    <div class="status-bar" id="statusBar">添加2只以上股票开始对比</div>
+
+    <div class="table-wrap" id="tableWrap" style="display:none;margin-top:16px">
+        <table class="compare-table">
+            <thead><tr><th>代码</th><th>名称</th><th>现价</th><th>今日涨幅</th><th>5日涨幅</th><th>20日涨幅</th></tr></thead>
+            <tbody id="compareBody"></tbody>
+        </table>
+    </div>
+</div>
+
+<footer class="footer">
+    <p>数据来源：腾讯财经 · 仅供学习参考</p>
+    <p style="margin-top:8px"><a href="stock-tools.html">← 返回工具箱</a></p>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const CORS_PROXY = "https://api.codetabs.com/v1/proxy/?quest=";
+const COLORS = ["#e67e22","#3498db","#2ecc71","#e74c3c","#9b59b6","#1abc9c","#f39c12","#e91e63"];
+let compareList = [];
+
+function showToast(msg, type) {
+  type = type || 'info';
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast ' + type + ' show';
+  clearTimeout(el._timer);
+  el._timer = setTimeout(() => { el.className = 'toast'; }, 2500);
+}
+
+function sinaCode(code) {
+  if (/^(sh|sz|bj)\d{6}$/.test(code)) return code;
+  if (/^(60|68|9)\d{5}$/.test(code)) return "sh" + code;
+  if (/^(00|30)\d{5}$/.test(code)) return "sz" + code;
+  return "sh" + code;
+}
+
+function fetchKLine(code, count) {
+  count = count || 60;
+  return new Promise((resolve, reject) => {
+    const sc = sinaCode(code);
+    const url = CORS_PROXY + encodeURIComponent("https://web.ifzq.gtimg.cn/appstock/app/kline/kline?param=" + sc + ",day,,," + count);
+    const timeout = setTimeout(() => reject(new Error("超时")), 15000);
+    fetch(url, { cache: "no-store" })
+      .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+      .then(data => {
+        clearTimeout(timeout);
+        const list = data && data.data && data.data[sc] && data.data[sc].day;
+        if (!list) return reject(new Error("无数据"));
+        resolve(list.map(r => ({ date: r[0], close: parseFloat(r[2]) })));
+      })
+      .catch(e => { clearTimeout(timeout); reject(e); });
+  });
+}
+
+function fetchQuotes(codes) {
+  return new Promise((resolve, reject) => {
+    if (!codes.length) return resolve({});
+    const list = codes.map(sinaCode).join(",");
+    const url = CORS_PROXY + encodeURIComponent("https://qt.gtimg.cn/q=" + list);
+    const timeout = setTimeout(() => reject(new Error("超时")), 15000);
+    fetch(url, { cache: "no-store" })
+      .then(r => { if (!r.ok) throw new Error(r.status); return r.arrayBuffer(); })
+      .then(buf => {
+        clearTimeout(timeout);
+        const raw = new TextDecoder('gbk').decode(buf);
+        const result = {};
+        raw.split(";").forEach(line => {
+          const m = line.match(/v_(\w+)="([^"]+)"/);
+          if (m) {
+            const f = m[2].split("~");
+            result[m[1]] = { name: f[1]||"", price: parseFloat(f[3])||0, changePct: parseFloat(f[32])||0 };
+          }
+        });
+        resolve(result);
+      })
+      .catch(e => { clearTimeout(timeout); reject(e); });
+  });
+}
+
+function fmtPct(p) { return (p>=0?"+":"") + (p*100).toFixed(2) + "%"; }
+
+function renderTags() {
+  document.getElementById("tagList").innerHTML = compareList.map((s, i) =>
+    '<div class="tag-item"><span class="legend-dot" style="background:' + COLORS[i % COLORS.length] + '"></span>' +
+    s.name + ' (' + s.code + ')<button class="remove" data-idx="' + i + '">&times;</button></div>'
+  ).join("");
+  document.querySelectorAll(".remove").forEach(btn => {
+    btn.onclick = () => { compareList.splice(parseInt(btn.dataset.idx), 1); renderTags(); updateChart(); };
+  });
+}
+
+function drawChart(canvas, datasets) {
+  const ctx = canvas.getContext("2d");
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.parentElement.getBoundingClientRect();
+  const w = rect.width - 40;
+  const h = 200;
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
+  canvas.style.width = w + "px";
+  canvas.style.height = h + "px";
+  ctx.scale(dpr, dpr);
+  ctx.clearRect(0, 0, w, h);
+
+  if (!datasets.length) return;
+
+  // 计算所有数据范围
+  let allVals = [];
+  datasets.forEach(d => allVals.push(...d.data));
+  const min = Math.min(...allVals), max = Math.max(...allVals);
+  const range = max - min || 1;
+
+  // 画网格
+  ctx.strokeStyle = "rgba(255,255,255,0.05)";
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = h - (i / 4) * h;
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+  }
+
+  // 画每条线
+  datasets.forEach((d, idx) => {
+    const color = COLORS[idx % COLORS.length];
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    d.data.forEach((v, i) => {
+      const x = (i / (d.data.length - 1)) * w;
+      const y = h - ((v - min) / range) * (h - 20) - 10;
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+  });
+
+  // 图例
+  document.getElementById("legend").innerHTML = datasets.map((d, i) =>
+    '<div class="legend-item"><span class="legend-dot" style="background:' + COLORS[i % COLORS.length] + '"></span>' + d.name + '</div>'
+  ).join("");
+}
+
+async function updateChart() {
+  if (compareList.length < 2) {
+    document.getElementById("statusBar").innerHTML = "请添加至少2只股票";
+    document.getElementById("tableWrap").style.display = "none";
+    drawChart(document.getElementById("chart"), []);
+    return;
+  }
+
+  document.getElementById("statusBar").innerHTML = "加载中...";
+  try {
+    const codes = compareList.map(s => s.code);
+    const [quotes, ...klineResults] = await Promise.all([
+      fetchQuotes(codes),
+      ...codes.map(c => fetchKLine(c, 60).catch(() => []))
+    ]);
+
+    // 归一化到第一天=100
+    const datasets = klineResults.map((klines, i) => {
+      const code = codes[i];
+      const sc = sinaCode(code);
+      const q = quotes[sc];
+      const name = q ? q.name : code;
+      const closes = klines.map(k => k.close);
+      const base = closes[0] || 1;
+      return { name, code, data: closes.map(v => (v / base) * 100), raw: closes };
+    });
+
+    drawChart(document.getElementById("chart"), datasets);
+
+    // 表格
+    const tbody = document.getElementById("compareBody");
+    document.getElementById("tableWrap").style.display = "block";
+    tbody.innerHTML = datasets.map((d, i) => {
+      const sc = sinaCode(d.code);
+      const q = quotes[sc];
+      const todayPct = q ? q.changePct / 100 : 0;
+      const pct5 = d.raw.length >= 5 ? (d.raw[d.raw.length-1] / d.raw[d.raw.length-5] - 1) : 0;
+      const pct20 = d.raw.length >= 20 ? (d.raw[d.raw.length-1] / d.raw[d.raw.length-20] - 1) : 0;
+      const cls = todayPct >= 0 ? "up" : "down";
+      return '<tr><td style="color:' + COLORS[i % COLORS.length] + '">' + d.code + '</td>' +
+        '<td style="font-weight:500">' + d.name + '</td>' +
+        '<td>' + (q ? q.price.toFixed(2) : "—") + '</td>' +
+        '<td class="' + cls + '">' + fmtPct(todayPct) + '</td>' +
+        '<td class="' + (pct5>=0?"up":"down") + '">' + fmtPct(pct5) + '</td>' +
+        '<td class="' + (pct20>=0?"up":"down") + '">' + fmtPct(pct20) + '</td></tr>';
+    }).join("");
+
+    document.getElementById("statusBar").innerHTML = "对比完成 · " + new Date().toLocaleTimeString("zh-CN");
+  } catch(e) {
+    document.getElementById("statusBar").innerHTML = "加载失败: " + e.message;
+  }
+}
+
+document.getElementById("addBtn").onclick = () => {
+  const input = document.getElementById("stockInput");
+  const code = input.value.trim();
+  if (!/^\d{6}$/.test(code)) { showToast("请输入6位代码", "error"); return; }
+  if (compareList.find(s => s.code === code)) { showToast("已添加", "error"); return; }
+  if (compareList.length >= 8) { showToast("最多对比8只", "error"); return; }
+  compareList.push({ code, name: code });
+  input.value = "";
+  renderTags();
+  updateChart();
+};
+document.getElementById("stockInput").onkeydown = e => { if (e.key === "Enter") document.getElementById("addBtn").click(); };
+document.getElementById("clearBtn").onclick = () => { compareList = []; renderTags(); updateChart(); };
+
+// 默认添加几只
+compareList = [{code:"601991",name:"大唐发电"},{code:"600396",name:"华电辽能"},{code:"603629",name:"利通电子"}];
+renderTags();
+updateChart();
+</script>
+</body>
+</html>

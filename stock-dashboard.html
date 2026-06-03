@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>实时看板 | 林小白的数字花园</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #1f1a16; --bg-raised: #2a231c;
+            --shadow-dark: rgba(0,0,0,0.55); --shadow-light: rgba(255,255,255,0.04);
+            --accent: #e67e22; --text: #e0e5ec; --text-dim: #a0a8b8; --text-muted: #7a8494;
+            --border: rgba(255,255,255,0.06); --up: #f85149; --down: #2ea043;
+            --radius-md: 18px; --radius-sm: 12px;
+            --neu-raised: 6px 6px 14px var(--shadow-dark), -6px -6px 14px var(--shadow-light);
+            --neu-raised-sm: 3px 3px 8px var(--shadow-dark), -3px -3px 8px var(--shadow-light);
+            --neu-inset-sm: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+        html,body { font-family:'Inter',-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); font-size:14px; min-height:100vh; }
+        body { padding-bottom:calc(20px + env(safe-area-inset-bottom)); }
+        .nav { background:rgba(31,26,22,0.95); backdrop-filter:blur(20px); border-bottom:1px solid var(--border); padding:16px 24px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:100; }
+        .nav-logo { font-family:'Outfit',sans-serif; font-size:1.2rem; font-weight:700; color:var(--accent); text-decoration:none; }
+        .nav-links { display:flex; gap:24px; list-style:none; }
+        .nav-links a { color:var(--text-dim); text-decoration:none; font-size:0.9rem; transition:color var(--transition); }
+        .nav-links a:hover,.nav-links a.active { color:var(--accent); }
+        .container-wide { max-width:960px; margin:0 auto; padding:24px 16px; }
+        .page-title { text-align:center; margin-bottom:24px; }
+        .page-title h1 { font-family:'Outfit',sans-serif; font-size:1.8rem; font-weight:700; background:linear-gradient(135deg,var(--accent),#f39c12); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+        .page-title p { color:var(--text-dim); font-size:0.85rem; margin-top:8px; }
+        .up { color:var(--up); } .down { color:var(--down); }
+        .toolbar { display:flex; gap:10px; align-items:center; margin-bottom:16px; flex-wrap:wrap; }
+        .toolbar input { background:var(--bg-raised); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 14px; color:var(--text); font-size:14px; outline:none; flex:1; min-width:120px; }
+        .toolbar input:focus { border-color:var(--accent); }
+        .btn { background:var(--accent); color:#fff; border:none; padding:10px 20px; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; transition:all var(--transition); box-shadow:var(--neu-raised-sm); }
+        .btn:hover { transform:translateY(-1px); } .btn:active { transform:translateY(0); }
+        .btn-sm { padding:6px 14px; font-size:12px; border-radius:8px; }
+        .btn-outline { background:transparent; border:1px solid var(--border); color:var(--text-dim); }
+        .dashboard-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:16px; }
+        .stock-card { background:var(--bg-raised); border-radius:var(--radius-md); padding:20px; box-shadow:var(--neu-raised); border:1px solid var(--border); transition:all var(--transition); cursor:pointer; }
+        .stock-card:hover { transform:translateY(-2px); border-color:var(--accent); }
+        .stock-card .header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px; }
+        .stock-card .name { font-size:16px; font-weight:600; }
+        .stock-card .code { font-size:12px; color:var(--text-muted); margin-top:2px; }
+        .stock-card .price { font-size:24px; font-weight:700; font-variant-numeric:tabular-nums; }
+        .stock-card .pct { font-size:14px; font-weight:500; margin-top:4px; font-variant-numeric:tabular-nums; }
+        .stock-card .details { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:16px; padding-top:16px; border-top:1px solid var(--border); }
+        .stock-card .detail-item { }
+        .stock-card .detail-label { font-size:11px; color:var(--text-muted); }
+        .stock-card .detail-value { font-size:13px; font-variant-numeric:tabular-nums; margin-top:2px; }
+        .stock-card .sparkline { margin-top:12px; }
+        .del-btn { background:none; border:none; color:var(--text-muted); font-size:18px; cursor:pointer; padding:4px; transition:color var(--transition); }
+        .del-btn:hover { color:var(--up); }
+        .status-bar { text-align:center; font-size:11px; color:var(--text-muted); padding:8px 0; }
+        .status-bar.loading { color:var(--accent); }
+        .pulse { display:inline-block; width:6px; height:6px; border-radius:50%; background:currentColor; margin-right:6px; vertical-align:middle; animation:pulse 1.5s infinite; }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+        .empty-tip { text-align:center; padding:48px 16px; color:var(--text-muted); }
+        .footer { text-align:center; padding:32px 16px; color:var(--text-muted); font-size:0.8rem; }
+        .footer a { color:var(--accent); text-decoration:none; }
+        .toast { position:fixed; top:80px; left:50%; transform:translateX(-50%) translateY(-20px); background:var(--bg-raised); color:var(--text); padding:12px 24px; border-radius:12px; font-size:14px; box-shadow:0 8px 32px rgba(0,0,0,0.4); z-index:10000; opacity:0; transition:all 0.3s ease; pointer-events:none; max-width:90vw; text-align:center; }
+        .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+        .toast.error { border-left:3px solid var(--up); } .toast.success { border-left:3px solid var(--down); }
+        .refresh-bar { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+        .refresh-btn { background:var(--bg-raised); border:none; color:var(--text-dim); width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all var(--transition); box-shadow:var(--neu-raised-sm); }
+        .refresh-btn:hover { color:var(--accent); } .refresh-btn.spinning svg { animation:spin 1s linear infinite; }
+        @keyframes spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+        @media(max-width:480px) { .dashboard-grid { grid-template-columns:1fr; } }
+    </style>
+</head>
+<body>
+
+<nav class="nav">
+    <a href="index.html" class="nav-logo">林小白</a>
+    <ul class="nav-links">
+        <li><a href="index.html">首页</a></li>
+        <li><a href="stock-tools.html" class="active">股票工具</a></li>
+    </ul>
+</nav>
+
+<div class="container-wide">
+    <div class="page-title">
+        <h1>实时看板</h1>
+        <p>多股票实时行情监控 · 自动刷新 · 一屏掌握</p>
+    </div>
+
+    <div class="toolbar">
+        <input id="stockInput" placeholder="输入股票代码，如 601991" />
+        <button class="btn" id="addBtn">添加</button>
+        <button class="btn btn-outline" id="clearBtn">清空</button>
+    </div>
+
+    <div class="refresh-bar">
+        <div class="status-bar" id="statusBar"><span class="pulse"></span>加载中...</div>
+        <button class="refresh-btn" id="refreshBtn" title="刷新">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+        </button>
+    </div>
+
+    <div class="dashboard-grid" id="dashboard"></div>
+</div>
+
+<footer class="footer">
+    <p>数据来源：腾讯财经 · 仅供学习参考</p>
+    <p style="margin-top:8px"><a href="stock-tools.html">← 返回工具箱</a></p>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const CORS_PROXY = "https://api.codetabs.com/v1/proxy/?quest=";
+let stocks = [];
+let autoTimer = null;
+
+function showToast(msg, type) {
+  type = type || 'info';
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast ' + type + ' show';
+  clearTimeout(el._timer);
+  el._timer = setTimeout(() => { el.className = 'toast'; }, 2500);
+}
+
+function sinaCode(code) {
+  if (/^(sh|sz|bj)\d{6}$/.test(code)) return code;
+  if (/^(60|68|9)\d{5}$/.test(code)) return "sh" + code;
+  if (/^(00|30)\d{5}$/.test(code)) return "sz" + code;
+  if (/^(4|8)\d{5}$/.test(code)) return "bj" + code;
+  return "sh" + code;
+}
+
+function fetchQuotes(codes) {
+  return new Promise((resolve, reject) => {
+    if (!codes.length) return resolve({});
+    const list = codes.map(sinaCode).join(",");
+    const url = CORS_PROXY + encodeURIComponent("https://qt.gtimg.cn/q=" + list);
+    const timeout = setTimeout(() => reject(new Error("超时")), 15000);
+    fetch(url, { cache: "no-store" })
+      .then(r => { if (!r.ok) throw new Error(r.status); return r.arrayBuffer(); })
+      .then(buf => {
+        clearTimeout(timeout);
+        const raw = new TextDecoder('gbk').decode(buf);
+        const result = {};
+        raw.split(";").forEach(line => {
+          const m = line.match(/v_(\w+)="([^"]+)"/);
+          if (m) {
+            const f = m[2].split("~");
+            result[m[1]] = {
+              name: f[1]||"", code: f[2]||"", price: parseFloat(f[3])||0,
+              prevClose: parseFloat(f[4])||0, open: parseFloat(f[5])||0,
+              volume: parseFloat(f[6])||0, amount: parseFloat(f[37])||0,
+              high: parseFloat(f[33])||0, low: parseFloat(f[34])||0,
+              changePct: parseFloat(f[32])||0, change: parseFloat(f[31])||0,
+            };
+          }
+        });
+        resolve(result);
+      })
+      .catch(e => { clearTimeout(timeout); reject(e); });
+  });
+}
+
+function fmtPct(p) { return (p>=0?"+":"") + (p*100).toFixed(2) + "%"; }
+function fmtVol(v) { if(!v) return "—"; return v>=1e8 ? (v/1e8).toFixed(2)+"亿" : v>=1e4 ? (v/1e4).toFixed(0)+"万" : v.toFixed(0); }
+
+function loadStocks() {
+  try { const raw = localStorage.getItem("dashboard_stocks"); if (raw) stocks = JSON.parse(raw); } catch(e) {}
+  if (!stocks.length) stocks = ["601991","600396","603629"];
+}
+function saveStocks() { localStorage.setItem("dashboard_stocks", JSON.stringify(stocks)); }
+
+function renderDashboard(data) {
+  const grid = document.getElementById("dashboard");
+  if (!stocks.length) { grid.innerHTML = '<div class="empty-tip">添加股票代码开始监控</div>'; return; }
+  grid.innerHTML = stocks.map(code => {
+    const sc = sinaCode(code);
+    const q = data ? data[sc] : null;
+    const name = q ? q.name : code;
+    const price = q ? q.price : 0;
+    const pct = q ? q.changePct/100 : 0;
+    const cls = pct >= 0 ? "up" : "down";
+    const amp = q && q.prevClose ? ((q.high-q.low)/q.prevClose*100).toFixed(2) : "—";
+    return '<div class="stock-card" data-code="'+code+'">' +
+      '<div class="header"><div><div class="name">'+name+'</div><div class="code">'+code+'</div></div>' +
+      '<button class="del-btn" data-del="'+code+'">&times;</button></div>' +
+      '<div class="price '+cls+'">'+price.toFixed(2)+'</div>' +
+      '<div class="pct '+cls+'">'+fmtPct(pct)+'</div>' +
+      '<div class="details">' +
+        '<div class="detail-item"><div class="detail-label">涨跌额</div><div class="detail-value '+cls+'">'+(q?(q.change>=0?"+":"")+q.change.toFixed(2):"—")+'</div></div>' +
+        '<div class="detail-item"><div class="detail-label">振幅</div><div class="detail-value">'+amp+'%</div></div>' +
+        '<div class="detail-item"><div class="detail-label">成交量</div><div class="detail-value">'+fmtVol(q?q.volume:0)+'</div></div>' +
+        '<div class="detail-item"><div class="detail-label">成交额</div><div class="detail-value">'+fmtVol(q?q.amount:0)+'</div></div>' +
+      '</div></div>';
+  }).join("");
+  grid.querySelectorAll("[data-del]").forEach(btn => {
+    btn.onclick = e => { e.stopPropagation(); stocks = stocks.filter(c => c !== btn.dataset.del); saveStocks(); refreshData(); };
+  });
+}
+
+async function refreshData() {
+  const bar = document.getElementById("statusBar");
+  bar.className = "status-bar loading";
+  bar.innerHTML = '<span class="pulse"></span>刷新中...';
+  try {
+    const data = await fetchQuotes(stocks);
+    renderDashboard(data);
+    bar.className = "status-bar";
+    bar.innerHTML = '<span class="pulse"></span>最后更新: ' + new Date().toLocaleTimeString("zh-CN");
+  } catch(e) {
+    bar.className = "status-bar";
+    bar.innerHTML = '刷新失败: ' + e.message;
+  }
+}
+
+document.getElementById("addBtn").onclick = () => {
+  const input = document.getElementById("stockInput");
+  const code = input.value.trim();
+  if (!/^\d{6}$/.test(code)) { showToast("请输入6位股票代码", "error"); return; }
+  if (stocks.includes(code)) { showToast("已在监控中", "error"); return; }
+  stocks.push(code);
+  saveStocks();
+  input.value = "";
+  refreshData();
+  showToast("已添加 " + code, "success");
+};
+
+document.getElementById("stockInput").onkeydown = e => { if (e.key === "Enter") document.getElementById("addBtn").click(); };
+document.getElementById("clearBtn").onclick = () => { stocks = []; saveStocks(); renderDashboard(null); showToast("已清空"); };
+document.getElementById("refreshBtn").onclick = () => { const btn = document.getElementById("refreshBtn"); btn.classList.add("spinning"); refreshData().finally(() => btn.classList.remove("spinning")); };
+
+loadStocks();
+refreshData();
+autoTimer = setInterval(refreshData, 30000);
+</script>
+</body>
+</html>

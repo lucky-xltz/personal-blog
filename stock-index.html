@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>大盘指数 | 林小白的数字花园</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root{--bg:#1f1a16;--bg-raised:#2a231c;--shadow-dark:rgba(0,0,0,.55);--shadow-light:rgba(255,255,255,.04);--accent:#e67e22;--text:#e0e5ec;--text-dim:#a0a8b8;--text-muted:#7a8494;--border:rgba(255,255,255,.06);--up:#f85149;--down:#2ea043;--radius-md:18px;--radius-sm:12px;--neu-raised:6px 6px 14px var(--shadow-dark),-6px -6px 14px var(--shadow-light);--neu-raised-sm:3px 3px 8px var(--shadow-dark),-3px -3px 8px var(--shadow-light);--neu-inset-sm:inset 2px 2px 5px var(--shadow-dark),inset -2px -2px 5px var(--shadow-light);--transition:.3s cubic-bezier(.4,0,.2,1)}
+        *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+        html,body{font-family:'Inter',-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);font-size:14px;min-height:100vh}
+        body{padding-bottom:calc(20px + env(safe-area-inset-bottom))}
+        .nav{background:rgba(31,26,22,.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+        .nav-logo{font-family:'Outfit',sans-serif;font-size:1.2rem;font-weight:700;color:var(--accent);text-decoration:none}
+        .nav-links{display:flex;gap:24px;list-style:none}
+        .nav-links a{color:var(--text-dim);text-decoration:none;font-size:.9rem;transition:color var(--transition)}
+        .nav-links a:hover,.nav-links a.active{color:var(--accent)}
+        .container{max-width:640px;margin:0 auto;padding:24px 16px}
+        .page-title{text-align:center;margin-bottom:24px}
+        .page-title h1{font-family:'Outfit',sans-serif;font-size:1.8rem;font-weight:700;background:linear-gradient(135deg,var(--accent),#f39c12);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+        .page-title p{color:var(--text-dim);font-size:.85rem;margin-top:8px}
+        .up{color:var(--up)}.down{color:var(--down)}
+        .index-card{background:var(--bg-raised);border-radius:var(--radius-md);padding:24px;margin-bottom:16px;box-shadow:var(--neu-raised);border:1px solid var(--border);transition:all var(--transition)}
+        .index-card:hover{transform:translateY(-2px);border-color:var(--accent)}
+        .index-card .header{display:flex;justify-content:space-between;align-items:flex-start}
+        .index-card .name{font-size:18px;font-weight:600}
+        .index-card .code{font-size:12px;color:var(--text-muted);margin-top:4px}
+        .index-card .price-section{text-align:right}
+        .index-card .price{font-size:28px;font-weight:700;font-variant-numeric:tabular-nums}
+        .index-card .pct{font-size:16px;font-weight:500;margin-top:4px;font-variant-numeric:tabular-nums}
+        .index-card .change{font-size:13px;margin-top:2px;font-variant-numeric:tabular-nums}
+        .index-card .details{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:20px;padding-top:20px;border-top:1px solid var(--border)}
+        .index-card .detail-label{font-size:11px;color:var(--text-muted)}
+        .index-card .detail-value{font-size:14px;font-variant-numeric:tabular-nums;margin-top:4px}
+        .index-card .sparkline-wrap{margin-top:16px}
+        .status-bar{text-align:center;font-size:11px;color:var(--text-muted);padding:8px 0}
+        .status-bar.loading{color:var(--accent)}
+        .pulse{display:inline-block;width:6px;height:6px;border-radius:50%;background:currentColor;margin-right:6px;vertical-align:middle;animation:pulse 1.5s infinite}
+        @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+        .toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+        .refresh-btn{background:var(--bg-raised);border:none;color:var(--text-dim);width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all var(--transition);box-shadow:var(--neu-raised-sm)}
+        .refresh-btn:hover{color:var(--accent)}.refresh-btn.spinning svg{animation:spin 1s linear infinite}
+        @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+        .footer{text-align:center;padding:32px 16px;color:var(--text-muted);font-size:.8rem}
+        .footer a{color:var(--accent);text-decoration:none}
+        .toast{position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-20px);background:var(--bg-raised);color:var(--text);padding:12px 24px;border-radius:12px;font-size:14px;box-shadow:0 8px 32px rgba(0,0,0,.4);z-index:10000;opacity:0;transition:all .3s;pointer-events:none;max-width:90vw;text-align:center}
+        .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+    </style>
+</head>
+<body>
+
+<nav class="nav">
+    <a href="index.html" class="nav-logo">林小白</a>
+    <ul class="nav-links">
+        <li><a href="index.html">首页</a></li>
+        <li><a href="stock-tools.html" class="active">股票工具</a></li>
+    </ul>
+</nav>
+
+<div class="container">
+    <div class="page-title">
+        <h1>大盘指数</h1>
+        <p>主要指数实时行情 · 涨跌概览 · 市场温度</p>
+    </div>
+
+    <div class="toolbar">
+        <div class="status-bar" id="statusBar"><span class="pulse"></span>加载中...</div>
+        <button class="refresh-btn" id="refreshBtn" title="刷新">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+        </button>
+    </div>
+
+    <div id="indexList"></div>
+</div>
+
+<footer class="footer">
+    <p>数据来源：腾讯财经 · 仅供学习参考</p>
+    <p style="margin-top:8px"><a href="stock-tools.html">← 返回工具箱</a></p>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const CORS_PROXY = "https://api.codetabs.com/v1/proxy/?quest=";
+const INDICES = [
+    { code: "sh000001", name: "上证指数", desc: "沪市整体表现" },
+    { code: "sz399001", name: "深证成指", desc: "深市整体表现" },
+    { code: "sz399006", name: "创业板指", desc: "创业板300只股票" },
+    { code: "sh000688", name: "科创50", desc: "科创板50只股票" },
+    { code: "sh000300", name: "沪深300", desc: "沪深两市龙头股" },
+    { code: "sh000016", name: "上证50", desc: "沪市50只大盘股" },
+    { code: "sz399005", name: "中小100", desc: "深市中小盘股" },
+    { code: "bj899050", name: "北证50", desc: "北交所50只股票" },
+];
+
+function showToast(msg, type) {
+  type = type || 'info';
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast ' + type + ' show';
+  clearTimeout(el._timer);
+  el._timer = setTimeout(() => { el.className = 'toast'; }, 2500);
+}
+
+function fetchQuotes(codes) {
+  return new Promise((resolve, reject) => {
+    const list = codes.join(",");
+    const url = CORS_PROXY + encodeURIComponent("https://qt.gtimg.cn/q=" + list);
+    const timeout = setTimeout(() => reject(new Error("超时")), 15000);
+    fetch(url, { cache: "no-store" })
+      .then(r => { if (!r.ok) throw new Error(r.status); return r.arrayBuffer(); })
+      .then(buf => {
+        clearTimeout(timeout);
+        const raw = new TextDecoder('gbk').decode(buf);
+        const result = {};
+        raw.split(";").forEach(line => {
+          const m = line.match(/v_(\w+)="([^"]+)"/);
+          if (m) {
+            const f = m[2].split("~");
+            result[m[1]] = {
+              name: f[1]||"", price: parseFloat(f[3])||0,
+              prevClose: parseFloat(f[4])||0, open: parseFloat(f[5])||0,
+              high: parseFloat(f[33])||0, low: parseFloat(f[34])||0,
+              change: parseFloat(f[31])||0, changePct: parseFloat(f[32])||0,
+              volume: parseFloat(f[6])||0, amount: parseFloat(f[37])||0,
+            };
+          }
+        });
+        resolve(result);
+      })
+      .catch(e => { clearTimeout(timeout); reject(e); });
+  });
+}
+
+function fetchKLine(code, count) {
+  count = count || 30;
+  return new Promise((resolve, reject) => {
+    const url = CORS_PROXY + encodeURIComponent("https://web.ifzq.gtimg.cn/appstock/app/kline/kline?param=" + code + ",day,,," + count);
+    const timeout = setTimeout(() => reject(new Error("K线超时")), 15000);
+    fetch(url, { cache: "no-store" })
+      .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+      .then(data => {
+        clearTimeout(timeout);
+        const list = data && data.data && data.data[code] && data.data[code].day;
+        if (!list) return resolve([]);
+        resolve(list.slice(-count).map(r => parseFloat(r[2])));
+      })
+      .catch(e => { clearTimeout(timeout); reject(e); });
+  });
+}
+
+function fmtPct(p) { return (p>=0?"+":"") + (p*100).toFixed(2) + "%"; }
+function fmtVol(v) { if(!v) return "—"; return v>=1e8 ? (v/1e8).toFixed(2)+"亿" : v>=1e4 ? (v/1e4).toFixed(0)+"万" : v.toFixed(0); }
+
+function sparklineSVG(data, w, h) {
+  w = w || 120; h = h || 32;
+  if (!data || data.length < 2) return "";
+  const min = Math.min(...data), max = Math.max(...data), range = max - min || 1;
+  const isUp = data[data.length-1] >= data[0];
+  const color = isUp ? "var(--up)" : "var(--down)";
+  const pts = data.map((v,i) => (i/(data.length-1)*w).toFixed(1)+","+(h-((v-min)/range)*(h-4)-2).toFixed(1)).join(" ");
+  return '<svg width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'"><polyline points="'+pts+'" fill="none" stroke="'+color+'" stroke-width="1.5" stroke-linecap="round"/></svg>';
+}
+
+async function refreshData() {
+  const bar = document.getElementById("statusBar");
+  bar.className = "status-bar loading";
+  bar.innerHTML = '<span class="pulse"></span>刷新中...';
+  try {
+    const codes = INDICES.map(i => i.code);
+    const [quotes, ...klines] = await Promise.all([
+      fetchQuotes(codes),
+      ...INDICES.map(i => fetchKLine(i.code, 30).catch(() => []))
+    ]);
+    const list = document.getElementById("indexList");
+    list.innerHTML = INDICES.map((idx, i) => {
+      const q = quotes[idx.code];
+      if (!q) return "";
+      const pct = q.changePct / 100;
+      const cls = pct >= 0 ? "up" : "down";
+      const amp = q.prevClose ? ((q.high - q.low) / q.prevClose * 100).toFixed(2) : "—";
+      return '<div class="index-card">' +
+        '<div class="header"><div><div class="name">' + idx.name + '</div><div class="code">' + idx.desc + '</div></div>' +
+        '<div class="price-section"><div class="price ' + cls + '">' + q.price.toFixed(2) + '</div>' +
+        '<div class="pct ' + cls + '">' + fmtPct(pct) + '</div>' +
+        '<div class="change ' + cls + '">' + (q.change>=0?"+":"") + q.change.toFixed(2) + '</div></div></div>' +
+        '<div class="details">' +
+          '<div><div class="detail-label">今开</div><div class="detail-value">' + q.open.toFixed(2) + '</div></div>' +
+          '<div><div class="detail-label">最高</div><div class="detail-value up">' + q.high.toFixed(2) + '</div></div>' +
+          '<div><div class="detail-label">最低</div><div class="detail-value down">' + q.low.toFixed(2) + '</div></div>' +
+          '<div><div class="detail-label">振幅</div><div class="detail-value">' + amp + '%</div></div>' +
+        '</div>' +
+        '<div class="sparkline-wrap">' + sparklineSVG(klines[i]) + '</div>' +
+      '</div>';
+    }).join("");
+    bar.className = "status-bar";
+    bar.innerHTML = '<span class="pulse"></span>更新于 ' + new Date().toLocaleTimeString("zh-CN");
+  } catch(e) {
+    bar.className = "status-bar";
+    bar.innerHTML = "加载失败: " + e.message;
+  }
+}
+
+document.getElementById("refreshBtn").onclick = () => {
+  const btn = document.getElementById("refreshBtn");
+  btn.classList.add("spinning");
+  refreshData().finally(() => btn.classList.remove("spinning"));
+};
+
+refreshData();
+setInterval(refreshData, 30000);
+</script>
+</body>
+</html>

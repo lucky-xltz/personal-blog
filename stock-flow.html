@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>资金流向 | 林小白的数字花园</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root{--bg:#1f1a16;--bg-raised:#2a231c;--shadow-dark:rgba(0,0,0,.55);--shadow-light:rgba(255,255,255,.04);--accent:#e67e22;--text:#e0e5ec;--text-dim:#a0a8b8;--text-muted:#7a8494;--border:rgba(255,255,255,.06);--up:#f85149;--down:#2ea043;--warn:#d29922;--radius-md:18px;--radius-sm:12px;--neu-raised:6px 6px 14px var(--shadow-dark),-6px -6px 14px var(--shadow-light);--neu-raised-sm:3px 3px 8px var(--shadow-dark),-3px -3px 8px var(--shadow-light);--neu-inset-sm:inset 2px 2px 5px var(--shadow-dark),inset -2px -2px 5px var(--shadow-light);--transition:.3s cubic-bezier(.4,0,.2,1)}
+        *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+        html,body{font-family:'Inter',-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);font-size:14px;min-height:100vh}
+        body{padding-bottom:calc(20px + env(safe-area-inset-bottom))}
+        .nav{background:rgba(31,26,22,.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+        .nav-logo{font-family:'Outfit',sans-serif;font-size:1.2rem;font-weight:700;color:var(--accent);text-decoration:none}
+        .nav-links{display:flex;gap:24px;list-style:none}
+        .nav-links a{color:var(--text-dim);text-decoration:none;font-size:.9rem;transition:color var(--transition)}
+        .nav-links a:hover,.nav-links a.active{color:var(--accent)}
+        .container{max-width:640px;margin:0 auto;padding:24px 16px}
+        .page-title{text-align:center;margin-bottom:24px}
+        .page-title h1{font-family:'Outfit',sans-serif;font-size:1.8rem;font-weight:700;background:linear-gradient(135deg,var(--accent),#f39c12);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+        .page-title p{color:var(--text-dim);font-size:.85rem;margin-top:8px}
+        .up{color:var(--up)}.down{color:var(--down)}
+        .toolbar{display:flex;gap:10px;align-items:center;margin-bottom:16px}
+        .toolbar input{background:var(--bg-raised);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;color:var(--text);font-size:14px;outline:none;flex:1}
+        .toolbar input:focus{border-color:var(--accent)}
+        .btn{background:var(--accent);color:#fff;border:none;padding:10px 20px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;transition:all var(--transition);box-shadow:var(--neu-raised-sm)}
+        .btn:hover{transform:translateY(-1px)}.btn:active{transform:translateY(0)}
+        .stock-header{display:flex;justify-content:space-between;align-items:center;padding:20px;background:var(--bg-raised);border-radius:var(--radius-md);box-shadow:var(--neu-raised);border:1px solid var(--border);margin-bottom:16px}
+        .stock-header .name{font-size:18px;font-weight:600}
+        .stock-header .price{font-size:24px;font-weight:700;font-variant-numeric:tabular-nums}
+        .flow-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:16px}
+        .flow-card{background:var(--bg-raised);border-radius:var(--radius-sm);padding:16px;box-shadow:var(--neu-raised);border:1px solid var(--border)}
+        .flow-card .label{font-size:12px;color:var(--text-muted);margin-bottom:8px}
+        .flow-card .value{font-size:18px;font-weight:700;font-variant-numeric:tabular-nums}
+        .flow-card .bar{height:6px;border-radius:3px;background:var(--bg);margin-top:8px;overflow:hidden}
+        .flow-card .bar-inner{height:100%;border-radius:3px;transition:width 0.5s ease}
+        .chart-area{background:var(--bg-raised);border-radius:var(--radius-md);padding:20px;box-shadow:var(--neu-raised);border:1px solid var(--border);margin-bottom:16px}
+        .chart-area canvas{width:100%!important;height:150px!important}
+        .chart-title{font-size:13px;color:var(--text-dim);margin-bottom:12px}
+        .flow-table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px}
+        .flow-table th{background:var(--bg);color:var(--text-dim);font-weight:500;padding:10px 12px;text-align:left;white-space:nowrap}
+        .flow-table td{padding:10px 12px;border-bottom:1px solid var(--border);font-variant-numeric:tabular-nums;white-space:nowrap}
+        .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;background:var(--bg-raised);border-radius:var(--radius-md);box-shadow:var(--neu-raised);border:1px solid var(--border)}
+        .status-bar{text-align:center;font-size:11px;color:var(--text-muted);padding:8px 0}
+        .status-bar.loading{color:var(--accent)}
+        .pulse{display:inline-block;width:6px;height:6px;border-radius:50%;background:currentColor;margin-right:6px;vertical-align:middle;animation:pulse 1.5s infinite}
+        @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+        .footer{text-align:center;padding:32px 16px;color:var(--text-muted);font-size:.8rem}
+        .footer a{color:var(--accent);text-decoration:none}
+        .toast{position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-20px);background:var(--bg-raised);color:var(--text);padding:12px 24px;border-radius:12px;font-size:14px;box-shadow:0 8px 32px rgba(0,0,0,.4);z-index:10000;opacity:0;transition:all .3s;pointer-events:none;max-width:90vw;text-align:center}
+        .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+    </style>
+</head>
+<body>
+
+<nav class="nav">
+    <a href="index.html" class="nav-logo">林小白</a>
+    <ul class="nav-links">
+        <li><a href="index.html">首页</a></li>
+        <li><a href="stock-tools.html" class="active">股票工具</a></li>
+    </ul>
+</nav>
+
+<div class="container">
+    <div class="page-title">
+        <h1>资金流向</h1>
+        <p>分析成交量与价格关系 · 判断资金进出</p>
+    </div>
+
+    <div class="toolbar">
+        <input id="stockInput" placeholder="输入股票代码，如 601991" value="601991" />
+        <button class="btn" id="queryBtn">查询</button>
+    </div>
+
+    <div id="stockHeader" class="stock-header" style="display:none"></div>
+    <div class="flow-cards" id="flowCards"></div>
+
+    <div class="chart-area">
+        <div class="chart-title">成交量与价格走势 (20日)</div>
+        <canvas id="volChart" height="150"></canvas>
+    </div>
+
+    <div class="table-wrap" id="tableWrap" style="display:none">
+        <table class="flow-table">
+            <thead><tr><th>日期</th><th>收盘</th><th>涨跌幅</th><th>成交量</th><th>资金方向</th></tr></thead>
+            <tbody id="flowBody"></tbody>
+        </table>
+    </div>
+
+    <div class="status-bar" id="statusBar">输入股票代码查询资金流向</div>
+</div>
+
+<footer class="footer">
+    <p>数据来源：腾讯财经 · 仅供学习参考</p>
+    <p style="margin-top:8px"><a href="stock-tools.html">← 返回工具箱</a></p>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const CORS_PROXY = "https://api.codetabs.com/v1/proxy/?quest=";
+
+function showToast(msg, type) {
+  type = type || 'info';
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast ' + type + ' show';
+  clearTimeout(el._timer);
+  el._timer = setTimeout(() => { el.className = 'toast'; }, 2500);
+}
+
+function sinaCode(code) {
+  if (/^(sh|sz|bj)\d{6}$/.test(code)) return code;
+  if (/^(60|68|9)\d{5}$/.test(code)) return "sh" + code;
+  if (/^(00|30)\d{5}$/.test(code)) return "sz" + code;
+  return "sh" + code;
+}
+
+function fetchKLine(code, count) {
+  count = count || 60;
+  return new Promise((resolve, reject) => {
+    const sc = sinaCode(code);
+    const url = CORS_PROXY + encodeURIComponent("https://web.ifzq.gtimg.cn/appstock/app/kline/kline?param=" + sc + ",day,,," + count);
+    const timeout = setTimeout(() => reject(new Error("超时")), 15000);
+    fetch(url, { cache: "no-store" })
+      .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+      .then(data => {
+        clearTimeout(timeout);
+        const list = data && data.data && data.data[sc] && data.data[sc].day;
+        if (!list) return reject(new Error("无数据"));
+        resolve(list.map(r => ({
+          date: r[0], open: parseFloat(r[1]), close: parseFloat(r[2]),
+          high: parseFloat(r[3]), low: parseFloat(r[4]), volume: parseFloat(r[5]) || 0
+        })));
+      })
+      .catch(e => { clearTimeout(timeout); reject(e); });
+  });
+}
+
+function fetchQuote(code) {
+  return new Promise((resolve, reject) => {
+    const sc = sinaCode(code);
+    const url = CORS_PROXY + encodeURIComponent("https://qt.gtimg.cn/q=" + sc);
+    const timeout = setTimeout(() => reject(new Error("超时")), 15000);
+    fetch(url, { cache: "no-store" })
+      .then(r => { if (!r.ok) throw new Error(r.status); return r.arrayBuffer(); })
+      .then(buf => {
+        clearTimeout(timeout);
+        const raw = new TextDecoder('gbk').decode(buf);
+        const m = raw.match(/="([^"]+)"/);
+        if (!m) return reject(new Error("无数据"));
+        const f = m[1].split("~");
+        resolve({ name: f[1]||"", price: parseFloat(f[3])||0, changePct: parseFloat(f[32])||0, volume: parseFloat(f[6])||0, amount: parseFloat(f[37])||0 });
+      })
+      .catch(e => { clearTimeout(timeout); reject(e); });
+  });
+}
+
+function fmtPct(p) { return (p>=0?"+":"") + (p*100).toFixed(2) + "%"; }
+function fmtVol(v) { if(!v) return "—"; return v>=1e8 ? (v/1e8).toFixed(2)+"亿手" : v>=1e4 ? (v/1e4).toFixed(0)+"万手" : v.toFixed(0)+"手"; }
+
+function drawBarChart(canvas, data, colors) {
+  const ctx = canvas.getContext("2d");
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.parentElement.getBoundingClientRect();
+  const w = rect.width - 40;
+  const h = 150;
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
+  canvas.style.width = w + "px";
+  canvas.style.height = h + "px";
+  ctx.scale(dpr, dpr);
+  ctx.clearRect(0, 0, w, h);
+
+  const max = Math.max(...data.map(d => d.volume));
+  const barW = Math.max(4, (w / data.length) - 2);
+
+  data.forEach((d, i) => {
+    const x = (i / data.length) * w + 1;
+    const barH = (d.volume / max) * (h - 20);
+    const y = h - barH;
+    ctx.fillStyle = d.close >= d.open ? "rgba(248,81,73,0.7)" : "rgba(46,160,67,0.7)";
+    ctx.fillRect(x, y, barW, barH);
+  });
+
+  // 价格线
+  const closes = data.map(d => d.close);
+  const min = Math.min(...closes), maxP = Math.max(...closes), range = maxP - min || 1;
+  ctx.strokeStyle = "#e67e22";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  closes.forEach((v, i) => {
+    const x = (i / data.length) * w + barW / 2;
+    const y = h - ((v - min) / range) * (h - 20) - 10;
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  });
+  ctx.stroke();
+}
+
+async function analyze() {
+  const code = document.getElementById("stockInput").value.trim();
+  if (!/^\d{6}$/.test(code)) { showToast("请输入6位代码", "error"); return; }
+
+  const bar = document.getElementById("statusBar");
+  bar.className = "status-bar loading";
+  bar.innerHTML = '<span class="pulse"></span>分析中...';
+
+  try {
+    const [klines, quote] = await Promise.all([
+      fetchKLine(code, 60),
+      fetchQuote(code).catch(() => null)
+    ]);
+
+    // 股票信息
+    if (quote) {
+      const cls = quote.changePct >= 0 ? "up" : "down";
+      document.getElementById("stockHeader").style.display = "flex";
+      document.getElementById("stockHeader").innerHTML =
+        '<div><div class="name">' + quote.name + ' <span style="color:var(--text-muted);font-size:13px">' + code + '</span></div></div>' +
+        '<div style="text-align:right"><div class="price ' + cls + '">' + quote.price.toFixed(2) + '</div><div class="' + cls + '">' + fmtPct(quote.changePct/100) + '</div></div>';
+    }
+
+    // 分析资金流向
+    const recent = klines.slice(-20);
+    let inflowDays = 0, outflowDays = 0;
+    let totalInVol = 0, totalOutVol = 0;
+
+    recent.forEach(k => {
+      const isUp = k.close >= k.open;
+      if (isUp) { inflowDays++; totalInVol += k.volume; }
+      else { outflowDays++; totalOutVol += k.volume; }
+    });
+
+    const totalVol = totalInVol + totalOutVol;
+    const inPct = totalVol > 0 ? (totalInVol / totalVol * 100) : 50;
+    const outPct = 100 - inPct;
+
+    // 最近5天趋势
+    const last5 = klines.slice(-5);
+    const avgVol5 = last5.reduce((s, k) => s + k.volume, 0) / 5;
+    const avgVol20 = recent.reduce((s, k) => s + k.volume, 0) / 20;
+    const volRatio = avgVol20 > 0 ? (avgVol5 / avgVol20) : 1;
+
+    const flowSignal = inPct > 60 ? "资金流入" : outPct > 60 ? "资金流出" : "资金平衡";
+    const flowCls = inPct > 60 ? "down" : outPct > 60 ? "up" : "";
+
+    document.getElementById("flowCards").innerHTML =
+      '<div class="flow-card"><div class="label">20日资金方向</div><div class="value ' + flowCls + '">' + flowSignal + '</div>' +
+        '<div class="bar"><div class="bar-inner" style="width:' + inPct + '%;background:var(--down)"></div></div>' +
+        '<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);margin-top:4px"><span>流入 ' + inPct.toFixed(0) + '%</span><span>流出 ' + outPct.toFixed(0) + '%</span></div></div>' +
+      '<div class="flow-card"><div class="label">量比 (5日/20日)</div><div class="value">' + volRatio.toFixed(2) + '</div>' +
+        '<div style="font-size:11px;color:var(--text-muted);margin-top:4px">' + (volRatio > 1.5 ? "放量" : volRatio < 0.7 ? "缩量" : "正常") + '</div></div>' +
+      '<div class="flow-card"><div class="label">上涨天数</div><div class="value up">' + inflowDays + ' / 20</div></div>' +
+      '<div class="flow-card"><div class="label">下跌天数</div><div class="value down">' + outflowDays + ' / 20</div></div>';
+
+    // 画图
+    drawBarChart(document.getElementById("volChart"), recent);
+
+    // 表格
+    document.getElementById("tableWrap").style.display = "block";
+    document.getElementById("flowBody").innerHTML = klines.slice(-10).reverse().map(k => {
+      const pct = k.open > 0 ? (k.close - k.open) / k.open : 0;
+      const cls = pct >= 0 ? "up" : "down";
+      const dir = k.close >= k.open ? '<span class="down">流入</span>' : '<span class="up">流出</span>';
+      return '<tr><td>' + k.date + '</td><td>' + k.close.toFixed(2) + '</td><td class="' + cls + '">' + fmtPct(pct) + '</td><td>' + fmtVol(k.volume) + '</td><td>' + dir + '</td></tr>';
+    }).join("");
+
+    bar.className = "status-bar";
+    bar.innerHTML = "分析完成 · " + new Date().toLocaleTimeString("zh-CN");
+  } catch(e) {
+    bar.className = "status-bar";
+    bar.innerHTML = "分析失败: " + e.message;
+  }
+}
+
+document.getElementById("queryBtn").onclick = analyze;
+document.getElementById("stockInput").onkeydown = e => { if (e.key === "Enter") analyze(); };
+</script>
+</body>
+</html>

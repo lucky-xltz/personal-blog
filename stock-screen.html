@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>股票筛选 | 林小白的数字花园</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root{--bg:#1f1a16;--bg-raised:#2a231c;--shadow-dark:rgba(0,0,0,.55);--shadow-light:rgba(255,255,255,.04);--accent:#e67e22;--text:#e0e5ec;--text-dim:#a0a8b8;--text-muted:#7a8494;--border:rgba(255,255,255,.06);--up:#f85149;--down:#2ea043;--warn:#d29922;--radius-md:18px;--radius-sm:12px;--neu-raised:6px 6px 14px var(--shadow-dark),-6px -6px 14px var(--shadow-light);--neu-raised-sm:3px 3px 8px var(--shadow-dark),-3px -3px 8px var(--shadow-light);--neu-inset-sm:inset 2px 2px 5px var(--shadow-dark),inset -2px -2px 5px var(--shadow-light);--transition:.3s cubic-bezier(.4,0,.2,1)}
+        *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+        html,body{font-family:'Inter',-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);font-size:14px;min-height:100vh}
+        body{padding-bottom:calc(20px + env(safe-area-inset-bottom))}
+        .nav{background:rgba(31,26,22,.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+        .nav-logo{font-family:'Outfit',sans-serif;font-size:1.2rem;font-weight:700;color:var(--accent);text-decoration:none}
+        .nav-links{display:flex;gap:24px;list-style:none}
+        .nav-links a{color:var(--text-dim);text-decoration:none;font-size:.9rem;transition:color var(--transition)}
+        .nav-links a:hover,.nav-links a.active{color:var(--accent)}
+        .container{max-width:640px;margin:0 auto;padding:24px 16px}
+        .page-title{text-align:center;margin-bottom:24px}
+        .page-title h1{font-family:'Outfit',sans-serif;font-size:1.8rem;font-weight:700;background:linear-gradient(135deg,var(--accent),#f39c12);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+        .page-title p{color:var(--text-dim);font-size:.85rem;margin-top:8px}
+        .up{color:var(--up)}.down{color:var(--down)}
+        .filter-section{background:var(--bg-raised);border-radius:var(--radius-md);padding:20px;box-shadow:var(--neu-raised);border:1px solid var(--border);margin-bottom:16px}
+        .filter-section h3{font-size:14px;color:var(--text-dim);margin-bottom:12px;font-weight:500}
+        .filter-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+        .filter-row label{font-size:12px;color:var(--text-muted);margin-bottom:4px;display:block}
+        .filter-group{flex:1;min-width:120px}
+        .filter-group select,.filter-group input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-size:13px;outline:none}
+        .filter-group select:focus,.filter-group input:focus{border-color:var(--accent)}
+        .btn{background:var(--accent);color:#fff;border:none;padding:10px 24px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;transition:all var(--transition);box-shadow:var(--neu-raised-sm);width:100%}
+        .btn:hover{transform:translateY(-1px)}.btn:active{transform:translateY(0)}
+        .status-bar{text-align:center;font-size:11px;color:var(--text-muted);padding:8px 0}
+        .status-bar.loading{color:var(--accent)}
+        .pulse{display:inline-block;width:6px;height:6px;border-radius:50%;background:currentColor;margin-right:6px;vertical-align:middle;animation:pulse 1.5s infinite}
+        @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+        .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;background:var(--bg-raised);border-radius:var(--radius-md);box-shadow:var(--neu-raised);border:1px solid var(--border)}
+        .result-table{width:100%;border-collapse:separate;border-spacing:0;font-size:13px}
+        .result-table th{background:var(--bg);color:var(--text-dim);font-weight:500;padding:10px 12px;text-align:left;white-space:nowrap;position:sticky;top:0}
+        .result-table td{padding:10px 12px;border-bottom:1px solid var(--border);font-variant-numeric:tabular-nums;white-space:nowrap}
+        .result-table tr:hover td{background:rgba(255,255,255,.02)}
+        .footer{text-align:center;padding:32px 16px;color:var(--text-muted);font-size:.8rem}
+        .footer a{color:var(--accent);text-decoration:none}
+        .toast{position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-20px);background:var(--bg-raised);color:var(--text);padding:12px 24px;border-radius:12px;font-size:14px;box-shadow:0 8px 32px rgba(0,0,0,.4);z-index:10000;opacity:0;transition:all .3s;pointer-events:none;max-width:90vw;text-align:center}
+        .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+    </style>
+</head>
+<body>
+
+<nav class="nav">
+    <a href="index.html" class="nav-logo">林小白</a>
+    <ul class="nav-links">
+        <li><a href="index.html">首页</a></li>
+        <li><a href="stock-tools.html" class="active">股票工具</a></li>
+    </ul>
+</nav>
+
+<div class="container">
+    <div class="page-title">
+        <h1>股票筛选</h1>
+        <p>按涨跌幅/板块/价格条件筛选股票</p>
+    </div>
+
+    <div class="filter-section">
+        <h3>筛选条件</h3>
+        <div class="filter-row">
+            <div class="filter-group">
+                <label>板块</label>
+                <select id="fBoard">
+                    <option value="all">全部</option>
+                    <option value="sh">沪市主板</option>
+                    <option value="sz">深市主板</option>
+                    <option value="gem">创业板</option>
+                    <option value="star">科创板</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>涨跌幅</label>
+                <select id="fPctRange">
+                    <option value="all">不限</option>
+                    <option value="up5">涨幅 > 5%</option>
+                    <option value="up3">涨幅 > 3%</option>
+                    <option value="flat">涨跌幅 < 3%</option>
+                    <option value="down3">跌幅 > 3%</option>
+                    <option value="down5">跌幅 > 5%</option>
+                </select>
+            </div>
+        </div>
+        <div class="filter-row">
+            <div class="filter-group">
+                <label>价格区间</label>
+                <select id="fPrice">
+                    <option value="all">不限</option>
+                    <option value="low">10元以下</option>
+                    <option value="mid">10-50元</option>
+                    <option value="high">50元以上</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>排序</label>
+                <select id="fSort">
+                    <option value="pctDesc">涨幅从高到低</option>
+                    <option value="pctAsc">涨幅从低到高</option>
+                    <option value="amountDesc">成交额从高到低</option>
+                </select>
+            </div>
+        </div>
+        <button class="btn" id="screenBtn">开始筛选</button>
+    </div>
+
+    <div class="status-bar" id="statusBar">设置条件后点击筛选</div>
+    <div class="table-wrap" id="resultWrap" style="display:none">
+        <table class="result-table">
+            <thead><tr><th>代码</th><th>名称</th><th>现价</th><th>涨跌幅</th><th>成交额</th><th>板块</th></tr></thead>
+            <tbody id="resultBody"></tbody>
+        </table>
+    </div>
+</div>
+
+<footer class="footer">
+    <p>数据来源：腾讯财经 · 仅供学习参考</p>
+    <p style="margin-top:8px"><a href="stock-tools.html">← 返回工具箱</a></p>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const CORS_PROXY = "https://api.codetabs.com/v1/proxy/?quest=";
+const STOCK_POOLS = {
+    sh: ["600519","600036","601318","601991","600905","600886","600025","600011","600795","601728","601857","600028","600030","601066","601628","601336","601012","601688","600104","600690","600588","603629","601899","600585","601985","600050","601398","601288","600000","601166"],
+    sz: ["000001","000858","000333","000651","002415","002475","000725","002714","002594","002230","002460","000568","000776","002352","000002","000625","002142","000338","002049","000768"],
+    gem: ["300750","300059","300015","300760","300124","300274","300014","300033","300122","300142","300274","300498","300529","300347","300433"],
+    star: ["688981","688041","688111","688036","688009","688012","688005","688002","688003","688006","688008","688015","688016","688017","688018"]
+};
+
+function showToast(msg, type) {
+  type = type || 'info';
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast ' + type + ' show';
+  clearTimeout(el._timer);
+  el._timer = setTimeout(() => { el.className = 'toast'; }, 2500);
+}
+
+function sinaCode(code) {
+  if (/^(60|68|9)\d{5}$/.test(code)) return "sh" + code;
+  if (/^(00|30)\d{5}$/.test(code)) return "sz" + code;
+  return "sh" + code;
+}
+
+function fmtPct(p) { return (p>=0?"+":"") + (p*100).toFixed(2) + "%"; }
+function fmtAmt(v) { if(!v) return "—"; return v>=1e8 ? (v/1e8).toFixed(2)+"亿" : v>=1e4 ? (v/1e4).toFixed(0)+"万" : v.toFixed(0); }
+
+function fetchQuotes(codes) {
+  return new Promise((resolve, reject) => {
+    if (!codes.length) return resolve({});
+    const list = codes.map(c => sinaCode(c)).join(",");
+    const url = CORS_PROXY + encodeURIComponent("https://qt.gtimg.cn/q=" + list);
+    const timeout = setTimeout(() => reject(new Error("超时")), 20000);
+    fetch(url, { cache: "no-store" })
+      .then(r => { if (!r.ok) throw new Error(r.status); return r.arrayBuffer(); })
+      .then(buf => {
+        clearTimeout(timeout);
+        const raw = new TextDecoder('gbk').decode(buf);
+        const result = {};
+        raw.split(";").forEach(line => {
+          const m = line.match(/v_(\w+)="([^"]+)"/);
+          if (m) {
+            const f = m[2].split("~");
+            result[m[1]] = {
+              name: f[1]||"", code: f[2]||"", price: parseFloat(f[3])||0,
+              changePct: parseFloat(f[32])||0, amount: parseFloat(f[37])||0,
+            };
+          }
+        });
+        resolve(result);
+      })
+      .catch(e => { clearTimeout(timeout); reject(e); });
+  });
+}
+
+async function doScreen() {
+  const board = document.getElementById("fBoard").value;
+  const pctRange = document.getElementById("fPctRange").value;
+  const priceRange = document.getElementById("fPrice").value;
+  const sort = document.getElementById("fSort").value;
+  const bar = document.getElementById("statusBar");
+  bar.className = "status-bar loading";
+  bar.innerHTML = '<span class="pulse"></span>正在筛选...';
+
+  let codes = [];
+  if (board === "all") Object.values(STOCK_POOLS).forEach(p => codes.push(...p));
+  else codes = STOCK_POOLS[board] || [];
+  codes = [...new Set(codes)];
+
+  try {
+    const data = await fetchQuotes(codes);
+    let items = Object.values(data).map(q => ({ ...q, board: q.code.startsWith("6") ? "沪市" : q.code.startsWith("3") ? "创业板" : q.code.startsWith("688") ? "科创板" : "深市" }));
+
+    // 筛选涨跌幅
+    if (pctRange === "up5") items = items.filter(i => i.changePct > 5);
+    else if (pctRange === "up3") items = items.filter(i => i.changePct > 3);
+    else if (pctRange === "flat") items = items.filter(i => Math.abs(i.changePct) < 3);
+    else if (pctRange === "down3") items = items.filter(i => i.changePct < -3);
+    else if (pctRange === "down5") items = items.filter(i => i.changePct < -5);
+
+    // 筛选价格
+    if (priceRange === "low") items = items.filter(i => i.price < 10);
+    else if (priceRange === "mid") items = items.filter(i => i.price >= 10 && i.price <= 50);
+    else if (priceRange === "high") items = items.filter(i => i.price > 50);
+
+    // 排序
+    if (sort === "pctDesc") items.sort((a, b) => b.changePct - a.changePct);
+    else if (sort === "pctAsc") items.sort((a, b) => a.changePct - b.changePct);
+    else if (sort === "amountDesc") items.sort((a, b) => b.amount - a.amount);
+
+    const wrap = document.getElementById("resultWrap");
+    const body = document.getElementById("resultBody");
+
+    if (!items.length) {
+      wrap.style.display = "none";
+      bar.className = "status-bar";
+      bar.innerHTML = "未找到符合条件的股票";
+      return;
+    }
+
+    wrap.style.display = "block";
+    body.innerHTML = items.map(i => {
+      const cls = i.changePct >= 0 ? "up" : "down";
+      return '<tr><td>' + i.code + '</td><td style="font-weight:500">' + i.name + '</td>' +
+        '<td>' + i.price.toFixed(2) + '</td><td class="' + cls + '">' + fmtPct(i.changePct/100) + '</td>' +
+        '<td>' + fmtAmt(i.amount) + '</td><td>' + i.board + '</td></tr>';
+    }).join("");
+
+    bar.className = "status-bar";
+    bar.innerHTML = "筛选完成 · 找到 " + items.length + " 只股票";
+  } catch(e) {
+    bar.className = "status-bar";
+    bar.innerHTML = "筛选失败: " + e.message;
+  }
+}
+
+document.getElementById("screenBtn").onclick = doScreen;
+</script>
+</body>
+</html>
