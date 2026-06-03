@@ -1,5 +1,25 @@
 [
   {
+    "slug": "gpu-vram-as-linux-swap-deep-dive-2026",
+    "title": "把显卡显存当内存用：NBD-VRAM 的 Linux 内存分层实战与技术深潜",
+    "date": "2026-06-03",
+    "category": "技术",
+    "tags": [
+      "Linux",
+      "NVIDIA",
+      "内存管理",
+      "系统编程",
+      "CUDA",
+      "NBD",
+      "swap",
+      "性能优化"
+    ],
+    "excerpt": "一个开源项目用巧妙的架构绕过 NVIDIA 驱动限制，让消费级显卡的闲置显存变成 Linux 内核的高速 swap 设备。本文深入剖析从 BAR1 内存映射到 NBD 协议桥接的完整技术链路，分析 PCIe 带宽瓶颈、四层内存分层架构，以及实际应用场景。",
+    "cover": "https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?w=600&h=400&fit=crop",
+    "readtime": 14,
+    "views": 0
+  },
+  {
     "slug": "vscode-github-dev-token-stealing-2026",
     "title": "点击一个链接，你的 GitHub Token 就没了：VSCode github.dev 的零点击 RCE 漏洞深度解析",
     "date": "2026-06-03",
