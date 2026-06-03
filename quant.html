@@ -424,6 +424,68 @@
         .btn-sm { padding: 6px 14px; font-size: 12px; border-radius: 8px; border: none; cursor: pointer; transition: all var(--transition); background: var(--bg-raised); color: var(--text-dim); box-shadow: var(--neu-raised-sm); }
         .btn-sm:hover { color: var(--accent); transform: translateY(-2px); }
         .btn-sm:active { transform: scale(0.95); box-shadow: var(--neu-inset-sm); }
+
+        /* Signal Strength Dashboard */
+        .signal-dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 10px;
+            margin-top: 12px;
+        }
+        .signal-gauge {
+            background: var(--bg);
+            border-radius: var(--radius-sm);
+            padding: 10px 12px;
+            box-shadow: var(--neu-inset-sm);
+            text-align: center;
+        }
+        .signal-gauge .gauge-label {
+            font-size: 10px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .signal-gauge .gauge-value {
+            font-size: 18px;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+        }
+        .signal-gauge .gauge-bar {
+            height: 3px;
+            border-radius: 2px;
+            margin-top: 6px;
+            background: var(--bg-raised);
+            overflow: hidden;
+        }
+        .signal-gauge .gauge-fill {
+            height: 100%;
+            border-radius: 2px;
+            transition: width 0.5s ease;
+        }
+        .gauge-buy { color: var(--safe); }
+        .gauge-sell { color: var(--danger); }
+        .gauge-neutral { color: var(--text-muted); }
+
+        /* Signal selector dropdown */
+        .signal-select-wrap {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        .signal-select-wrap label {
+            font-size: 13px;
+            color: var(--text-dim);
+        }
+        .signal-select {
+            background: var(--bg);
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 6px 12px;
+            font-size: 13px;
+        }
     </style>
 </head>
 <body>
@@ -536,6 +598,29 @@
             <div class="perf-label">盈亏比</div>
             <div class="perf-value" id="profitFactor">--</div>
         </div>
+    </div>
+
+    <!-- Signal Strength Dashboard -->
+    <div class="card" id="signalDashboardCard">
+        <div class="card-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            信号仪表盘
+            <div class="signal-select-wrap" style="margin-left: auto; margin-bottom: 0;">
+                <label>股票:</label>
+                <select class="signal-select" id="signalStockSelect"></select>
+            </div>
+        </div>
+        <div class="signal-dashboard" id="signalDashboard">
+            <div class="signal-gauge"><div class="gauge-label">RSI</div><div class="gauge-value" id="gRSI">--</div><div class="gauge-bar"><div class="gauge-fill" id="gRSIbar"></div></div></div>
+            <div class="signal-gauge"><div class="gauge-label">MACD</div><div class="gauge-value" id="gMACD">--</div><div class="gauge-bar"><div class="gauge-fill" id="gMACDbar"></div></div></div>
+            <div class="signal-gauge"><div class="gauge-label">KDJ-J</div><div class="gauge-value" id="gKDJ">--</div><div class="gauge-bar"><div class="gauge-fill" id="gKDJbar"></div></div></div>
+            <div class="signal-gauge"><div class="gauge-label">Williams</div><div class="gauge-value" id="gWR">--</div><div class="gauge-bar"><div class="gauge-fill" id="gWRbar"></div></div></div>
+            <div class="signal-gauge"><div class="gauge-label">StochRSI</div><div class="gauge-value" id="gSRSI">--</div><div class="gauge-bar"><div class="gauge-fill" id="gSRSIbar"></div></div></div>
+            <div class="signal-gauge"><div class="gauge-label">ADX</div><div class="gauge-value" id="gADX">--</div><div class="gauge-bar"><div class="gauge-fill" id="gADXbar"></div></div></div>
+            <div class="signal-gauge"><div class="gauge-label">综合评分</div><div class="gauge-value" id="gScore">--</div><div class="gauge-bar"><div class="gauge-fill" id="gScorebar"></div></div></div>
+            <div class="signal-gauge"><div class="gauge-label">Ichimoku</div><div class="gauge-value" id="gIchi">--</div><div class="gauge-bar"><div class="gauge-fill" id="gIchibar"></div></div></div>
+        </div>
+        <div id="signalDetails" style="margin-top: 12px; font-size: 12px; color: var(--text-dim); line-height: 1.8;"></div>
     </div>
     <!-- Market Status Bar -->
     <div class="card" id="marketStatusCard" style="display:flex; align-items:center; justify-content:space-between; padding: 14px 20px;">
@@ -1001,6 +1086,58 @@ function computeSignalScore(code, quote) {
         else if (vwapDeviation > 2) { score -= 1; signals.push({ label: '高于VWAP', type: 'sell' }); }
     }
 
+    // RSI Divergence (strong reversal signal)
+    const rsiDiv = calcRSIDivergence(prices, 14);
+    if (rsiDiv.type === 'bullish') {
+        score += 1.5 * rsiDiv.strength;
+        signals.push({ label: 'RSI底背离', type: 'buy' });
+    } else if (rsiDiv.type === 'bearish') {
+        score -= 1.5 * rsiDiv.strength;
+        signals.push({ label: 'RSI顶背离', type: 'sell' });
+    }
+
+    // Ichimoku Cloud signals
+    const ichimoku = calcIchimoku(prices);
+    if (ichimoku) {
+        if (ichimoku.aboveCloud && ichimoku.cloudBullish) {
+            score += 1;
+            signals.push({ label: '云层上方', type: 'buy' });
+        } else if (ichimoku.belowCloud && !ichimoku.cloudBullish) {
+            score -= 1;
+            signals.push({ label: '云层下方', type: 'sell' });
+        }
+        if (ichimoku.tkCross === 'bullish') {
+            score += 1.5;
+            signals.push({ label: 'TK金叉', type: 'buy' });
+        } else if (ichimoku.tkCross === 'bearish') {
+            score -= 1.5;
+            signals.push({ label: 'TK死叉', type: 'sell' });
+        }
+    }
+
+    // ADX Trend Strength - amplify/reduce signals based on trend strength
+    if (prices.length >= 28) {
+        const adxData = calcADX(prices, 14);
+        if (adxData.adx > 25) {
+            if (adxData.pdi > adxData.mdi) {
+                score *= 1.1; // strong uptrend amplifies
+                signals.push({ label: '强趋势↑', type: 'buy' });
+            } else {
+                score *= 0.85; // strong downtrend suppresses buys
+                signals.push({ label: '强趋势↓', type: 'sell' });
+            }
+        } else if (adxData.adx < 15) {
+            signals.push({ label: '震荡市', type: 'neutral' });
+        }
+    }
+
+    // Stochastic RSI
+    if (prices.length >= 30) {
+        const stochRSI = calcStochRSI(prices, 14, 14);
+        if (stochRSI.k < 20) { score += 1; signals.push({ label: 'StochRSI超卖', type: 'buy' }); }
+        else if (stochRSI.k > 80) { score -= 1; signals.push({ label: 'StochRSI超买', type: 'sell' }); }
+    }
+
     // Trend filter (EMA20 slope) - suppress signals against trend
     const trend = calcTrendFilter(prices);
     if (trend === 'down') { score *= 0.7; signals.push({ label: '下降趋势', type: 'sell' }); }
@@ -1318,7 +1455,7 @@ async function aiDecide() {
     }
 
     // === Risk Management: Sector Diversification ===
-    const totalAssets = calculateTotalAssets();
+    let totalAssets = calculateTotalAssets();
     const sectorAlloc = {};
     Object.entries(state.positions).forEach(([code, pos]) => {
         const stockInfo = STOCK_POOL.find(s => s.code === code);
@@ -1376,7 +1513,7 @@ async function aiDecide() {
     });
 
     // Record equity curve
-    const totalAssets = calculateTotalAssets();
+    totalAssets = calculateTotalAssets();
     state.equityHistory.push({ time: new Date().toISOString(), value: totalAssets });
     if (state.equityHistory.length > 200) {
         state.equityHistory = state.equityHistory.slice(-200);
@@ -1492,6 +1629,154 @@ function renderPerformance() {
     }
 }
 
+
+
+// ============ Signal Dashboard ============
+function populateSignalStocks() {
+    var sel = document.getElementById('signalStockSelect');
+    if (!sel) return;
+    sel.innerHTML = '<option value="">-- 请选择 --</option>' +
+        STOCK_POOL.map(function(s) {
+            return '<option value="' + s.code + '">' + s.name + ' (' + s.code + ')</option>';
+        }).join('');
+    // Add positions first
+    Object.keys(state.positions).forEach(function(code) {
+        var pos = state.positions[code];
+        var opt = sel.querySelector('option[value="' + code + '"]');
+        if (opt) opt.textContent = '⭐ ' + pos.name + ' (' + code + ') [持仓]';
+    });
+}
+
+function updateSignalDashboard(code) {
+    if (!code) {
+        document.getElementById('signalDetails').innerHTML = '<span style="color:var(--text-muted);">请选择一只股票查看详细信号</span>';
+        return;
+    }
+    var q = getStockPrice(code);
+    if (!q || q.price <= 0) {
+        document.getElementById('signalDetails').innerHTML = '<span style="color:var(--text-muted);">暂无行情数据</span>';
+        return;
+    }
+    
+    var prices = priceHistory[code];
+    if (!prices || prices.length < 15) {
+        document.getElementById('signalDetails').innerHTML = '<span style="color:var(--text-muted);">数据积累中... (' + (prices ? prices.length : 0) + '/15)</span>';
+        return;
+    }
+    
+    var sig = computeSignalScore(code, q);
+    
+    // RSI
+    var rsiEl = document.getElementById('gRSI');
+    var rsiBar = document.getElementById('gRSIbar');
+    rsiEl.textContent = sig.rsi;
+    rsiEl.className = 'gauge-value ' + (sig.rsi < 30 ? 'gauge-buy' : sig.rsi > 70 ? 'gauge-sell' : 'gauge-neutral');
+    rsiBar.style.width = sig.rsi + '%';
+    rsiBar.style.background = sig.rsi < 30 ? 'var(--safe)' : sig.rsi > 70 ? 'var(--danger)' : 'var(--text-muted)';
+    
+    // MACD
+    if (prices.length >= 26) {
+        var macd = calcMACD(prices);
+        var macdEl = document.getElementById('gMACD');
+        var macdBar = document.getElementById('gMACDbar');
+        var macdNorm = Math.min(100, Math.abs(macd.macd) * 20);
+        macdEl.textContent = macd.macd > 0 ? '+' + macd.macd.toFixed(2) : macd.macd.toFixed(2);
+        macdEl.className = 'gauge-value ' + (macd.macd > 0 ? 'gauge-buy' : macd.macd < 0 ? 'gauge-sell' : 'gauge-neutral');
+        macdBar.style.width = macdNorm + '%';
+        macdBar.style.background = macd.macd > 0 ? 'var(--safe)' : 'var(--danger)';
+    }
+    
+    // KDJ
+    if (prices.length >= 9) {
+        var kdj = calcKDJ(prices, 9);
+        var kdjEl = document.getElementById('gKDJ');
+        var kdjBar = document.getElementById('gKDJbar');
+        var kdjNorm = Math.max(0, Math.min(100, (kdj.j + 20) / 1.4));
+        kdjEl.textContent = kdj.j;
+        kdjEl.className = 'gauge-value ' + (kdj.j < 20 ? 'gauge-buy' : kdj.j > 80 ? 'gauge-sell' : 'gauge-neutral');
+        kdjBar.style.width = kdjNorm + '%';
+        kdjBar.style.background = kdj.j < 20 ? 'var(--safe)' : kdj.j > 80 ? 'var(--danger)' : 'var(--text-muted)';
+    }
+    
+    // Williams %R
+    if (prices.length >= 14) {
+        var wr = calcWilliamsR(prices, 14);
+        var wrEl = document.getElementById('gWR');
+        var wrBar = document.getElementById('gWRbar');
+        var wrNorm = Math.abs(wr);
+        wrEl.textContent = wr.toFixed(0);
+        wrEl.className = 'gauge-value ' + (wr < -80 ? 'gauge-buy' : wr > -20 ? 'gauge-sell' : 'gauge-neutral');
+        wrBar.style.width = wrNorm + '%';
+        wrBar.style.background = wr < -80 ? 'var(--safe)' : wr > -20 ? 'var(--danger)' : 'var(--text-muted)';
+    }
+    
+    // Stochastic RSI
+    if (prices.length >= 30) {
+        var srsi = calcStochRSI(prices, 14, 14);
+        var srsiEl = document.getElementById('gSRSI');
+        var srsiBar = document.getElementById('gSRSIbar');
+        srsiEl.textContent = srsi.k;
+        srsiEl.className = 'gauge-value ' + (srsi.k < 20 ? 'gauge-buy' : srsi.k > 80 ? 'gauge-sell' : 'gauge-neutral');
+        srsiBar.style.width = srsi.k + '%';
+        srsiBar.style.background = srsi.k < 20 ? 'var(--safe)' : srsi.k > 80 ? 'var(--danger)' : 'var(--text-muted)';
+    }
+    
+    // ADX
+    if (prices.length >= 28) {
+        var adx = calcADX(prices, 14);
+        var adxEl = document.getElementById('gADX');
+        var adxBar = document.getElementById('gADXbar');
+        adxEl.textContent = adx.adx;
+        adxEl.className = 'gauge-value ' + (adx.adx > 25 ? (adx.pdi > adx.mdi ? 'gauge-buy' : 'gauge-sell') : 'gauge-neutral');
+        adxBar.style.width = Math.min(100, adx.adx * 2) + '%';
+        adxBar.style.background = adx.adx > 25 ? (adx.pdi > adx.mdi ? 'var(--safe)' : 'var(--danger)') : 'var(--text-muted)';
+    }
+    
+    // Composite Score
+    var scoreEl = document.getElementById('gScore');
+    var scoreBar = document.getElementById('gScorebar');
+    var scoreNorm = Math.max(0, Math.min(100, (sig.score + 6) / 12 * 100));
+    scoreEl.textContent = sig.score > 0 ? '+' + sig.score : sig.score;
+    scoreEl.className = 'gauge-value ' + (sig.score > 2 ? 'gauge-buy' : sig.score < -2 ? 'gauge-sell' : 'gauge-neutral');
+    scoreBar.style.width = scoreNorm + '%';
+    scoreBar.style.background = sig.score > 2 ? 'var(--safe)' : sig.score < -2 ? 'var(--danger)' : 'var(--text-muted)';
+    
+    // Ichimoku
+    if (prices.length >= 52) {
+        var ichi = calcIchimoku(prices);
+        var ichiEl = document.getElementById('gIchi');
+        var ichiBar = document.getElementById('gIchibar');
+        var ichiVal = ichi.aboveCloud ? 80 : ichi.belowCloud ? 20 : 50;
+        ichiEl.textContent = ichi.aboveCloud ? '看多' : ichi.belowCloud ? '看空' : '中性';
+        ichiEl.className = 'gauge-value ' + (ichi.aboveCloud ? 'gauge-buy' : ichi.belowCloud ? 'gauge-sell' : 'gauge-neutral');
+        ichiBar.style.width = ichiVal + '%';
+        ichiBar.style.background = ichi.aboveCloud ? 'var(--safe)' : ichi.belowCloud ? 'var(--danger)' : 'var(--text-muted)';
+    }
+    
+    // Signal details text
+    var details = sig.signals.map(function(s) {
+        var icon = s.type === 'buy' ? '🟢' : s.type === 'sell' ? '🔴' : '⚪';
+        return icon + ' ' + s.label;
+    }).join('  ');
+    var trendLabel = sig.trend === 'up' ? '📈 上升趋势' : sig.trend === 'down' ? '📉 下降趋势' : '➡️ 震荡';
+    var bbInfo = sig.bb ? ' | 布林带宽: ' + sig.bb.bandwidth.toFixed(1) + '%' : '';
+    document.getElementById('signalDetails').innerHTML = 
+        '<strong>' + q.name + '</strong> ¥' + q.price.toFixed(2) + ' (' + (q.changePct >= 0 ? '+' : '') + q.changePct.toFixed(2) + '%)<br>' +
+        '综合评分: <strong style="color:' + (sig.score > 0 ? 'var(--safe)' : sig.score < 0 ? 'var(--danger)' : 'var(--text)') + '">' + sig.score + '</strong> | ' +
+        trendLabel + ' | ATR波动: ' + sig.atrPct + '%' + bbInfo + '<br>' +
+        '信号: ' + (details || '无明显信号');
+}
+
+// Signal stock selector event
+var signalSel = document.getElementById('signalStockSelect');
+if (signalSel) {
+    signalSel.addEventListener('change', function() {
+        updateSignalDashboard(this.value);
+    });
+}
+populateSignalStocks();
+
+
 // ============ 渲染 ============
 function renderAll() {
     renderMode();
@@ -1501,6 +1786,15 @@ function renderAll() {
     renderChart();
     renderStatus();
     renderPerformance();
+    // Auto-select first position in signal dashboard
+    var sigSel = document.getElementById('signalStockSelect');
+    if (sigSel && sigSel.value === '') {
+        var posCodes = Object.keys(state.positions);
+        if (posCodes.length > 0) {
+            sigSel.value = posCodes[0];
+            updateSignalDashboard(posCodes[0]);
+        }
+    }
 }
 
 function renderMode() {
@@ -1904,7 +2198,7 @@ async function runBacktest() {
     }
 
     // Simulate
-    var cash = 100000, position = 0, avgCost = 0, peakPrice = 0, trades = 0, wins = 0;
+    var cash = 100000, position = 0, avgCost = 0, peakPrice = 0, trades = 0, wins = 0, totalCommission = 0;
     var equity = [cash], peak = cash, maxDD = 0;
     var buyThreshold = modeKey === 'aggressive' ? 1.5 : modeKey === 'balanced' ? 2.5 : 3.5;
 
@@ -1986,7 +2280,7 @@ async function runBacktest() {
         if (position === 0 && sigScore >= buyThreshold && cash > price * 100) {
             var ratio = modeKey === 'aggressive' ? 0.25 : modeKey === 'balanced' ? 0.15 : 0.08;
             var qty = Math.floor(cash * ratio / (price * 100));
-            if (qty > 0) { position = qty; avgCost = price; peakPrice = price; cash -= qty * 100 * price; trades++; }
+            if (qty > 0) { var buyComm = qty * 100 * price * 0.0003; position = qty; avgCost = price; peakPrice = price; cash -= qty * 100 * price + buyComm; totalCommission += buyComm; trades++; }
         }
 
         if (position > 0) {
@@ -1996,7 +2290,11 @@ async function runBacktest() {
             var trailPct = modeKey === 'aggressive' ? 0.04 : modeKey === 'balanced' ? 0.025 : 0.015;
             // Sell logic: stop loss > take profit > trailing stop > signal sell
             if (pPct <= -dynStop || pPct >= mode.takeProfit || (dropFromPeak >= trailPct && pPct > 0) || (sigScore <= -3 && pPct > 0)) {
-                cash += position * 100 * price;
+                var sellAmount = position * 100 * price;
+                var sellCommission = sellAmount * 0.0003;
+                var stampTax = sellAmount * 0.001;
+                cash += sellAmount - sellCommission - stampTax;
+                totalCommission += (position * 100 * avgCost * 0.0003) + sellCommission + stampTax;
                 if (pPct > 0) wins++;
                 position = 0; trades++;
             }
@@ -2021,7 +2319,9 @@ async function runBacktest() {
         '<div class="backtest-stat"><div class="bt-label">总收益</div><div class="bt-value ' + (totalReturn >= 0 ? 'up' : 'down') + '">' + (totalReturn >= 0 ? '+' : '') + totalReturn.toFixed(2) + '%</div></div>' +
         '<div class="backtest-stat"><div class="bt-label">胜率</div><div class="bt-value">' + winRate.toFixed(0) + '%</div></div>' +
         '<div class="backtest-stat"><div class="bt-label">最大回撤</div><div class="bt-value up">-' + (maxDD * 100).toFixed(1) + '%</div></div>' +
-        '<div class="backtest-stat"><div class="bt-label">交易次数</div><div class="bt-value">' + closedTrades + ' 笔</div></div>';
+        '<div class="backtest-stat"><div class="bt-label">交易次数</div><div class="bt-value">' + closedTrades + ' 笔</div></div>' +
+        '<div class="backtest-stat"><div class="bt-label">手续费总计</div><div class="bt-value">¥' + totalCommission.toFixed(0) + '</div></div>' +
+        '<div class="backtest-stat"><div class="bt-label">净收益(扣除费用)</div><div class="bt-value ' + (totalReturn >= 0 ? 'up' : 'down') + '">' + (totalReturn >= 0 ? '+' : '') + (totalReturn - totalCommission / 1000).toFixed(2) + '%</div></div>';
 
     // Draw chart
     var canvas = document.getElementById('btChart');
