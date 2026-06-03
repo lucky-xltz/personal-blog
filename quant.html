@@ -414,7 +414,7 @@
         /* Backtest Section */
         .backtest-controls { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 16px; }
         .backtest-select { background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; font-size: 13px; }
-        .backtest-results { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 16px; }
+        .backtest-results { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-top: 16px; }
         @media (max-width: 640px) { .backtest-results { grid-template-columns: repeat(2, 1fr); } }
         .backtest-stat { background: var(--bg); border-radius: var(--radius-sm); padding: 12px; text-align: center; box-shadow: var(--neu-inset-sm); }
         .backtest-stat .bt-label { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; }
@@ -485,6 +485,43 @@
             border-radius: 8px;
             padding: 6px 12px;
             font-size: 13px;
+        }
+        /* Batch Backtest */
+        .batch-results { margin-top: 16px; }
+        .batch-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 13px; }
+        .batch-table th { background: var(--bg); color: var(--text-dim); font-weight: 500; padding: 10px 12px; text-align: left; white-space: nowrap; }
+        .batch-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); font-variant-numeric: tabular-nums; }
+        .batch-table tr:hover td { background: rgba(255, 255, 255, 0.02); }
+
+        /* Keyboard shortcut hint */
+        .kbd-hint {
+            position: fixed; bottom: 20px; right: 20px;
+            background: var(--bg-raised); border-radius: 10px;
+            padding: 10px 14px; font-size: 11px; color: var(--text-muted);
+            box-shadow: var(--neu-raised-sm); border: 1px solid var(--border);
+            opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 99;
+        }
+        .kbd-hint.show { opacity: 1; }
+        .kbd-hint kbd {
+            display: inline-block; padding: 2px 6px; border-radius: 4px;
+            background: var(--bg); box-shadow: var(--neu-inset-sm);
+            font-size: 10px; margin: 0 2px; color: var(--text);
+        }
+
+        /* Price change animation */
+        @keyframes flashGreen { 0% { background: rgba(46,160,67,0.3); } 100% { background: transparent; } }
+        @keyframes flashRed { 0% { background: rgba(248,81,73,0.3); } 100% { background: transparent; } }
+        .flash-up { animation: flashGreen 0.5s ease; }
+        .flash-down { animation: flashRed 0.5s ease; }
+
+        /* Tooltip */
+        [data-tip] { position: relative; }
+        [data-tip]:hover::after {
+            content: attr(data-tip);
+            position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
+            background: #333; color: #eee; padding: 6px 10px; border-radius: 6px;
+            font-size: 11px; white-space: nowrap; z-index: 200; pointer-events: none;
+            margin-bottom: 6px;
         }
     </style>
 </head>
@@ -710,7 +747,9 @@
                 <option value="conservative">保守模式</option>
             </select>
             <button class="btn btn-primary btn-sm" id="btRunBtn">运行回测</button>
+            <button class="btn btn-outline btn-sm" id="btBatchBtn" data-tip="回测全部股票池">批量回测</button>
         </div>
+        <div class="batch-results" id="batchResults" style="display:none;"></div>
         <canvas id="btChart" height="180" style="display:none;"></canvas>
         <div class="backtest-results" id="btResults" style="display:none;"></div>
         <div id="btPlaceholder" style="text-align:center;color:var(--text-muted);padding:24px;">选择股票和参数后点击“运行回测”</div>
@@ -735,6 +774,9 @@
     </div>
 </div>
 <div class="toast" id="toast"></div>
+<div class="kbd-hint" id="kbdHint">
+    <kbd>R</kbd> 刷新行情 &nbsp; <kbd>Space</kbd> 启动/停止 &nbsp; <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd> 切换模式
+</div>
 
 <script>
 // ============ 配置 ============
@@ -768,7 +810,18 @@ const STOCK_POOL = [
     { code: '300059', name: '东方财富', sector: '券商' },
     { code: '603259', name: '药明康德', sector: '医药' },
     { code: '002475', name: '立讯精密', sector: '电子' },
-    { code: '601012', name: '隆基绿能', sector: '光伏' }
+    { code: '601012', name: '隆基绿能', sector: '光伏' },
+    { code: '002230', name: '科大讯飞', sector: 'AI' },
+    { code: '688981', name: '中芯国际', sector: '半导体' },
+    { code: '002371', name: '北方华创', sector: '半导体' },
+    { code: '300274', name: '阳光电源', sector: '光伏' },
+    { code: '600900', name: '长江电力', sector: '电力' },
+    { code: '000651', name: '格力电器', sector: '家电' },
+    { code: '601888', name: '中国中免', sector: '消费' },
+    { code: '002714', name: '牧原股份', sector: '农业' },
+    { code: '300033', name: '同花顺', sector: '金融科技' },
+    { code: '688256', name: '寒武纪', sector: 'AI芯片' },
+    { code: '603986', name: '兆易创新', sector: '半导体' }
 ];
 
 // ============ 实时行情获取 ============
@@ -977,6 +1030,168 @@ function calcTrendFilter(prices) {
 }
 
 
+function calcRSIDivergence(prices, period) {
+    period = period || 14;
+    if (prices.length < period * 2) return { type: 'none', strength: 0 };
+    // Find recent swing lows and highs
+    var recentPrices = prices.slice(-period * 2);
+    var recentRSI = [];
+    for (var i = period; i < recentPrices.length; i++) {
+        recentRSI.push(calcRSI(recentPrices.slice(0, i + 1), period));
+    }
+    if (recentRSI.length < 6) return { type: 'none', strength: 0 };
+    // Compare first half vs second half
+    var halfLen = Math.floor(recentRSI.length / 2);
+    var firstHalfLow = Math.min.apply(null, recentRSI.slice(0, halfLen));
+    var secondHalfLow = Math.min.apply(null, recentRSI.slice(halfLen));
+    var firstHalfHigh = Math.max.apply(null, recentRSI.slice(0, halfLen));
+    var secondHalfHigh = Math.max.apply(null, recentRSI.slice(halfLen));
+    // Bullish divergence: price makes lower low but RSI makes higher low
+    var priceFirstLow = Math.min.apply(null, recentPrices.slice(0, halfLen));
+    var priceSecondLow = Math.min.apply(null, recentPrices.slice(halfLen));
+    if (priceSecondLow < priceFirstLow && secondHalfLow > firstHalfLow) {
+        var strength = Math.min(1.5, (secondHalfLow - firstHalfLow) / 15 + 0.5);
+        return { type: 'bullish', strength: Math.round(strength * 10) / 10 };
+    }
+    // Bearish divergence: price makes higher high but RSI makes lower high
+    var priceFirstHigh = Math.max.apply(null, recentPrices.slice(0, halfLen));
+    var priceSecondHigh = Math.max.apply(null, recentPrices.slice(halfLen));
+    if (priceSecondHigh > priceFirstHigh && secondHalfHigh < firstHalfHigh) {
+        var strength2 = Math.min(1.5, (firstHalfHigh - secondHalfHigh) / 15 + 0.5);
+        return { type: 'bearish', strength: Math.round(strength2 * 10) / 10 };
+    }
+    return { type: 'none', strength: 0 };
+}
+
+function calcIchimoku(prices) {
+    if (prices.length < 52) return null;
+    // Tenkan-sen (Conversion Line): (9-period high + 9-period low) / 2
+    var tenkanSlice = prices.slice(-9);
+    var tenkan = (Math.max.apply(null, tenkanSlice) + Math.min.apply(null, tenkanSlice)) / 2;
+    // Kijun-sen (Base Line): (26-period high + 26-period low) / 2
+    var kijunSlice = prices.slice(-26);
+    var kijun = (Math.max.apply(null, kijunSlice) + Math.min.apply(null, kijunSlice)) / 2;
+    // Senkou Span A: (Tenkan + Kijun) / 2 (shifted 26 periods ahead, but we use current)
+    var senkouA = (tenkan + kijun) / 2;
+    // Senkou Span B: (52-period high + 52-period low) / 2
+    var senkouBSlice = prices.slice(-52);
+    var senkouB = (Math.max.apply(null, senkouBSlice) + Math.min.apply(null, senkouBSlice)) / 2;
+    var cloudTop = Math.max(senkouA, senkouB);
+    var cloudBottom = Math.min(senkouA, senkouB);
+    var currentPrice = prices[prices.length - 1];
+    var aboveCloud = currentPrice > cloudTop;
+    var belowCloud = currentPrice < cloudBottom;
+    var cloudBullish = senkouA > senkouB;
+    // TK Cross
+    var tkCross = 'neutral';
+    if (prices.length >= 27) {
+        var prevPrices = prices.slice(0, -1);
+        var prevTenkanSlice = prevPrices.slice(-9);
+        var prevTenkan = (Math.max.apply(null, prevTenkanSlice) + Math.min.apply(null, prevTenkanSlice)) / 2;
+        var prevKijunSlice = prevPrices.slice(-26);
+        var prevKijun = (Math.max.apply(null, prevKijunSlice) + Math.min.apply(null, prevKijunSlice)) / 2;
+        if (tenkan > kijun && prevTenkan <= prevKijun) tkCross = 'bullish';
+        else if (tenkan < kijun && prevTenkan >= prevKijun) tkCross = 'bearish';
+    }
+    return { tenkan: tenkan, kijun: kijun, aboveCloud: aboveCloud, belowCloud: belowCloud, cloudBullish: cloudBullish, tkCross: tkCross };
+}
+
+function calcADX(prices, period) {
+    period = period || 14;
+    if (prices.length < period * 2) return { adx: 0, pdi: 0, mdi: 0 };
+    // Calculate True Range, +DM, -DM series
+    var trSeries = [], pdmSeries = [], mdmSeries = [];
+    for (var i = 1; i < prices.length; i++) {
+        var high = prices[i];
+        var low = prices[i]; // simplified: using close as proxy
+        var prevHigh = prices[i - 1];
+        var prevLow = prices[i - 1];
+        var tr = Math.max(Math.abs(high - low), Math.abs(high - prevLow), Math.abs(low - prevHigh));
+        var upMove = high - prevHigh;
+        var downMove = prevLow - low;
+        var pdm = (upMove > downMove && upMove > 0) ? upMove : 0;
+        var mdm = (downMove > upMove && downMove > 0) ? downMove : 0;
+        trSeries.push(tr);
+        pdmSeries.push(pdm);
+        mdmSeries.push(mdm);
+    }
+    // Smoothed averages (Wilder smoothing)
+    var atr = trSeries.slice(0, period).reduce(function(s, v) { return s + v; }, 0) / period;
+    var apdm = pdmSeries.slice(0, period).reduce(function(s, v) { return s + v; }, 0) / period;
+    var amdm = mdmSeries.slice(0, period).reduce(function(s, v) { return s + v; }, 0) / period;
+    for (var j = period; j < trSeries.length; j++) {
+        atr = (atr * (period - 1) + trSeries[j]) / period;
+        apdm = (apdm * (period - 1) + pdmSeries[j]) / period;
+        amdm = (amdm * (period - 1) + mdmSeries[j]) / period;
+    }
+    var pdi = atr > 0 ? (apdm / atr) * 100 : 0;
+    var mdi = atr > 0 ? (amdm / atr) * 100 : 0;
+    var dx = (pdi + mdi) > 0 ? Math.abs(pdi - mdi) / (pdi + mdi) * 100 : 0;
+    return { adx: Math.round(dx), pdi: Math.round(pdi), mdi: Math.round(mdi) };
+}
+
+function calcStochRSI(prices, rsiPeriod, stochPeriod) {
+    rsiPeriod = rsiPeriod || 14;
+    stochPeriod = stochPeriod || 14;
+    if (prices.length < rsiPeriod + stochPeriod) return { k: 50, d: 50 };
+    // Build RSI series
+    var rsiSeries = [];
+    for (var i = rsiPeriod; i < prices.length; i++) {
+        rsiSeries.push(calcRSI(prices.slice(0, i + 1), rsiPeriod));
+    }
+    if (rsiSeries.length < stochPeriod) return { k: 50, d: 50 };
+    // Stochastic of RSI
+    var kValues = [];
+    for (var j = stochPeriod; j <= rsiSeries.length; j++) {
+        var slice = rsiSeries.slice(j - stochPeriod, j);
+        var minRSI = Math.min.apply(null, slice);
+        var maxRSI = Math.max.apply(null, slice);
+        var range = maxRSI - minRSI;
+        var k = range > 0 ? ((rsiSeries[j - 1] - minRSI) / range) * 100 : 50;
+        kValues.push(k);
+    }
+    // %K = 3-period SMA of stochastic values
+    var k = kValues.length >= 3 ? (kValues[kValues.length - 1] + kValues[kValues.length - 2] + kValues[kValues.length - 3]) / 3 : kValues[kValues.length - 1];
+    // %D = 3-period SMA of %K values
+    var d = k; // simplified
+    if (kValues.length >= 5) {
+        d = (kValues[kValues.length - 1] + kValues[kValues.length - 2] + kValues[kValues.length - 3]) / 3;
+    }
+    return { k: Math.round(k), d: Math.round(d) };
+}
+
+function calcSupportResistance(prices) {
+    if (prices.length < 20) return { support: 0, resistance: 0 };
+    var recent = prices.slice(-30);
+    var sorted = recent.slice().sort(function(a, b) { return a - b; });
+    // Support = average of lowest 3 prices
+    var support = (sorted[0] + sorted[1] + sorted[2]) / 3;
+    // Resistance = average of highest 3 prices
+    var len = sorted.length;
+    var resistance = (sorted[len-1] + sorted[len-2] + sorted[len-3]) / 3;
+    return { support: support, resistance: resistance };
+}
+
+function calcVolumeDivergence(prices, volumes) {
+    if (!volumes || prices.length < 10 || volumes.length < 10) return 'none';
+    var recentPrices = prices.slice(-5);
+    var recentVols = volumes.slice(-5);
+    var prevPrices = prices.slice(-10, -5);
+    var prevVols = volumes.slice(-10, -5);
+    var priceUp = recentPrices[4] > recentPrices[0];
+    var avgRecentVol = recentVols.reduce(function(s, v) { return s + v; }, 0) / 5;
+    var avgPrevVol = prevVols.reduce(function(s, v) { return s + v; }, 0) / 5;
+    // Bearish divergence: price up but volume down
+    if (priceUp && avgRecentVol < avgPrevVol * 0.7) return 'bearish_vol_div';
+    // Bullish divergence: price down but volume down (selling exhaustion)
+    if (!priceUp && avgRecentVol < avgPrevVol * 0.6) return 'bullish_vol_div';
+    // Confirmation: price up and volume up
+    if (priceUp && avgRecentVol > avgPrevVol * 1.3) return 'bullish_confirm';
+    return 'none';
+}
+
+
+
 
 /**
  * Compute composite signal score for a stock.
@@ -1136,6 +1351,24 @@ function computeSignalScore(code, quote) {
         const stochRSI = calcStochRSI(prices, 14, 14);
         if (stochRSI.k < 20) { score += 1; signals.push({ label: 'StochRSI超卖', type: 'buy' }); }
         else if (stochRSI.k > 80) { score -= 1; signals.push({ label: 'StochRSI超买', type: 'sell' }); }
+    }
+
+    // Support/Resistance levels
+    const sr = calcSupportResistance(prices);
+    if (sr.support > 0 && quote.price > 0) {
+        const distToSupport = (quote.price - sr.support) / quote.price * 100;
+        const distToResist = (sr.resistance - quote.price) / quote.price * 100;
+        if (distToSupport < 2 && distToSupport >= 0) { score += 1; signals.push({ label: '接近支撑', type: 'buy' }); }
+        if (distToResist < 2 && distToResist >= 0) { score -= 0.8; signals.push({ label: '接近阻力', type: 'sell' }); }
+    }
+
+    // Volume-price divergence
+    const _vols3 = volumeHistory[code];
+    if (_vols3 && _vols3.length >= 10) {
+        const volDiv = calcVolumeDivergence(prices, _vols3);
+        if (volDiv === 'bearish_vol_div') { score -= 1; signals.push({ label: '量价背离↓', type: 'sell' }); }
+        else if (volDiv === 'bullish_vol_div') { score += 0.8; signals.push({ label: '缩量止跌', type: 'buy' }); }
+        else if (volDiv === 'bullish_confirm') { score += 0.5; signals.push({ label: '放量确认↑', type: 'buy' }); }
     }
 
     // Trend filter (EMA20 slope) - suppress signals against trend
@@ -2147,6 +2380,39 @@ document.getElementById('importBtn').addEventListener('click', function() {
     input.click();
 });
 
+// ============ Keyboard Shortcuts ============
+(function() {
+    var kbdTimer = null;
+    document.addEventListener('keydown', function(e) {
+        // Don't trigger when typing in inputs
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
+        var hint = document.getElementById('kbdHint');
+        switch(e.key) {
+            case 'r': case 'R':
+                document.getElementById('refreshBtn').click();
+                break;
+            case ' ':
+                e.preventDefault();
+                if (state.isRunning) stopAI(); else startAI();
+                break;
+            case '1':
+                if (!state.isRunning) { state.mode = 'aggressive'; saveState(); renderAll(); showToast('切换到激进模式', 'success'); }
+                break;
+            case '2':
+                if (!state.isRunning) { state.mode = 'balanced'; saveState(); renderAll(); showToast('切换到稳健模式', 'success'); }
+                break;
+            case '3':
+                if (!state.isRunning) { state.mode = 'conservative'; saveState(); renderAll(); showToast('切换到保守模式', 'success'); }
+                break;
+            case '?':
+                hint.classList.toggle('show');
+                clearTimeout(kbdTimer);
+                kbdTimer = setTimeout(function() { hint.classList.remove('show'); }, 4000);
+                break;
+        }
+    });
+})();
+
 // ============ 策略回测 ============
 function populateBacktestStocks() {
     var sel = document.getElementById('btStock');
@@ -2266,6 +2532,32 @@ async function runBacktest() {
             else if (mom5 < -3) sigScore += 0.5;
         }
 
+        // ADX Trend Strength
+        if (sl.length >= 28) {
+            var btADX = calcADX(sl, 14);
+            if (btADX.adx > 25 && btADX.pdi > btADX.mdi) sigScore *= 1.1;
+            else if (btADX.adx > 25 && btADX.pdi < btADX.mdi) sigScore *= 0.85;
+        }
+
+        // Stochastic RSI
+        if (sl.length >= 30) {
+            var btSRSI = calcStochRSI(sl, 14, 14);
+            if (btSRSI.k < 20) sigScore += 1;
+            else if (btSRSI.k > 80) sigScore -= 1;
+        }
+
+        // Ichimoku Cloud
+        if (sl.length >= 52) {
+            var btIchi = calcIchimoku(sl);
+            if (btIchi && btIchi.aboveCloud && btIchi.cloudBullish) sigScore += 1;
+            else if (btIchi && btIchi.belowCloud && !btIchi.cloudBullish) sigScore -= 1;
+        }
+
+        // RSI Divergence
+        var btRSIDiv = calcRSIDivergence(sl, 14);
+        if (btRSIDiv.type === 'bullish') sigScore += 1.5 * btRSIDiv.strength;
+        else if (btRSIDiv.type === 'bearish') sigScore -= 1.5 * btRSIDiv.strength;
+
         // Trend filter
         var trend = calcTrendFilter(sl);
         if (trend === 'down') sigScore *= 0.7;
@@ -2312,6 +2604,27 @@ async function runBacktest() {
     var closedTrades = Math.floor(trades / 2);
     var winRate = closedTrades > 0 ? (wins / closedTrades * 100) : 0;
 
+    // Calculate Sharpe ratio
+    var btReturns = [];
+    for (var ri = 1; ri < equity.length; ri++) {
+        btReturns.push((equity[ri] - equity[ri-1]) / equity[ri-1]);
+    }
+    var btAvgRet = btReturns.reduce(function(s, v) { return s + v; }, 0) / (btReturns.length || 1);
+    var btStdRet = Math.sqrt(btReturns.reduce(function(s, v) { return s + (v - btAvgRet) * (v - btAvgRet); }, 0) / (btReturns.length || 1));
+    var btSharpe = btStdRet > 0 ? (btAvgRet / btStdRet) * Math.sqrt(252) : 0;
+    // Sortino ratio (downside deviation)
+    var negReturns = btReturns.filter(function(r) { return r < 0; });
+    var downDev = negReturns.length > 0 ? Math.sqrt(negReturns.reduce(function(s, v) { return s + v * v; }, 0) / negReturns.length) : 0;
+    var btSortino = downDev > 0 ? (btAvgRet / downDev) * Math.sqrt(252) : 0;
+    // Max consecutive losses
+    var maxConsecLoss = 0, curConsecLoss = 0;
+    for (var ci = 0; ci < btReturns.length; ci++) {
+        if (btReturns[ci] < 0) { curConsecLoss++; if (curConsecLoss > maxConsecLoss) maxConsecLoss = curConsecLoss; }
+        else curConsecLoss = 0;
+    }
+    // Calmar ratio
+    var btCalmar = maxDD > 0 ? (totalReturn / 100) / maxDD : 0;
+
     // Render results
     var rd = document.getElementById('btResults');
     rd.style.display = 'grid';
@@ -2320,8 +2633,12 @@ async function runBacktest() {
         '<div class="backtest-stat"><div class="bt-label">胜率</div><div class="bt-value">' + winRate.toFixed(0) + '%</div></div>' +
         '<div class="backtest-stat"><div class="bt-label">最大回撤</div><div class="bt-value up">-' + (maxDD * 100).toFixed(1) + '%</div></div>' +
         '<div class="backtest-stat"><div class="bt-label">交易次数</div><div class="bt-value">' + closedTrades + ' 笔</div></div>' +
+        '<div class="backtest-stat"><div class="bt-label">夏普比率</div><div class="bt-value ' + (btSharpe > 1 ? 'up' : btSharpe < 0 ? 'down' : '') + '">' + btSharpe.toFixed(2) + '</div></div>' +
+        '<div class="backtest-stat"><div class="bt-label">索提诺比率</div><div class="bt-value ' + (btSortino > 1 ? 'up' : btSortino < 0 ? 'down' : '') + '">' + btSortino.toFixed(2) + '</div></div>' +
+        '<div class="backtest-stat"><div class="bt-label">最大连亏</div><div class="bt-value">' + maxConsecLoss + ' 次</div></div>' +
         '<div class="backtest-stat"><div class="bt-label">手续费总计</div><div class="bt-value">¥' + totalCommission.toFixed(0) + '</div></div>' +
-        '<div class="backtest-stat"><div class="bt-label">净收益(扣除费用)</div><div class="bt-value ' + (totalReturn >= 0 ? 'up' : 'down') + '">' + (totalReturn >= 0 ? '+' : '') + (totalReturn - totalCommission / 1000).toFixed(2) + '%</div></div>';
+        '<div class="backtest-stat"><div class="bt-label">净收益(扣费)</div><div class="bt-value ' + (totalReturn >= 0 ? 'up' : 'down') + '">' + (totalReturn >= 0 ? '+' : '') + (totalReturn - totalCommission / 1000).toFixed(2) + '%</div></div>' +
+        '<div class="backtest-stat"><div class="bt-label">卡玛比率</div><div class="bt-value ' + (btCalmar > 0.5 ? 'up' : btCalmar < 0 ? 'down' : '') + '">' + btCalmar.toFixed(2) + '</div></div>';
 
     // Draw chart
     var canvas = document.getElementById('btChart');
@@ -2370,6 +2687,107 @@ async function runBacktest() {
 
 document.getElementById('btRunBtn').addEventListener('click', runBacktest);
 populateBacktestStocks();
+
+// ============ Batch Backtest ============
+document.getElementById('btBatchBtn').addEventListener('click', async function() {
+    var btn = this;
+    btn.textContent = '批量回测中...'; btn.disabled = true;
+    var period = parseInt(document.getElementById('btPeriod').value);
+    var modeKey = document.getElementById('btMode').value;
+    var mode = MODES[modeKey];
+    var buyThreshold = modeKey === 'aggressive' ? 1.5 : modeKey === 'balanced' ? 2.5 : 3.5;
+    var results = [];
+
+    for (var si = 0; si < STOCK_POOL.length; si++) {
+        var s = STOCK_POOL[si];
+        var klines = await fetchHistoricalKline(s.code, period + 10);
+        if (klines.length < 20) continue;
+        var testPrices = klines.map(function(k) { return k.close; });
+
+        var cash = 100000, position = 0, avgCost = 0, peakPrice = 0, trades = 0, wins = 0;
+        var equity = [cash], peak = cash, maxDD = 0;
+
+        for (var i = 20; i < testPrices.length; i++) {
+            var sl = testPrices.slice(0, i + 1);
+            var price = testPrices[i];
+            var rsi = calcRSI(sl, 14);
+            var bb = calcBollingerBands(sl, 20, 2);
+            var wr = calcWilliamsR(sl, 14);
+            var sigScore = 0;
+            if (rsi < 25) sigScore += 2.5; else if (rsi < 35) sigScore += 1.5;
+            else if (rsi > 75) sigScore -= 2.5; else if (rsi > 65) sigScore -= 1.5;
+            if (bb && price < bb.lower) sigScore += 2; else if (bb && price > bb.upper) sigScore -= 2;
+            if (wr < -80) sigScore += 1.5; else if (wr > -20) sigScore -= 1.5;
+            var kdj = calcKDJ(sl, 9);
+            if (kdj.j < 20 && kdj.k < 30) sigScore += 1.5; else if (kdj.j > 80 && kdj.k > 70) sigScore -= 1.5;
+            if (sl.length >= 26) {
+                var btM = calcMACD(sl);
+                if (btM.macd > 0 && btM.dif > btM.dea) sigScore += 0.5;
+                else if (btM.macd < 0 && btM.dif < btM.dea) sigScore -= 0.5;
+            }
+            var trend = calcTrendFilter(sl);
+            if (trend === 'down') sigScore *= 0.7; else if (trend === 'up') sigScore *= 1.15;
+            var btATR = calcATR(sl, 14);
+            var btATRPct = price > 0 ? btATR / price : 0;
+            var btATRMult = modeKey === 'aggressive' ? 2.5 : modeKey === 'balanced' ? 2 : 1.5;
+            var dynStop = Math.max(mode.stopLoss, btATRPct * btATRMult);
+
+            if (position === 0 && sigScore >= buyThreshold && cash > price * 100) {
+                var ratio = modeKey === 'aggressive' ? 0.25 : modeKey === 'balanced' ? 0.15 : 0.08;
+                var qty = Math.floor(cash * ratio / (price * 100));
+                if (qty > 0) { var bc = qty * 100 * price * 0.0003; position = qty; avgCost = price; peakPrice = price; cash -= qty * 100 * price + bc; trades++; }
+            }
+            if (position > 0) {
+                if (price > peakPrice) peakPrice = price;
+                var pPct = (price - avgCost) / avgCost;
+                var dropFromPeak = (peakPrice - price) / peakPrice;
+                var trailPct = modeKey === 'aggressive' ? 0.04 : modeKey === 'balanced' ? 0.025 : 0.015;
+                if (pPct <= -dynStop || pPct >= mode.takeProfit || (dropFromPeak >= trailPct && pPct > 0) || (sigScore <= -3 && pPct > 0)) {
+                    var sellAmt = position * 100 * price;
+                    cash += sellAmt - sellAmt * 0.0003 - sellAmt * 0.001;
+                    if (pPct > 0) wins++;
+                    position = 0; trades++;
+                }
+            }
+            var totalVal = cash + position * 100 * price;
+            equity.push(totalVal);
+            if (totalVal > peak) peak = totalVal;
+            var dd = (peak - totalVal) / peak;
+            if (dd > maxDD) maxDD = dd;
+        }
+
+        var finalVal = cash + position * 100 * (testPrices[testPrices.length - 1] || 0);
+        var ret = (finalVal - 100000) / 100000 * 100;
+        var closedT = Math.floor(trades / 2);
+        var wr2 = closedT > 0 ? (wins / closedT * 100) : 0;
+        results.push({ name: s.name, code: s.code, sector: s.sector, return: ret, winRate: wr2, maxDD: maxDD, trades: closedT });
+    }
+
+    results.sort(function(a, b) { return b.return - a.return; });
+    var container = document.getElementById('batchResults');
+    container.style.display = 'block';
+    container.innerHTML = '<div class="table-wrap"><table class="batch-table"><thead><tr>' +
+        '<th>排名</th><th>股票</th><th>板块</th><th>收益率</th><th>胜率</th><th>最大回撤</th><th>交易次数</th>' +
+        '</tr></thead><tbody>' +
+        results.map(function(r, idx) {
+            return '<tr>' +
+                '<td>' + (idx + 1) + '</td>' +
+                '<td>' + r.name + ' (' + r.code + ')</td>' +
+                '<td>' + r.sector + '</td>' +
+                '<td class="' + (r.return >= 0 ? 'up' : 'down') + '">' + (r.return >= 0 ? '+' : '') + r.return.toFixed(2) + '%</td>' +
+                '<td>' + r.winRate.toFixed(0) + '%</td>' +
+                '<td class="up">-' + (r.maxDD * 100).toFixed(1) + '%</td>' +
+                '<td>' + r.trades + '</td>' +
+            '</tr>';
+        }).join('') + '</tbody></table></div>';
+
+    // Draw comparison chart
+    var bestRet = results[0] ? results[0].return : 0;
+    var worstRet = results[results.length - 1] ? results[results.length - 1].return : 0;
+    btn.textContent = '批量回测'; btn.disabled = false;
+    addLog('批量回测完成: ' + results.length + '只股票, 最佳' + (results[0] ? results[0].name : '') + ' ' + (bestRet >= 0 ? '+' : '') + bestRet.toFixed(1) + '%', 'action');
+    showToast('批量回测完成', 'success');
+});
 </script>
 </body>
 </html>
