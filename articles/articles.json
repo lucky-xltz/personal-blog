@@ -1,6 +1,26 @@
 {
   "articles": [
     {
+      "slug": "ai-news-2026-06-03",
+      "title": "AI 日报：2026年6月3日 | 微软双线出击AI战场，佛罗里达起诉OpenAI引发行业地震",
+      "date": "2026-06-03",
+      "category": "技术",
+      "tags": [
+        "AI日报",
+        "OpenAI",
+        "微软",
+        "Anthropic",
+        "AI安全",
+        "AI代理",
+        "AI监管",
+        "代码生成"
+      ],
+      "excerpt": "佛罗里达州起诉OpenAI引发AI安全司法化浪潮；微软同时发布MAI-Code-1-Flash编码模型和Scout自主代理；Anthropic将Claude Mythos推向15国关键基础设施并提交IPO；白宫签署新AI行政令强调创新与安全并重。",
+      "cover": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&h=400&fit=crop",
+      "readtime": 12,
+      "views": 0
+    },
+    {
       "slug": "tui-renaissance-bonsai-term-ai-agents-2026",
       "title": "TUI 复兴：为什么终端界面成了 AI 时代最有前途的开发平台",
       "date": "2026-06-02",
