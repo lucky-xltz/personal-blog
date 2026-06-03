@@ -493,6 +493,28 @@
         .batch-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); font-variant-numeric: tabular-nums; }
         .batch-table tr:hover td { background: rgba(255, 255, 255, 0.02); }
 
+        /* K-Line Candlestick Chart */
+        .kline-container {
+            background: var(--bg);
+            border-radius: var(--radius-sm);
+            padding: 12px;
+            box-shadow: var(--neu-inset-sm);
+            position: relative;
+            overflow: hidden;
+        }
+        .kline-header {
+            display: flex; align-items: center; gap: 12px; margin-bottom: 12px; flex-wrap: wrap;
+        }
+        .kline-header select { background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; font-size: 13px; }
+        .kline-header .kline-info { font-size: 12px; color: var(--text-dim); margin-left: auto; }
+        .kline-legend { display: flex; gap: 12px; font-size: 10px; flex-wrap: wrap; margin-top: 8px; }
+        .kline-legend span { display: inline-flex; align-items: center; gap: 4px; }
+        .kline-legend .dot { width: 10px; height: 3px; border-radius: 1px; display: inline-block; }
+        .kline-legend .ema5 { background: #e67e22; }
+        .kline-legend .ema10 { background: #7c83db; }
+        .kline-legend .ema20 { background: #5cc4b0; }
+        .kline-legend .ema60 { background: #d4789b; }
+
         /* Keyboard shortcut hint */
         .kbd-hint {
             position: fixed; bottom: 20px; right: 20px;
@@ -688,6 +710,35 @@
         <canvas id="equityChart" height="200"></canvas>
     </div>
 
+    <!-- K-Line Candlestick Chart -->
+    <div class="card" id="klineCard">
+        <div class="card-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="8" width="4" height="12"/><rect x="10" y="4" width="4" height="16"/><rect x="17" y="10" width="4" height="10"/><line x1="5" y1="4" x2="5" y2="8"/><line x1="12" y1="0" x2="12" y2="4"/><line x1="19" y1="6" x2="19" y2="10"/></svg>
+            K线图
+            <div style="margin-left: auto; display: flex; gap: 8px; align-items: center;">
+                <select class="backtest-select" id="klineStockSelect"></select>
+                <select class="backtest-select" id="klinePeriod">
+                    <option value="30">近30日</option>
+                    <option value="60" selected>近60日</option>
+                    <option value="90">近90日</option>
+                    <option value="120">近120日</option>
+                </select>
+                <button class="btn btn-primary btn-sm" id="klineDrawBtn">绘制K线</button>
+            </div>
+        </div>
+        <div class="kline-container">
+            <canvas id="klineCanvas" height="300"></canvas>
+            <div class="kline-legend">
+                <span><i class="dot ema5"></i> EMA5</span>
+                <span><i class="dot ema10"></i> EMA10</span>
+                <span><i class="dot ema20"></i> EMA20</span>
+                <span><i class="dot ema60"></i> EMA60</span>
+                <span style="color: var(--text-muted);">| 红涨绿跌 · 柱状为成交量</span>
+            </div>
+            <div id="klineInfo" style="font-size: 12px; color: var(--text-dim); margin-top: 8px;"></div>
+        </div>
+    </div>
+
     <!-- Positions -->
     <div class="card">
         <div class="card-title">
@@ -786,7 +837,7 @@
 </div>
 <div class="toast" id="toast"></div>
 <div class="kbd-hint" id="kbdHint">
-    <kbd>R</kbd> 刷新行情 &nbsp; <kbd>Space</kbd> 启动/停止 &nbsp; <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd> 切换模式
+    <kbd>R</kbd> 刷新行情 &nbsp; <kbd>Space</kbd> 启动/停止 &nbsp; <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd> 切换模式 &nbsp; <kbd>K</kbd> K线图
 </div>
 
 <script>
@@ -2576,6 +2627,10 @@ document.getElementById('importBtn').addEventListener('click', function() {
             case '3':
                 if (!state.isRunning) { state.mode = 'conservative'; saveState(); renderAll(); showToast('切换到保守模式', 'success'); }
                 break;
+            case 'k': case 'K':
+                var klineCard = document.getElementById('klineCard');
+                if (klineCard) { klineCard.scrollIntoView({behavior:'smooth'}); showToast('跳转到K线图', 'success'); }
+                break;
             case '?':
                 hint.classList.toggle('show');
                 clearTimeout(kbdTimer);
@@ -2898,6 +2953,178 @@ async function runBacktest() {
 document.getElementById('btRunBtn').addEventListener('click', runBacktest);
 populateBacktestStocks();
 
+
+// ============ K-Line Candlestick Chart ============
+function populateKlineStocks() {
+    var sel = document.getElementById('klineStockSelect');
+    if (!sel) return;
+    sel.innerHTML = STOCK_POOL.map(function(s) {
+        return '<option value="' + s.code + '">' + s.name + ' (' + s.code + ')</option>';
+    }).join('');
+    // Pre-select first position if any
+    var posCodes = Object.keys(state.positions);
+    if (posCodes.length > 0) {
+        sel.value = posCodes[0];
+    }
+}
+
+function drawKlineChart(klines, stockName) {
+    var canvas = document.getElementById('klineCanvas');
+    if (!canvas || klines.length < 5) return;
+    var ctx = canvas.getContext('2d');
+    var dpr = window.devicePixelRatio || 1;
+    var rect = canvas.parentElement.getBoundingClientRect();
+    var totalW = rect.width - 24;
+    var totalH = 300;
+    canvas.width = totalW * dpr;
+    canvas.height = totalH * dpr;
+    canvas.style.width = totalW + 'px';
+    canvas.style.height = totalH + 'px';
+    ctx.scale(dpr, dpr);
+    ctx.clearRect(0, 0, totalW, totalH);
+
+    // Layout: price chart 75% height, volume chart 25%
+    var priceH = Math.floor(totalH * 0.72);
+    var volH = totalH - priceH - 20;
+    var volTop = priceH + 15;
+
+    // Calculate price range
+    var allHighs = klines.map(function(k) { return k.high; });
+    var allLows = klines.map(function(k) { return k.low; });
+    var priceMax = Math.max.apply(null, allHighs) * 1.02;
+    var priceMin = Math.min.apply(null, allLows) * 0.98;
+    var priceRange = priceMax - priceMin || 1;
+
+    // Calculate volume range
+    var allVols = klines.map(function(k) { return k.volume || 0; });
+    var volMax = Math.max.apply(null, allVols) || 1;
+
+    // Candle dimensions
+    var candleCount = klines.length;
+    var gap = Math.max(1, Math.floor(totalW / candleCount * 0.15));
+    var candleW = Math.max(3, Math.floor((totalW - gap * candleCount) / candleCount));
+    var step = candleW + gap;
+
+    // EMA calculation
+    function emaSeries(data, period) {
+        var k = 2 / (period + 1);
+        var result = [data[0]];
+        for (var i = 1; i < data.length; i++) {
+            result.push(data[i] * k + result[i-1] * (1 - k));
+        }
+        return result;
+    }
+    var closes = klines.map(function(k) { return k.close; });
+    var ema5 = emaSeries(closes, 5);
+    var ema10 = emaSeries(closes, 10);
+    var ema20 = emaSeries(closes, 20);
+    var ema60 = closes.length >= 60 ? emaSeries(closes, 60) : null;
+
+    // Draw grid lines
+    ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+    ctx.lineWidth = 1;
+    for (var g = 0; g <= 4; g++) {
+        var gy = (g / 4) * priceH;
+        ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(totalW, gy); ctx.stroke();
+        // Price labels
+        var pVal = priceMax - (g / 4) * priceRange;
+        ctx.fillStyle = '#7a8494';
+        ctx.font = '10px Inter';
+        ctx.textAlign = 'right';
+        ctx.fillText(pVal.toFixed(2), totalW - 2, gy - 3);
+    }
+
+    // Draw candlesticks
+    for (var i = 0; i < candleCount; i++) {
+        var k = klines[i];
+        var x = i * step + gap / 2;
+        var centerX = x + candleW / 2;
+        var isUp = k.close >= k.open;
+        var color = isUp ? '#f85149' : '#2ea043'; // Chinese market: red=up, green=down
+
+        // Wick (high-low line)
+        var highY = priceH - ((k.high - priceMin) / priceRange) * priceH;
+        var lowY = priceH - ((k.low - priceMin) / priceRange) * priceH;
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(centerX, highY); ctx.lineTo(centerX, lowY); ctx.stroke();
+
+        // Body
+        var openY = priceH - ((k.open - priceMin) / priceRange) * priceH;
+        var closeY = priceH - ((k.close - priceMin) / priceRange) * priceH;
+        var bodyTop = Math.min(openY, closeY);
+        var bodyH = Math.max(1, Math.abs(openY - closeY));
+        if (isUp) {
+            ctx.fillStyle = color;
+            ctx.fillRect(x, bodyTop, candleW, bodyH);
+        } else {
+            ctx.fillStyle = color;
+            ctx.fillRect(x, bodyTop, candleW, bodyH);
+        }
+
+        // Volume bar
+        var vH = (k.volume / volMax) * volH;
+        ctx.fillStyle = isUp ? 'rgba(248,81,73,0.4)' : 'rgba(46,160,67,0.4)';
+        ctx.fillRect(x, totalH - vH, candleW, vH);
+    }
+
+    // Draw EMA lines
+    function drawEMALine(data, color, width) {
+        ctx.strokeStyle = color;
+        ctx.lineWidth = width;
+        ctx.beginPath();
+        var started = false;
+        for (var i = 0; i < data.length; i++) {
+            var x = i * step + gap / 2 + candleW / 2;
+            var y = priceH - ((data[i] - priceMin) / priceRange) * priceH;
+            if (!started) { ctx.moveTo(x, y); started = true; }
+            else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+    }
+    drawEMALine(ema5, '#e67e22', 1.2);
+    drawEMALine(ema10, '#7c83db', 1.2);
+    drawEMALine(ema20, '#5cc4b0', 1.2);
+    if (ema60) drawEMALine(ema60, '#d4789b', 1.2);
+
+    // Volume axis label
+    ctx.fillStyle = '#7a8494';
+    ctx.font = '9px Inter';
+    ctx.textAlign = 'left';
+    ctx.fillText('Vol', 4, volTop + 10);
+
+    // Info text
+    var last = klines[klines.length - 1];
+    var prev = klines[klines.length - 2];
+    var changePct = prev ? ((last.close - prev.close) / prev.close * 100) : 0;
+    var changeColor = changePct >= 0 ? 'var(--up)' : 'var(--down)';
+    document.getElementById('klineInfo').innerHTML =
+        '<strong>' + stockName + '</strong> ' +
+        '开: ' + last.open.toFixed(2) + ' 高: ' + last.high.toFixed(2) +
+        ' 低: ' + last.low.toFixed(2) + ' <strong>收: ' + last.close.toFixed(2) + '</strong> ' +
+        '<span style="color:' + changeColor + '">(' + (changePct >= 0 ? '+' : '') + changePct.toFixed(2) + '%)</span>' +
+        ' | EMA5: ' + (ema5[ema5.length-1] || 0).toFixed(2) +
+        ' EMA20: ' + (ema20[ema20.length-1] || 0).toFixed(2);
+}
+
+document.getElementById('klineDrawBtn').addEventListener('click', async function() {
+    var btn = this;
+    var stockCode = document.getElementById('klineStockSelect').value;
+    var period = parseInt(document.getElementById('klinePeriod').value);
+    var stockName = document.getElementById('klineStockSelect').selectedOptions[0].text;
+    if (!stockCode) { showToast('请选择股票', 'error'); return; }
+    btn.textContent = '加载中...'; btn.disabled = true;
+    var klines = await fetchHistoricalKline(stockCode, period + 10);
+    if (klines.length < 5) {
+        showToast('K线数据不足', 'error');
+        btn.textContent = '绘制K线'; btn.disabled = false;
+        return;
+    }
+    drawKlineChart(klines.slice(-period), stockName);
+    btn.textContent = '绘制K线'; btn.disabled = false;
+});
+populateKlineStocks();
+
 // ============ Batch Backtest ============
 document.getElementById('btBatchBtn').addEventListener('click', async function() {
     var btn = this;
@@ -2961,7 +3188,22 @@ document.getElementById('btBatchBtn').addEventListener('click', async function()
     results.sort(function(a, b) { return b.return - a.return; });
     var container = document.getElementById('batchResults');
     container.style.display = 'block';
-    container.innerHTML = '<div class="table-wrap"><table class="batch-table"><thead><tr>' +
+    // Calculate batch summary stats
+    var avgReturn = results.length > 0 ? results.reduce(function(s,r){return s+r.return;},0)/results.length : 0;
+    var avgWinRate = results.length > 0 ? results.reduce(function(s,r){return s+r.winRate;},0)/results.length : 0;
+    var positiveCount = results.filter(function(r){return r.return > 0;}).length;
+    var bestStock = results[0];
+    var worstStock = results[results.length - 1];
+
+    var summaryHtml = '<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;">' +
+        '<div class="backtest-stat" style="flex:1;min-width:80px;"><div class="bt-label">平均收益</div><div class="bt-value ' + (avgReturn >= 0 ? 'up' : 'down') + '">' + (avgReturn >= 0 ? '+' : '') + avgReturn.toFixed(2) + '%</div></div>' +
+        '<div class="backtest-stat" style="flex:1;min-width:80px;"><div class="bt-label">平均胜率</div><div class="bt-value">' + avgWinRate.toFixed(0) + '%</div></div>' +
+        '<div class="backtest-stat" style="flex:1;min-width:80px;"><div class="bt-label">盈利股数</div><div class="bt-value">' + positiveCount + '/' + results.length + '</div></div>' +
+        '<div class="backtest-stat" style="flex:1;min-width:80px;"><div class="bt-label">最佳</div><div class="bt-value up">' + (bestStock ? bestStock.name : '--') + '</div></div>' +
+        '<div class="backtest-stat" style="flex:1;min-width:80px;"><div class="bt-label">最差</div><div class="bt-value down">' + (worstStock ? worstStock.name : '--') + '</div></div>' +
+    '</div>';
+
+    container.innerHTML = summaryHtml + '<div class="table-wrap"><table class="batch-table"><thead><tr>' +
         '<th>排名</th><th>股票</th><th>板块</th><th>收益率</th><th>胜率</th><th>最大回撤</th><th>交易次数</th>' +
         '</tr></thead><tbody>' +
         results.map(function(r, idx) {
