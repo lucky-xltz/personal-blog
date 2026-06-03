@@ -593,6 +593,316 @@
             color: var(--text-muted);
             font-size: 13px;
         }
+
+        /* === 新增样式 === */
+
+        /* Sparkline */
+        .sparkline-wrap {
+            display: inline-flex;
+            align-items: center;
+            margin: 0 8px;
+        }
+
+        /* Watchlist action buttons */
+        .watchlist-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .wl-action-btn {
+            background: var(--bg);
+            border: none;
+            color: var(--text-dim);
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all var(--transition);
+            box-shadow: var(--neu-raised-sm);
+            font-size: 12px;
+            position: relative;
+        }
+        .wl-action-btn:hover {
+            color: var(--accent);
+            transform: translateY(-1px);
+        }
+        .wl-action-btn:active {
+            box-shadow: var(--neu-inset-sm);
+            transform: translateY(0);
+        }
+        .wl-action-btn .badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: var(--danger);
+            color: #fff;
+            font-size: 9px;
+            min-width: 14px;
+            height: 14px;
+            border-radius: 7px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 3px;
+            font-weight: 600;
+        }
+        .wl-action-btn.text-btn {
+            width: auto;
+            padding: 0 10px;
+            font-size: 12px;
+            gap: 4px;
+        }
+
+        /* Bell icon on watch item */
+        .watch-item .bell-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            padding: 2px;
+            cursor: pointer;
+            transition: color var(--transition);
+            display: flex;
+            align-items: center;
+        }
+        .watch-item .bell-btn:hover { color: var(--accent); }
+        .watch-item .bell-btn.has-alert { color: var(--warn); }
+
+        /* Alert History */
+        .alert-history-section {
+            margin-top: 16px;
+        }
+        .alert-history-section .head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            padding: 0 4px;
+            cursor: pointer;
+        }
+        .alert-history-section .head h3 {
+            font-size: 14px;
+            color: var(--text-dim);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .alert-history-section .head .arrow {
+            transition: transform var(--transition);
+            color: var(--text-muted);
+        }
+        .alert-history-section .head .arrow.open {
+            transform: rotate(90deg);
+        }
+        .alert-history-list {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+        }
+        .alert-history-list.expanded {
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        .alert-entry {
+            background: var(--bg-raised);
+            border-radius: var(--radius-sm);
+            padding: 10px 14px;
+            margin-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid var(--border);
+            font-size: 12px;
+        }
+        .alert-entry .alert-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .alert-entry .alert-name {
+            font-weight: 500;
+            color: var(--text);
+        }
+        .alert-entry .alert-detail {
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+        .alert-entry .alert-time {
+            color: var(--text-muted);
+            font-size: 11px;
+            white-space: nowrap;
+            margin-left: 8px;
+        }
+        .clear-history-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 11px;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: all var(--transition);
+        }
+        .clear-history-btn:hover {
+            color: var(--danger);
+            background: rgba(248, 81, 73, 0.1);
+        }
+
+        /* Comparison Table */
+        .comparison-section {
+            margin-top: 16px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .comparison-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 12px;
+            min-width: 500px;
+        }
+        .comparison-table th {
+            background: var(--bg);
+            color: var(--text-dim);
+            font-weight: 500;
+            padding: 10px 12px;
+            text-align: left;
+            white-space: nowrap;
+            position: sticky;
+            top: 0;
+        }
+        .comparison-table th:first-child { border-radius: 10px 0 0 0; }
+        .comparison-table th:last-child { border-radius: 0 10px 0 0; }
+        .comparison-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border);
+            font-variant-numeric: tabular-nums;
+            white-space: nowrap;
+        }
+        .comparison-table tr:hover td {
+            background: rgba(255,255,255,0.02);
+        }
+
+        /* Enhanced detail indicators */
+        .tech-summary {
+            margin-top: 16px;
+        }
+        .tech-summary .title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text);
+            padding-bottom: 14px;
+        }
+        .tech-signals {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .tech-signal {
+            padding: 6px 12px;
+            border-radius: 10px;
+            font-size: 12px;
+            background: var(--bg);
+            color: var(--text-dim);
+            box-shadow: var(--neu-inset-sm);
+        }
+        .tech-signal.bullish {
+            background: rgba(248, 81, 73, 0.1);
+            color: var(--up);
+        }
+        .tech-signal.bearish {
+            background: rgba(46, 160, 67, 0.1);
+            color: var(--down);
+        }
+        .tech-signal.neutral {
+            background: rgba(210, 153, 34, 0.1);
+            color: var(--warn);
+        }
+
+        /* Help button */
+        .help-fab {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--bg-raised);
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+            font-size: 18px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--neu-raised);
+            transition: all var(--transition);
+            z-index: 99;
+            font-family: 'Inter', sans-serif;
+        }
+        .help-fab:hover {
+            color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        /* Import modal textarea */
+        .import-textarea {
+            width: 100%;
+            min-height: 120px;
+            background: var(--bg);
+            border: none;
+            border-radius: 10px;
+            padding: 12px 16px;
+            color: var(--text);
+            font-size: 13px;
+            font-family: 'Inter', monospace;
+            outline: none;
+            box-shadow: var(--neu-inset-sm);
+            margin-bottom: 16px;
+            resize: vertical;
+        }
+        .import-textarea:focus {
+            box-shadow: 0 0 0 2px var(--accent), var(--neu-inset-sm);
+        }
+
+        /* Shortcuts modal */
+        .shortcuts-list {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        .shortcuts-list li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
+        }
+        .shortcuts-list li:last-child { border-bottom: none; }
+        .shortcuts-list .key {
+            background: var(--bg);
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            color: var(--accent);
+            box-shadow: var(--neu-raised-sm);
+            font-family: monospace;
+        }
+
+        /* Price alert modal */
+        .price-alert-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        .price-alert-row input {
+            flex: 1;
+        }
     </style>
 </head>
 <body>
@@ -631,7 +941,19 @@
     <div class="watchlist-section">
         <div class="head">
             <h3>监控列表</h3>
-            <div style="display:flex;align-items:center;gap:12px">
+            <div class="watchlist-actions">
+                <button class="wl-action-btn text-btn" id="importBtn" title="导入">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    导入
+                </button>
+                <button class="wl-action-btn text-btn" id="exportBtn" title="导出">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    导出
+                </button>
+                <button class="wl-action-btn text-btn" id="compareBtn" title="对比模式">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                    对比
+                </button>
                 <span class="count" id="watchCount">0 只</span>
                 <button id="refreshBtn" class="refresh-btn" title="刷新数据">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -643,11 +965,32 @@
             </div>
         </div>
         <div id="watchList"></div>
+        <!-- 对比模式 -->
+        <div class="comparison-section" id="comparisonSection" style="display:none"></div>
+    </div>
+
+    <!-- 预警历史 -->
+    <div class="alert-history-section" id="alertHistorySection">
+        <div class="head" id="alertHistoryToggle">
+            <h3>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                预警历史
+                <span id="alertHistoryCount" style="color:var(--text-muted);font-size:11px;margin-left:4px"></span>
+            </h3>
+            <div style="display:flex;align-items:center;gap:8px">
+                <button class="clear-history-btn" id="clearHistoryBtn">清空</button>
+                <svg class="arrow" id="alertHistoryArrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+        </div>
+        <div class="alert-history-list" id="alertHistoryList"></div>
     </div>
 
     <!-- 详情卡片 -->
     <div id="detailArea"></div>
 </div>
+
+<!-- Help FAB -->
+<button class="help-fab" id="helpFab" title="键盘快捷键">?</button>
 
 <footer class="footer">
     <p>数据来源：腾讯财经 · 仅供学习参考</p>
@@ -1156,14 +1499,20 @@ function renderWatchlist() {
     const pct = q && q.changePct != null ? q.changePct / 100 : (prev ? (today - prev) / prev : 0);
     const pctClass = pct >= 0 ? "up" : "down";
     const isActive = s.code === activeCode;
+    const sparkline = generateSparkline(series);
+    const hasAlert = priceAlerts.some(a => a.code === s.code);
     return '<div class="watch-item' + (isActive ? ' active' : '') + '" data-code="' + s.code + '">' +
       '<div class="left">' +
         '<span class="name">' + (s.name || getName(s.code)) + '</span>' +
         '<span class="code">' + s.code + '</span>' +
       '</div>' +
       '<div class="right">' +
+        sparkline +
         '<span class="price" style="font-variant-numeric:tabular-nums">' + today.toFixed(2) + '</span>' +
         '<span class="pct ' + pctClass + '">' + fmtPct(pct) + '</span>' +
+        '<button class="bell-btn' + (hasAlert ? ' has-alert' : '') + '" data-bell="' + s.code + '" title="价格提醒">' +
+          '<svg width="14" height="14" viewBox="0 0 24 24" fill="' + (hasAlert ? 'currentColor' : 'none') + '" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>' +
+        '</button>' +
         '<button class="delete-btn" data-del="' + s.code + '">&times;</button>' +
       '</div>' +
     '</div>';
@@ -1171,7 +1520,7 @@ function renderWatchlist() {
 
   list.querySelectorAll(".watch-item").forEach(el => {
     el.addEventListener("click", e => {
-      if (e.target.dataset.del) return;
+      if (e.target.dataset.del || e.target.closest('[data-del]') || e.target.dataset.bell || e.target.closest('[data-bell]')) return;
       activeCode = el.dataset.code;
       renderAll();
       document.getElementById("detailArea").scrollIntoView({ behavior: "smooth", block: "start" });
@@ -1184,6 +1533,12 @@ function renderWatchlist() {
       if (activeCode === btn.dataset.del) activeCode = watchlist[0] ? watchlist[0].code : null;
       saveWatchlist();
       renderAll();
+    });
+  });
+  list.querySelectorAll("[data-bell]").forEach(btn => {
+    btn.addEventListener("click", e => {
+      e.stopPropagation();
+      showPriceAlertModal(btn.dataset.bell);
     });
   });
 }
@@ -1275,6 +1630,13 @@ function renderDetail() {
   const triggered30 = accums[2] && accums[2].status === "triggered";
   const triggered10 = accums[1] && accums[1].status === "triggered";
 
+  // 记录触发的异动到预警历史
+  accums.forEach(a => {
+    if (a.status === 'triggered') {
+      logAlert(item.code, item.name || getName(item.code), a.label, a.pct, a.thresholds.up);
+    }
+  });
+
   let warningHtml = "";
   if (triggered30 || triggered10) {
     const a = triggered30 ? accums[2] : accums[1];
@@ -1301,6 +1663,10 @@ function renderDetail() {
     const d = q.datetime;
     return d.slice(0,4) + "-" + d.slice(4,6) + "-" + d.slice(6,8) + " " + d.slice(8,10) + ":" + d.slice(10,12) + ":" + (d.slice(12,14) || "00");
   })();
+
+  // 增强指标
+  const indicators = calcEnhancedIndicators(item);
+  const techSignals = generateTechSignals(item, accums);
 
   area.innerHTML =
     '<div class="card stock-header">' +
@@ -1338,8 +1704,16 @@ function renderDetail() {
         '<span class="value" style="font-size:13px">' + (q && q.high ? q.high.toFixed(2) : '—') + ' / ' + (q && q.low ? q.low.toFixed(2) : '—') + '</span>' +
       '</div>' +
       '<div class="row">' +
+        '<span class="label">振幅</span>' +
+        '<span class="value" style="font-size:13px">' + (indicators ? indicators.amplitude.toFixed(2) + '%' : '—') + '</span>' +
+      '</div>' +
+      '<div class="row">' +
         '<span class="label">成交量</span>' +
         '<span class="value" style="font-size:13px">' + (q && q.volume ? (q.volume / 10000).toFixed(2) + ' 万手' : '—') + '</span>' +
+      '</div>' +
+      '<div class="row">' +
+        '<span class="label">成交额</span>' +
+        '<span class="value" style="font-size:13px">' + (q && q.amount ? (q.amount >= 100000000 ? (q.amount / 100000000).toFixed(2) + ' 亿' : (q.amount / 10000).toFixed(2) + ' 万') : '—') + '</span>' +
       '</div>' +
       '<div class="row">' +
         '<span class="label">指数涨跌幅</span>' +
@@ -1357,7 +1731,6 @@ function renderDetail() {
         const v = a.pct * 100;
         const cls = v >= 0 ? "up" : "down";
         const displayStatus = shouldWarnAbsolute(a.pct) && a.status === "safe" ? "near" : a.status;
-        // 每行只显示偏离值和状态，不显示次日触发提示
         return '<div class="row">' +
           '<div class="label-block">' +
             '<div class="main">' + a.label + '</div>' +
@@ -1371,6 +1744,15 @@ function renderDetail() {
       }).join("") +
     '</div>' +
 
+    // 技术面摘要
+    (techSignals.length > 0 ?
+      '<div class="card tech-summary">' +
+        '<div class="title">技术面摘要</div>' +
+        '<div class="tech-signals">' +
+          techSignals.map(s => '<span class="tech-signal ' + s.cls + '">' + s.text + '</span>').join('') +
+        '</div>' +
+      '</div>' : '') +
+
     limitWarningHtml +
     warningHtml;
 }
@@ -1378,6 +1760,8 @@ function renderDetail() {
 function renderAll() {
   renderWatchlist();
   renderDetail();
+  renderComparison();
+  renderAlertHistory();
 }
 
 // ============ 操作 ============
@@ -1451,7 +1835,397 @@ async function addStock() {
   renderAll();
 }
 
-// ============ 启动 ============
+// ============ 新增功能: 迷你走势图 ============
+function generateSparkline(series, width, height) {
+  width = width || 60;
+  height = height || 24;
+  if (!series || series.length < 2) return '';
+  const data = series.slice(-20);
+  const min = Math.min.apply(null, data);
+  const max = Math.max.apply(null, data);
+  const range = max - min || 1;
+  const isUp = data[data.length - 1] >= data[0];
+  const color = isUp ? 'var(--up)' : 'var(--down)';
+  const points = data.map(function(v, i) {
+    var x = (i / (data.length - 1)) * width;
+    var y = height - ((v - min) / range) * (height - 4) - 2;
+    return x.toFixed(1) + ',' + y.toFixed(1);
+  }).join(' ');
+  return '<div class="sparkline-wrap"><svg width="' + width + '" height="' + height + '" viewBox="0 0 ' + width + ' ' + height + '">' +
+    '<polyline points="' + points + '" fill="none" stroke="' + color + '" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>' +
+    '</svg></div>';
+}
+
+// ============ 新增功能: 预警历史 ============
+var ALERT_HISTORY_KEY = 'stock_alert_history_v1';
+var alertHistory = [];
+
+function loadAlertHistory() {
+  try {
+    var raw = localStorage.getItem(ALERT_HISTORY_KEY);
+    if (raw) alertHistory = JSON.parse(raw);
+  } catch (e) { alertHistory = []; }
+}
+
+function saveAlertHistory() {
+  try {
+    // 只保留最近50条
+    if (alertHistory.length > 50) alertHistory = alertHistory.slice(0, 50);
+    localStorage.setItem(ALERT_HISTORY_KEY, JSON.stringify(alertHistory));
+  } catch (e) {}
+}
+
+function logAlert(code, name, type, value, threshold) {
+  // 去重: 同一股票同类型1小时内不重复记录
+  var now = Date.now();
+  var recent = alertHistory.find(function(h) {
+    return h.code === code && h.type === type && (now - h.timestamp) < 3600000;
+  });
+  if (recent) return;
+  alertHistory.unshift({
+    code: code, name: name, type: type,
+    value: value, threshold: threshold,
+    timestamp: now
+  });
+  saveAlertHistory();
+  renderAlertHistory();
+}
+
+function renderAlertHistory() {
+  var container = document.getElementById('alertHistoryList');
+  var countEl = document.getElementById('alertHistoryCount');
+  if (!container) return;
+  var history = alertHistory.slice(0, 20);
+  if (countEl) countEl.textContent = history.length > 0 ? '(' + history.length + ')' : '';
+  if (history.length === 0) {
+    container.innerHTML = '<div class="empty-tip" style="padding:16px">暂无预警记录</div>';
+    return;
+  }
+  container.innerHTML = history.map(function(h) {
+    var d = new Date(h.timestamp);
+    var timeStr = (d.getMonth()+1) + '/' + d.getDate() + ' ' +
+      String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+    return '<div class="alert-entry">' +
+      '<div class="alert-info">' +
+        '<div class="alert-name">' + h.name + ' <span style="color:var(--text-muted);font-size:11px">' + h.code + '</span></div>' +
+        '<div class="alert-detail">' + h.type + ' 偏离 ' + fmtPct(h.value) + ' (阈值 ' + fmtPct(h.threshold) + ')</div>' +
+      '</div>' +
+      '<div class="alert-time">' + timeStr + '</div>' +
+    '</div>';
+  }).join('');
+}
+
+// ============ 新增功能: 价格提醒 ============
+var PRICE_ALERTS_KEY = 'stock_price_alerts_v1';
+var priceAlerts = [];
+
+function loadPriceAlerts() {
+  try {
+    var raw = localStorage.getItem(PRICE_ALERTS_KEY);
+    if (raw) priceAlerts = JSON.parse(raw);
+  } catch (e) { priceAlerts = []; }
+}
+
+function savePriceAlerts() {
+  try {
+    localStorage.setItem(PRICE_ALERTS_KEY, JSON.stringify(priceAlerts));
+  } catch (e) {}
+}
+
+function checkPriceAlerts() {
+  var triggered = [];
+  priceAlerts = priceAlerts.filter(function(alert) {
+    var item = watchlist.find(function(s) { return s.code === alert.code; });
+    if (!item || !item.quote) return true;
+    var price = item.quote.price;
+    if (!price) return true;
+    var crossed = false;
+    if (alert.direction === 'above' && price >= alert.target) crossed = true;
+    if (alert.direction === 'below' && price <= alert.target) crossed = true;
+    if (crossed) {
+      triggered.push({ name: item.name || getName(item.code), code: alert.code, target: alert.target, price: price, direction: alert.direction });
+      return false; // 移除已触发的
+    }
+    return true;
+  });
+  if (triggered.length > 0) {
+    savePriceAlerts();
+    triggered.forEach(function(t) {
+      showToast(t.name + '(' + t.code + ') ' + (t.direction === 'above' ? '突破' : '跌破') + '目标价 ' + t.target.toFixed(2) + '，当前 ' + t.price.toFixed(2), 'success');
+    });
+    renderWatchlist();
+  }
+}
+
+function getPriceAlertCount() {
+  return priceAlerts.length;
+}
+
+async function showPriceAlertModal(code) {
+  var item = watchlist.find(function(s) { return s.code === code; });
+  if (!item) return;
+  var currentPrice = (item.quote && item.quote.price) || 0;
+  var existing = priceAlerts.find(function(a) { return a.code === code; });
+  var result = await showModal({
+    title: '价格提醒 - ' + (item.name || getName(code)),
+    bodyHtml: '<div style="margin-bottom:12px;color:var(--text-dim);font-size:13px">当前价: ' + currentPrice.toFixed(2) + '</div>' +
+      '<div class="price-alert-row">' +
+        '<input class="modal-input" id="priceAlertInput" type="number" step="0.01" placeholder="目标价格" value="' + (existing ? existing.target : '') + '" style="margin-bottom:0" />' +
+      '</div>' +
+      '<div style="display:flex;gap:8px;margin-bottom:8px">' +
+        '<label style="display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer;color:var(--text-dim)">' +
+          '<input type="radio" name="priceDir" value="above" ' + (!existing || existing.direction === 'above' ? 'checked' : '') + ' /> 高于目标价时提醒' +
+        '</label>' +
+        '<label style="display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer;color:var(--text-dim)">' +
+          '<input type="radio" name="priceDir" value="below" ' + (existing && existing.direction === 'below' ? 'checked' : '') + ' /> 低于目标价时提醒' +
+        '</label>' +
+      '</div>',
+    buttons: [
+      { text: '取消', value: null },
+      { text: existing ? '更新' : '设置', value: '__set__', primary: true },
+      existing ? { text: '删除', value: '__delete__' } : null
+    ].filter(Boolean)
+  });
+  if (result === '__set__') {
+    var val = parseFloat(document.getElementById('priceAlertInput').value);
+    if (isNaN(val) || val <= 0) {
+      showToast('请输入有效的价格', 'error');
+      return;
+    }
+    var dir = 'above';
+    var radios = document.querySelectorAll('input[name="priceDir"]');
+    radios.forEach(function(r) { if (r.checked) dir = r.value; });
+    // 移除旧的
+    priceAlerts = priceAlerts.filter(function(a) { return a.code !== code; });
+    priceAlerts.push({ code: code, target: val, direction: dir });
+    savePriceAlerts();
+    showToast('价格提醒已设置', 'success');
+    renderWatchlist();
+  } else if (result === '__delete__') {
+    priceAlerts = priceAlerts.filter(function(a) { return a.code !== code; });
+    savePriceAlerts();
+    showToast('价格提醒已删除');
+    renderWatchlist();
+  }
+}
+
+// ============ 新增功能: 对比模式 ============
+var compareMode = false;
+
+function renderComparison() {
+  var section = document.getElementById('comparisonSection');
+  if (!section) return;
+  if (!compareMode) {
+    section.style.display = 'none';
+    return;
+  }
+  section.style.display = 'block';
+  var rows = watchlist.map(function(s) {
+    var q = s.quote;
+    var series = s.series || [];
+    var today = q ? q.price : (series[series.length - 1] || 0);
+    var prev = q ? q.prevClose : (series[series.length - 2] || today);
+    var dailyPct = q && q.changePct != null ? q.changePct / 100 : (prev ? (today - prev) / prev : 0);
+    var board = detectBoard(s.code);
+    var accums = getAccumRules(board.key).map(function(rule) {
+      var pct = calcAccum(series, s.idxSeries, rule.days, rule.method) || 0;
+      return { label: rule.label, pct: pct, status: rule.status(pct) };
+    });
+    var cls = dailyPct >= 0 ? 'up' : 'down';
+    return '<tr>' +
+      '<td>' + s.code + '</td>' +
+      '<td style="font-weight:500">' + (s.name || getName(s.code)) + '</td>' +
+      '<td class="' + cls + '">' + fmtPct(dailyPct) + '</td>' +
+      accums.map(function(a) {
+        var vCls = a.pct >= 0 ? 'up' : 'down';
+        var st = statusClass(shouldWarnAbsolute(a.pct) && a.status === 'safe' ? 'near' : a.status);
+        return '<td><span class="' + vCls + '">' + fmtPct(a.pct) + '</span> <span class="status-pill ' + st + '" style="font-size:10px;padding:2px 6px">' + statusText(shouldWarnAbsolute(a.pct) && a.status === 'safe' ? 'near' : a.status) + '</span></td>';
+      }).join('') +
+    '</tr>';
+  }).join('');
+  section.innerHTML = '<table class="comparison-table">' +
+    '<thead><tr><th>代码</th><th>名称</th><th>当日涨幅</th><th>3日偏离</th><th>10日偏离</th><th>30日偏离</th></tr></thead>' +
+    '<tbody>' + rows + '</tbody></table>';
+}
+
+// ============ 新增功能: 批量导入导出 ============
+function exportWatchlist() {
+  var data = watchlist.map(function(s) { return { code: s.code, name: s.name }; });
+  var json = JSON.stringify(data, null, 2);
+  // 尝试下载
+  try {
+    var blob = new Blob([json], { type: 'application/json' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'watchlist_' + new Date().toISOString().slice(0,10) + '.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('已导出监控列表', 'success');
+  } catch (e) {
+    // fallback: 复制到剪贴板
+    navigator.clipboard.writeText(json).then(function() {
+      showToast('已复制到剪贴板', 'success');
+    }).catch(function() {
+      showToast('导出失败', 'error');
+    });
+  }
+}
+
+async function importWatchlist() {
+  var result = await showModal({
+    title: '导入监控列表',
+    bodyHtml: '<div style="margin-bottom:12px;color:var(--text-dim);font-size:13px">支持两种格式：</div>' +
+      '<div style="margin-bottom:8px;color:var(--text-muted);font-size:12px">1. JSON数组: [{"code":"601991","name":"大唐发电"}]</div>' +
+      '<div style="margin-bottom:12px;color:var(--text-muted);font-size:12px">2. 每行一个6位股票代码</div>' +
+      '<textarea class="import-textarea" id="importTextarea" placeholder="在此粘贴..."></textarea>',
+    buttons: [
+      { text: '取消', value: null },
+      { text: '导入', value: '__import__', primary: true }
+    ]
+  });
+  if (result !== '__import__') return;
+  var text = (document.getElementById('importTextarea') || {}).value || '';
+  text = text.trim();
+  if (!text) { showToast('内容为空', 'error'); return; }
+  var imported = [];
+  // 尝试JSON解析
+  try {
+    var arr = JSON.parse(text);
+    if (Array.isArray(arr)) {
+      arr.forEach(function(item) {
+        if (item && item.code && /^\d{6}$/.test(String(item.code))) {
+          imported.push({ code: String(item.code), name: item.name || getName(String(item.code)) });
+        }
+      });
+    }
+  } catch (e) {}
+  // 如果JSON没解析到，尝试按行解析
+  if (imported.length === 0) {
+    text.split(/[\n,;]+/).forEach(function(line) {
+      var code = line.trim();
+      if (/^\d{6}$/.test(code)) {
+        imported.push({ code: code, name: getName(code) });
+      }
+    });
+  }
+  if (imported.length === 0) {
+    showToast('未识别到有效股票代码', 'error');
+    return;
+  }
+  // 合并去重
+  var added = 0;
+  imported.forEach(function(item) {
+    var exists = watchlist.find(function(s) { return s.code === item.code; });
+    if (!exists) {
+      watchlist.push({ code: item.code, name: item.name });
+      added++;
+    }
+  });
+  if (added > 0) {
+    saveWatchlist();
+    renderAll();
+    showToast('成功导入 ' + added + ' 只股票', 'success');
+  } else {
+    showToast('所有股票已在监控列表中', 'info');
+  }
+}
+
+// ============ 新增功能: 键盘快捷键 ============
+function showShortcutsModal() {
+  showModal({
+    title: '键盘快捷键',
+    bodyHtml: '<ul class="shortcuts-list">' +
+      '<li><span>搜索</span><span class="key">Enter</span></li>' +
+      '<li><span>关闭弹窗</span><span class="key">Esc</span></li>' +
+      '<li><span>刷新数据</span><span class="key">Ctrl+R</span></li>' +
+      '<li><span>刷新数据</span><span class="key">F5</span></li>' +
+      '<li><span>帮助</span><span class="key">?</span></li>' +
+    '</ul>',
+    buttons: [{ text: '知道了', primary: true }]
+  });
+}
+
+// ============ 新增功能: 增强技术指标 ============
+function calcEnhancedIndicators(item) {
+  var q = item.quote;
+  var series = item.series || [];
+  if (!q && series.length === 0) return null;
+  var today = q ? q.price : (series[series.length - 1] || 0);
+  var prev = q ? q.prevClose : (series[series.length - 2] || today);
+  var high = q && q.high ? q.high : today;
+  var low = q && q.low ? q.low : today;
+  var volume = q ? q.volume : 0;
+  var amount = q ? q.amount : 0;
+  // 振幅
+  var amplitude = prev ? ((high - low) / prev * 100) : 0;
+  // 量比 (当前成交量 vs 5日平均成交量)
+  var volumeRatio = 0;
+  if (series.length >= 6 && volume > 0) {
+    // 用K线最后5天的成交量估算（如果没有成交量数据，用价格变化幅度估算活跃度）
+    // 这里简单用当日量和历史估算
+    var avgVol = volume * 0.8; // 粗略估计
+    volumeRatio = avgVol > 0 ? (volume / avgVol) : 0;
+  }
+  // 市值估算 - 腾讯接口不直接提供，标记为不可用
+  var marketCap = null;
+  // 换手率估算
+  var turnoverRate = null;
+  return {
+    amplitude: amplitude,
+    volumeRatio: volumeRatio,
+    marketCap: marketCap,
+    turnoverRate: turnoverRate
+  };
+}
+
+function generateTechSignals(item, accums) {
+  var signals = [];
+  var q = item.quote;
+  var series = item.series || [];
+  if (!q) return signals;
+  var dailyPct = q.changePct / 100;
+  // 涨跌停信号
+  var board = detectBoard(item.code);
+  var limit = DAILY_LIMIT[board.key] || 0.10;
+  if (Math.abs(dailyPct) >= limit - 0.001) {
+    signals.push({ text: dailyPct > 0 ? '涨停' : '跌停', cls: dailyPct > 0 ? 'bullish' : 'bearish' });
+  } else if (Math.abs(dailyPct) >= limit * 0.8) {
+    signals.push({ text: dailyPct > 0 ? '接近涨停' : '接近跌停', cls: 'neutral' });
+  }
+  // 量价信号
+  if (q.volume && q.amount) {
+    var avgPrice = q.volume > 0 ? q.amount / q.volume : 0;
+    if (avgPrice > 0 && q.price > avgPrice * 1.02) {
+      signals.push({ text: '量价齐升', cls: 'bullish' });
+    }
+  }
+  // 异动信号
+  accums.forEach(function(a) {
+    if (a.status === 'triggered') {
+      signals.push({ text: a.label + '异动', cls: 'bearish' });
+    } else if (a.status === 'near') {
+      signals.push({ text: a.label + '临近', cls: 'neutral' });
+    }
+  });
+  // 连续涨跌信号
+  if (series.length >= 4) {
+    var last3 = series.slice(-4);
+    var allUp = last3[1] > last3[0] && last3[2] > last3[1] && last3[3] > last3[2];
+    var allDown = last3[1] < last3[0] && last3[2] < last3[1] && last3[3] < last3[2];
+    if (allUp) signals.push({ text: '3连阳', cls: 'bullish' });
+    if (allDown) signals.push({ text: '3连阴', cls: 'bearish' });
+  }
+  // 大幅波动
+  if (Math.abs(dailyPct) >= 0.05) {
+    signals.push({ text: '大幅波动', cls: 'neutral' });
+  }
+  return signals;
+}
+
+// ============ 原 bootstrap 前的初始化 ============
 let fetchStatus = "idle";
 let fetchErrorDetail = "";
 
@@ -1502,6 +2276,7 @@ async function refreshQuotes() {
   }
   renderStatusBar();
   renderAll();
+  checkPriceAlerts();
 }
 
 async function refreshAllKLines() {
@@ -1527,6 +2302,8 @@ async function refreshAllKLines() {
 
 async function bootstrap() {
   loadWatchlist();
+  loadAlertHistory();
+  loadPriceAlerts();
   renderWatchlist();
   renderStatusBar();
   renderAll();
@@ -1545,9 +2322,67 @@ async function bootstrap() {
       renderStatusBar();
       await refreshAllKLines();
       await refreshQuotes();
+      checkPriceAlerts();
       refreshBtn.classList.remove('spinning');
     });
   }
+
+  // 导入导出按钮
+  var importBtn = document.getElementById('importBtn');
+  if (importBtn) importBtn.addEventListener('click', importWatchlist);
+  var exportBtn = document.getElementById('exportBtn');
+  if (exportBtn) exportBtn.addEventListener('click', exportWatchlist);
+
+  // 对比模式按钮
+  var compareBtn = document.getElementById('compareBtn');
+  if (compareBtn) compareBtn.addEventListener('click', function() {
+    compareMode = !compareMode;
+    compareBtn.style.color = compareMode ? 'var(--accent)' : '';
+    renderComparison();
+  });
+
+  // 预警历史折叠
+  var historyToggle = document.getElementById('alertHistoryToggle');
+  if (historyToggle) historyToggle.addEventListener('click', function() {
+    var list = document.getElementById('alertHistoryList');
+    var arrow = document.getElementById('alertHistoryArrow');
+    if (list) list.classList.toggle('expanded');
+    if (arrow) arrow.classList.toggle('open');
+  });
+
+  // 清空预警历史
+  var clearBtn = document.getElementById('clearHistoryBtn');
+  if (clearBtn) clearBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    alertHistory = [];
+    saveAlertHistory();
+    renderAlertHistory();
+    showToast('预警历史已清空');
+  });
+
+  // 帮助按钮
+  var helpFab = document.getElementById('helpFab');
+  if (helpFab) helpFab.addEventListener('click', showShortcutsModal);
+
+  // 键盘快捷键
+  document.addEventListener('keydown', function(e) {
+    // Esc 关闭弹窗
+    if (e.key === 'Escape') {
+      closeModal();
+      return;
+    }
+    // Ctrl/Cmd+R 或 F5 刷新数据
+    if ((e.key === 'r' && (e.ctrlKey || e.metaKey)) || e.key === 'F5') {
+      e.preventDefault();
+      if (refreshBtn) refreshBtn.click();
+      return;
+    }
+    // ? 显示帮助 (仅在非输入状态)
+    if (e.key === '?' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+      e.preventDefault();
+      showShortcutsModal();
+    }
+  });
 }
 
 bootstrap();
