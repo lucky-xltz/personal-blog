@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>量化交易系统 | 林小白的数字花园</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #1f1a16;
+            --bg-raised: #2a231c;
+            --shadow-dark: rgba(0, 0, 0, 0.55);
+            --shadow-light: rgba(255, 255, 255, 0.04);
+            --accent: #e67e22;
+            --text: #e0e5ec;
+            --text-dim: #a0a8b8;
+            --text-muted: #7a8494;
+            --border: rgba(255, 255, 255, 0.06);
+            --up: #f85149;
+            --down: #2ea043;
+            --warn: #d29922;
+            --danger: #f85149;
+            --safe: #2ea043;
+            --radius-md: 18px;
+            --radius-sm: 12px;
+            --neu-raised: 6px 6px 14px var(--shadow-dark), -6px -6px 14px var(--shadow-light);
+            --neu-raised-sm: 3px 3px 8px var(--shadow-dark), -3px -3px 8px var(--shadow-light);
+            --neu-inset-sm: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        html, body {
+            font-family: 'Inter', -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            font-size: 14px;
+            min-height: 100vh;
+        }
+        body { padding-bottom: calc(20px + env(safe-area-inset-bottom)); }
+
+        .nav {
+            background: rgba(31, 26, 22, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .nav-logo { font-family: 'Outfit', sans-serif; font-size: 1.2rem; font-weight: 700; color: var(--accent); text-decoration: none; }
+        .nav-links { display: flex; gap: 24px; list-style: none; }
+        .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 0.9rem; transition: color var(--transition); }
+        .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+
+        .container { max-width: 960px; margin: 0 auto; padding: 24px 16px; }
+        .page-title { text-align: center; margin-bottom: 32px; }
+        .page-title h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent), #f39c12);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .page-title p { color: var(--text-dim); font-size: 0.9rem; margin-top: 8px; }
+
+        .up { color: var(--up); }
+        .down { color: var(--down); }
+
+        .card {
+            background: var(--bg-raised);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--neu-raised);
+            border: 1px solid var(--border);
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Mode Selector */
+        .mode-selector {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        .mode-card {
+            background: var(--bg-raised);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all var(--transition);
+            box-shadow: var(--neu-raised);
+            border: 2px solid transparent;
+        }
+        .mode-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 8px 8px 20px var(--shadow-dark), -8px -8px 20px var(--shadow-light);
+        }
+        .mode-card.active {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 1px var(--accent), var(--neu-raised);
+        }
+        .mode-card .mode-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            margin: 0 auto 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        .mode-card .mode-name {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .mode-card .mode-desc {
+            font-size: 12px;
+            color: var(--text-dim);
+            line-height: 1.5;
+        }
+        .mode-card .mode-params {
+            margin-top: 12px;
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+        .mode-aggressive .mode-icon { background: rgba(248, 81, 73, 0.15); color: var(--up); }
+        .mode-balanced .mode-icon { background: rgba(210, 153, 34, 0.15); color: var(--warn); }
+        .mode-conservative .mode-icon { background: rgba(46, 160, 67, 0.15); color: var(--safe); }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        @media (max-width: 640px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .mode-selector { grid-template-columns: 1fr; }
+        }
+        .stat-card {
+            background: var(--bg-raised);
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            box-shadow: var(--neu-raised);
+            border: 1px solid var(--border);
+        }
+        .stat-card .stat-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+        .stat-card .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+        }
+        .stat-card .stat-sub {
+            font-size: 11px;
+            color: var(--text-dim);
+            margin-top: 4px;
+        }
+
+        /* Position Table */
+        .table-wrap {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .position-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 13px;
+        }
+        .position-table th {
+            background: var(--bg);
+            color: var(--text-dim);
+            font-weight: 500;
+            padding: 12px 14px;
+            text-align: left;
+            white-space: nowrap;
+            position: sticky;
+            top: 0;
+        }
+        .position-table td {
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--border);
+            font-variant-numeric: tabular-nums;
+            white-space: nowrap;
+        }
+        .position-table tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        /* Trade History */
+        .trade-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .trade-item:last-child { border-bottom: none; }
+        .trade-info { flex: 1; }
+        .trade-stock { font-weight: 500; }
+        .trade-time { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+        .trade-action {
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .trade-buy { background: rgba(248, 81, 73, 0.15); color: var(--up); }
+        .trade-sell { background: rgba(46, 160, 67, 0.15); color: var(--down); }
+
+        /* Control Buttons */
+        .control-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 12px 24px;
+            border-radius: 12px;
+            border: none;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition);
+            box-shadow: var(--neu-raised-sm);
+        }
+        .btn:hover { transform: translateY(-2px); }
+        .btn:active { transform: translateY(0); box-shadow: var(--neu-inset-sm); }
+        .btn-primary { background: var(--accent); color: #fff; }
+        .btn-success { background: var(--safe); color: #fff; }
+        .btn-danger { background: var(--danger); color: #fff; }
+        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-dim); }
+
+        /* Status */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .status-running { background: rgba(46, 160, 67, 0.15); color: var(--safe); }
+        .status-stopped { background: rgba(122, 132, 148, 0.15); color: var(--text-muted); }
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+        /* Chart Area */
+        .chart-area {
+            background: var(--bg-raised);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            box-shadow: var(--neu-raised);
+            border: 1px solid var(--border);
+            margin-bottom: 16px;
+        }
+        .chart-area canvas { width: 100% !important; height: 200px !important; }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-20px);
+            background: var(--bg-raised);
+            color: var(--text);
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+            z-index: 10000;
+            opacity: 0;
+            transition: all 0.3s ease;
+            pointer-events: none;
+            max-width: 90vw;
+            text-align: center;
+        }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+        .toast.error { border-left: 3px solid var(--danger); }
+        .toast.success { border-left: 3px solid var(--safe); }
+
+        .footer {
+            text-align: center;
+            padding: 32px 16px;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+        .footer a { color: var(--accent); text-decoration: none; }
+
+        /* AI Log */
+        .ai-log {
+            background: var(--bg);
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            line-height: 1.6;
+            box-shadow: var(--neu-inset-sm);
+        }
+        .ai-log .log-entry { margin-bottom: 4px; }
+        .ai-log .log-time { color: var(--text-muted); }
+        .ai-log .log-action { color: var(--accent); }
+        .ai-log .log-success { color: var(--safe); }
+        .ai-log .log-error { color: var(--danger); }
+    </style>
+</head>
+<body>
+
+<nav class="nav">
+    <a href="index.html" class="nav-logo">林小白</a>
+    <ul class="nav-links">
+        <li><a href="index.html">首页</a></li>
+        <li><a href="stock-tools.html">股票工具</a></li>
+        <li><a href="quant.html" class="active">量化交易</a></li>
+    </ul>
+</nav>
+
+<div class="container">
+    <div class="page-title">
+        <h1>量化交易系统</h1>
+        <p>AI 驱动的智能交易 · 模拟运行 · 三种策略模式</p>
+    </div>
+
+    <!-- Mode Selector -->
+    <div class="mode-selector">
+        <div class="mode-card mode-aggressive active" data-mode="aggressive">
+            <div class="mode-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            </div>
+            <div class="mode-name">激进模式</div>
+            <div class="mode-desc">追涨杀跌，高频交易，高风险高收益</div>
+            <div class="mode-params">止损 5% · 止盈 15% · 日交易上限 10 次</div>
+        </div>
+        <div class="mode-card mode-balanced" data-mode="balanced">
+            <div class="mode-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 6v6l4 2"/></svg>
+            </div>
+            <div class="mode-name">稳健模式</div>
+            <div class="mode-desc">趋势跟踪，波段操作，平衡风险收益</div>
+            <div class="mode-params">止损 3% · 止盈 8% · 日交易上限 5 次</div>
+        </div>
+        <div class="mode-card mode-conservative" data-mode="conservative">
+            <div class="mode-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <div class="mode-name">保守模式</div>
+            <div class="mode-desc">价值投资，低频交易，稳健保本</div>
+            <div class="mode-params">止损 2% · 止盈 5% · 日交易上限 2 次</div>
+        </div>
+    </div>
+
+    <!-- Control Bar -->
+    <div class="control-bar">
+        <button class="btn btn-primary" id="startBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 6px;"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            启动 AI 交易
+        </button>
+        <button class="btn btn-danger" id="stopBtn" style="display: none;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 6px;"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+            停止交易
+        </button>
+        <button class="btn btn-outline" id="resetBtn">重置账户</button>
+        <div class="status-badge status-stopped" id="statusBadge">
+            <span class="status-dot"></span>
+            <span id="statusText">已停止</span>
+        </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-label">总资产</div>
+            <div class="stat-value" id="totalAssets">¥100,000.00</div>
+            <div class="stat-sub">初始资金 ¥100,000</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">可用资金</div>
+            <div class="stat-value" id="availableCash">¥100,000.00</div>
+            <div class="stat-sub">可买入金额</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">持仓市值</div>
+            <div class="stat-value" id="positionValue">¥0.00</div>
+            <div class="stat-sub" id="positionCount">0 只股票</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">总收益</div>
+            <div class="stat-value" id="totalProfit">¥0.00</div>
+            <div class="stat-sub" id="totalProfitPct">0.00%</div>
+        </div>
+    </div>
+
+    <!-- Equity Chart -->
+    <div class="chart-area">
+        <div class="card-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            资产曲线
+        </div>
+        <canvas id="equityChart" height="200"></canvas>
+    </div>
+
+    <!-- Positions -->
+    <div class="card">
+        <div class="card-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+            当前持仓
+        </div>
+        <div class="table-wrap">
+            <table class="position-table">
+                <thead>
+                    <tr>
+                        <th>股票</th>
+                        <th>代码</th>
+                        <th>数量</th>
+                        <th>成本价</th>
+                        <th>现价</th>
+                        <th>盈亏</th>
+                        <th>盈亏率</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="positionBody">
+                    <tr><td colspan="8" style="text-align: center; color: var(--text-muted); padding: 32px;">暂无持仓</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Trade History -->
+    <div class="card">
+        <div class="card-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            交易历史
+        </div>
+        <div id="tradeHistory">
+            <div style="text-align: center; color: var(--text-muted); padding: 32px;">暂无交易记录</div>
+        </div>
+    </div>
+
+    <!-- AI Log -->
+    <div class="card">
+        <div class="card-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            AI 决策日志
+        </div>
+        <div class="ai-log" id="aiLog">
+            <div class="log-entry"><span class="log-time">[系统]</span> <span class="log-action">AI 交易引擎就绪，等待启动...</span></div>
+        </div>
+    </div>
+</div>
+
+<footer class="footer">
+    <p>量化交易系统 · 模拟运行 · 仅供学习</p>
+    <p style="margin-top:8px"><a href="stock-tools.html">← 返回工具箱</a></p>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============ 配置 ============
+const INITIAL_CASH = 100000;
+const MODES = {
+    aggressive: { stopLoss: 0.05, takeProfit: 0.15, maxDailyTrades: 10, name: '激进' },
+    balanced: { stopLoss: 0.03, takeProfit: 0.08, maxDailyTrades: 5, name: '稳健' },
+    conservative: { stopLoss: 0.02, takeProfit: 0.05, maxDailyTrades: 2, name: '保守' }
+};
+
+// 模拟股票池
+const STOCK_POOL = [
+    { code: '601991', name: '大唐发电' },
+    { code: '600396', name: '华电辽能' },
+    { code: '603629', name: '利通电子' },
+    { code: '600519', name: '贵州茅台' },
+    { code: '000858', name: '五粮液' },
+    { code: '300750', name: '宁德时代' },
+    { code: '601318', name: '中国平安' },
+    { code: '600036', name: '招商银行' }
+];
+
+// ============ 状态 ============
+let state = {
+    mode: 'aggressive',
+    isRunning: false,
+    cash: INITIAL_CASH,
+    positions: {},  // { code: { name, quantity, avgCost } }
+    trades: [],
+    equityHistory: [],
+    dailyTrades: 0,
+    lastTradeDate: null
+};
+
+// ============ 持久化 ============
+const STORAGE_KEY = 'quant_trading_state';
+
+function saveState() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function loadState() {
+    try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+            const parsed = JSON.parse(saved);
+            state = { ...state, ...parsed };
+        }
+    } catch (e) {
+        console.error('加载状态失败:', e);
+    }
+}
+
+// ============ 工具函数 ============
+function showToast(msg, type) {
+    type = type || 'info';
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.className = 'toast ' + type + ' show';
+    clearTimeout(el._timer);
+    el._timer = setTimeout(() => { el.className = 'toast'; }, 2500);
+}
+
+function formatMoney(amount) {
+    return '¥' + amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
+function formatTime(date) {
+    return date.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+}
+
+function addLog(msg, type) {
+    type = type || 'action';
+    const log = document.getElementById('aiLog');
+    const entry = document.createElement('div');
+    entry.className = 'log-entry';
+    entry.innerHTML = '<span class="log-time">[' + formatTime(new Date()) + ']</span> <span class="log-' + type + '">' + msg + '</span>';
+    log.appendChild(entry);
+    log.scrollTop = log.scrollHeight;
+    // 保留最近100条
+    while (log.children.length > 100) log.removeChild(log.firstChild);
+}
+
+// ============ 交易接口（预留真实接入） ============
+/**
+ * 执行买入操作
+ * @param {string} stockCode - 股票代码
+ * @param {string} stockName - 股票名称
+ * @param {number} quantity - 买入数量（手数，1手=100股）
+ * @param {number} price - 买入价格
+ * @returns {boolean} 是否成功
+ */
+function executeBuy(stockCode, stockName, quantity, price) {
+    const totalCost = quantity * 100 * price;
+    const commission = totalCost * 0.0003; // 万三佣金
+    const totalAmount = totalCost + commission;
+
+    if (totalAmount > state.cash) {
+        addLog('买入失败：资金不足 ' + stockName, 'error');
+        return false;
+    }
+
+    // 扣减资金
+    state.cash -= totalAmount;
+
+    // 更新持仓
+    if (state.positions[stockCode]) {
+        const pos = state.positions[stockCode];
+        const totalQty = pos.quantity + quantity;
+        pos.avgCost = (pos.avgCost * pos.quantity + price * quantity) / totalQty;
+        pos.quantity = totalQty;
+    } else {
+        state.positions[stockCode] = {
+            name: stockName,
+            quantity: quantity,
+            avgCost: price
+        };
+    }
+
+    // 记录交易
+    state.trades.unshift({
+        time: new Date().toISOString(),
+        code: stockCode,
+        name: stockName,
+        action: 'buy',
+        quantity: quantity,
+        price: price,
+        amount: totalAmount,
+        commission: commission
+    });
+
+    state.dailyTrades++;
+    saveState();
+    addLog('买入 ' + stockName + ' ' + quantity + '手 @ ' + price.toFixed(2), 'success');
+    return true;
+}
+
+/**
+ * 执行卖出操作
+ * @param {string} stockCode - 股票代码
+ * @param {number} quantity - 卖出数量（手数）
+ * @param {number} price - 卖出价格
+ * @returns {boolean} 是否成功
+ */
+function executeSell(stockCode, quantity, price) {
+    const pos = state.positions[stockCode];
+    if (!pos || pos.quantity < quantity) {
+        addLog('卖出失败：持仓不足', 'error');
+        return false;
+    }
+
+    const totalAmount = quantity * 100 * price;
+    const commission = totalAmount * 0.0003;
+    const stampTax = totalAmount * 0.001; // 千一印花税
+    const netAmount = totalAmount - commission - stampTax;
+
+    // 增加资金
+    state.cash += netAmount;
+
+    // 更新持仓
+    pos.quantity -= quantity;
+    if (pos.quantity === 0) {
+        delete state.positions[stockCode];
+    }
+
+    // 记录交易
+    state.trades.unshift({
+        time: new Date().toISOString(),
+        code: stockCode,
+        name: pos.name,
+        action: 'sell',
+        quantity: quantity,
+        price: price,
+        amount: netAmount,
+        commission: commission + stampTax
+    });
+
+    state.dailyTrades++;
+    saveState();
+    addLog('卖出 ' + pos.name + ' ' + quantity + '手 @ ' + price.toFixed(2), 'success');
+    return true;
+}
+
+// ============ AI 交易引擎 ============
+let aiTimer = null;
+
+function getRandomPrice(basePrice) {
+    // 模拟价格波动 ±3%
+    const change = (Math.random() - 0.5) * 0.06;
+    return basePrice * (1 + change);
+}
+
+function aiDecide() {
+    if (!state.isRunning) return;
+
+    const mode = MODES[state.mode];
+    const today = new Date().toDateString();
+
+    // 重置每日交易计数
+    if (state.lastTradeDate !== today) {
+        state.dailyTrades = 0;
+        state.lastTradeDate = today;
+    }
+
+    // 检查每日交易限制
+    if (state.dailyTrades >= mode.maxDailyTrades) {
+        addLog('今日交易次数已达上限 (' + mode.maxDailyTrades + '次)', 'action');
+        return;
+    }
+
+    // 随机选择一个股票
+    const stock = STOCK_POOL[Math.floor(Math.random() * STOCK_POOL.length)];
+    const basePrice = 10 + Math.random() * 90; // 模拟价格 10-100
+    const currentPrice = getRandomPrice(basePrice);
+
+    // 检查持仓止损止盈
+    Object.keys(state.positions).forEach(code => {
+        const pos = state.positions[code];
+        const posPrice = getRandomPrice(pos.avgCost);
+        const profitPct = (posPrice - pos.avgCost) / pos.avgCost;
+
+        if (profitPct <= -mode.stopLoss) {
+            addLog('止损触发: ' + pos.name + ' 亏损 ' + (profitPct * 100).toFixed(2) + '%', 'error');
+            executeSell(code, pos.quantity, posPrice);
+        } else if (profitPct >= mode.takeProfit) {
+            addLog('止盈触发: ' + pos.name + ' 盈利 ' + (profitPct * 100).toFixed(2) + '%', 'success');
+            executeSell(code, pos.quantity, posPrice);
+        }
+    });
+
+    // AI 决策：买入或卖出
+    const rand = Math.random();
+    const hasPosition = state.positions[stock.code];
+
+    if (state.mode === 'aggressive') {
+        // 激进：频繁交易
+        if (rand < 0.6 && !hasPosition && state.cash > currentPrice * 100) {
+            const qty = Math.floor(state.cash * 0.3 / (currentPrice * 100));
+            if (qty > 0) {
+                addLog('AI 决策: 激进买入 ' + stock.name, 'action');
+                executeBuy(stock.code, stock.name, qty, currentPrice);
+            }
+        } else if (rand < 0.8 && hasPosition) {
+            addLog('AI 决策: 激进卖出 ' + stock.name, 'action');
+            executeSell(stock.code, hasPosition.quantity, currentPrice);
+        }
+    } else if (state.mode === 'balanced') {
+        // 稳健：波段操作
+        if (rand < 0.4 && !hasPosition && state.cash > currentPrice * 100) {
+            const qty = Math.floor(state.cash * 0.2 / (currentPrice * 100));
+            if (qty > 0) {
+                addLog('AI 决策: 稳健买入 ' + stock.name, 'action');
+                executeBuy(stock.code, stock.name, qty, currentPrice);
+            }
+        } else if (rand < 0.6 && hasPosition) {
+            addLog('AI 决策: 稳健卖出 ' + stock.name, 'action');
+            executeSell(stock.code, hasPosition.quantity, currentPrice);
+        }
+    } else {
+        // 保守：低频交易
+        if (rand < 0.2 && !hasPosition && state.cash > currentPrice * 100) {
+            const qty = Math.floor(state.cash * 0.1 / (currentPrice * 100));
+            if (qty > 0) {
+                addLog('AI 决策: 保守买入 ' + stock.name, 'action');
+                executeBuy(stock.code, stock.name, qty, currentPrice);
+            }
+        }
+    }
+
+    // 记录资产曲线
+    const totalAssets = calculateTotalAssets();
+    state.equityHistory.push({
+        time: new Date().toISOString(),
+        value: totalAssets
+    });
+    // 保留最近100个点
+    if (state.equityHistory.length > 100) {
+        state.equityHistory = state.equityHistory.slice(-100);
+    }
+
+    saveState();
+    renderAll();
+}
+
+function calculateTotalAssets() {
+    let total = state.cash;
+    Object.values(state.positions).forEach(pos => {
+        // 模拟当前价格
+        const currentPrice = getRandomPrice(pos.avgCost);
+        total += pos.quantity * 100 * currentPrice;
+    });
+    return total;
+}
+
+function startAI() {
+    if (state.isRunning) return;
+    state.isRunning = true;
+    saveState();
+    addLog('AI 交易引擎启动 [' + MODES[state.mode].name + '模式]', 'success');
+    aiTimer = setInterval(aiDecide, 5000); // 每5秒决策一次
+    renderAll();
+}
+
+function stopAI() {
+    state.isRunning = false;
+    if (aiTimer) {
+        clearInterval(aiTimer);
+        aiTimer = null;
+    }
+    saveState();
+    addLog('AI 交易引擎停止', 'error');
+    renderAll();
+}
+
+function resetAccount() {
+    if (!confirm('确定要重置账户吗？所有持仓和交易记录将被清除。')) return;
+    stopAI();
+    state.cash = INITIAL_CASH;
+    state.positions = {};
+    state.trades = [];
+    state.equityHistory = [];
+    state.dailyTrades = 0;
+    saveState();
+    addLog('账户已重置', 'action');
+    renderAll();
+    showToast('账户已重置', 'success');
+}
+
+// ============ 渲染 ============
+function renderAll() {
+    renderMode();
+    renderStats();
+    renderPositions();
+    renderTrades();
+    renderChart();
+    renderStatus();
+}
+
+function renderMode() {
+    document.querySelectorAll('.mode-card').forEach(card => {
+        card.classList.toggle('active', card.dataset.mode === state.mode);
+    });
+}
+
+function renderStats() {
+    const totalAssets = calculateTotalAssets();
+    const positionValue = totalAssets - state.cash;
+    const profit = totalAssets - INITIAL_CASH;
+    const profitPct = (profit / INITIAL_CASH * 100);
+
+    document.getElementById('totalAssets').textContent = formatMoney(totalAssets);
+    document.getElementById('availableCash').textContent = formatMoney(state.cash);
+    document.getElementById('positionValue').textContent = formatMoney(positionValue);
+    document.getElementById('positionCount').textContent = Object.keys(state.positions).length + ' 只股票';
+
+    const profitEl = document.getElementById('totalProfit');
+    const profitPctEl = document.getElementById('totalProfitPct');
+    profitEl.textContent = (profit >= 0 ? '+' : '') + formatMoney(profit);
+    profitEl.className = 'stat-value ' + (profit >= 0 ? 'up' : 'down');
+    profitPctEl.textContent = (profitPct >= 0 ? '+' : '') + profitPct.toFixed(2) + '%';
+    profitPctEl.className = 'stat-sub ' + (profitPct >= 0 ? 'up' : 'down');
+}
+
+function renderPositions() {
+    const body = document.getElementById('positionBody');
+    const codes = Object.keys(state.positions);
+
+    if (codes.length === 0) {
+        body.innerHTML = '<tr><td colspan="8" style="text-align: center; color: var(--text-muted); padding: 32px;">暂无持仓</td></tr>';
+        return;
+    }
+
+    body.innerHTML = codes.map(code => {
+        const pos = state.positions[code];
+        const currentPrice = getRandomPrice(pos.avgCost);
+        const profit = (currentPrice - pos.avgCost) * pos.quantity * 100;
+        const profitPct = (currentPrice - pos.avgCost) / pos.avgCost * 100;
+        const cls = profit >= 0 ? 'up' : 'down';
+
+        return '<tr>' +
+            '<td style="font-weight: 500">' + pos.name + '</td>' +
+            '<td>' + code + '</td>' +
+            '<td>' + pos.quantity + '手</td>' +
+            '<td>' + pos.avgCost.toFixed(2) + '</td>' +
+            '<td>' + currentPrice.toFixed(2) + '</td>' +
+            '<td class="' + cls + '">' + (profit >= 0 ? '+' : '') + profit.toFixed(2) + '</td>' +
+            '<td class="' + cls + '">' + (profitPct >= 0 ? '+' : '') + profitPct.toFixed(2) + '%</td>' +
+            '<td><button class="btn btn-outline" style="padding: 4px 12px; font-size: 12px;" onclick="manualSell(\'' + code + '\')">卖出</button></td>' +
+        '</tr>';
+    }).join('');
+}
+
+function renderTrades() {
+    const container = document.getElementById('tradeHistory');
+    if (state.trades.length === 0) {
+        container.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 32px;">暂无交易记录</div>';
+        return;
+    }
+
+    container.innerHTML = state.trades.slice(0, 20).map(t => {
+        const time = new Date(t.time);
+        return '<div class="trade-item">' +
+            '<div class="trade-info">' +
+                '<div class="trade-stock">' + t.name + ' (' + t.code + ')</div>' +
+                '<div class="trade-time">' + formatTime(time) + ' · ' + t.quantity + '手 · ' + t.price.toFixed(2) + '</div>' +
+            '</div>' +
+            '<span class="trade-action ' + (t.action === 'buy' ? 'trade-buy' : 'trade-sell') + '">' +
+                (t.action === 'buy' ? '买入' : '卖出') +
+            '</span>' +
+        '</div>';
+    }).join('');
+}
+
+function renderChart() {
+    const canvas = document.getElementById('equityChart');
+    const ctx = canvas.getContext('2d');
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.parentElement.getBoundingClientRect();
+    const w = rect.width - 40;
+    const h = 200;
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+    ctx.scale(dpr, dpr);
+    ctx.clearRect(0, 0, w, h);
+
+    const data = state.equityHistory.map(e => e.value);
+    if (data.length < 2) {
+        ctx.fillStyle = 'var(--text-muted)';
+        ctx.font = '14px Inter';
+        ctx.textAlign = 'center';
+        ctx.fillText('等待数据...', w / 2, h / 2);
+        return;
+    }
+
+    const min = Math.min(...data) * 0.99;
+    const max = Math.max(...data) * 1.01;
+    const range = max - min || 1;
+
+    // 画网格
+    ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+    ctx.lineWidth = 1;
+    for (let i = 0; i <= 4; i++) {
+        const y = h - (i / 4) * h;
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(w, y);
+        ctx.stroke();
+    }
+
+    // 画线
+    const isUp = data[data.length - 1] >= data[0];
+    ctx.strokeStyle = isUp ? 'var(--down)' : 'var(--up)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    data.forEach((v, i) => {
+        const x = (i / (data.length - 1)) * w;
+        const y = h - ((v - min) / range) * (h - 20) - 10;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+
+    // 填充渐变
+    const gradient = ctx.createLinearGradient(0, 0, 0, h);
+    gradient.addColorStop(0, isUp ? 'rgba(46,160,67,0.3)' : 'rgba(248,81,73,0.3)');
+    gradient.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.lineTo(w, h);
+    ctx.lineTo(0, h);
+    ctx.closePath();
+    ctx.fillStyle = gradient;
+    ctx.fill();
+}
+
+function renderStatus() {
+    const badge = document.getElementById('statusBadge');
+    const text = document.getElementById('statusText');
+    const startBtn = document.getElementById('startBtn');
+    const stopBtn = document.getElementById('stopBtn');
+
+    if (state.isRunning) {
+        badge.className = 'status-badge status-running';
+        text.textContent = '运行中 [' + MODES[state.mode].name + ']';
+        startBtn.style.display = 'none';
+        stopBtn.style.display = 'inline-flex';
+    } else {
+        badge.className = 'status-badge status-stopped';
+        text.textContent = '已停止';
+        startBtn.style.display = 'inline-flex';
+        stopBtn.style.display = 'none';
+    }
+}
+
+function manualSell(code) {
+    const pos = state.positions[code];
+    if (!pos) return;
+    const price = getRandomPrice(pos.avgCost);
+    executeSell(code, pos.quantity, price);
+    renderAll();
+}
+
+// ============ 事件绑定 ============
+document.querySelectorAll('.mode-card').forEach(card => {
+    card.addEventListener('click', () => {
+        if (state.isRunning) {
+            showToast('请先停止交易再切换模式', 'error');
+            return;
+        }
+        state.mode = card.dataset.mode;
+        saveState();
+        renderAll();
+        showToast('已切换到' + MODES[state.mode].name + '模式', 'success');
+    });
+});
+
+document.getElementById('startBtn').addEventListener('click', startAI);
+document.getElementById('stopBtn').addEventListener('click', stopAI);
+document.getElementById('resetBtn').addEventListener('click', resetAccount);
+
+// ============ 启动 ============
+loadState();
+renderAll();
+
+// 恢复运行状态
+if (state.isRunning) {
+    startAI();
+}
+</script>
+</body>
+</html>
