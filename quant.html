@@ -11,9 +11,11 @@
         :root {
             --bg: #1f1a16;
             --bg-raised: #2a231c;
-            --shadow-dark: rgba(0, 0, 0, 0.55);
-            --shadow-light: rgba(255, 255, 255, 0.04);
+            --bg-surface: #252019;
+            --shadow-dark: rgba(0, 0, 0, 0.5);
+            --shadow-light: rgba(255, 255, 255, 0.03);
             --accent: #e67e22;
+            --accent-soft: rgba(230, 126, 34, 0.15);
             --text: #e0e5ec;
             --text-dim: #a0a8b8;
             --text-muted: #7a8494;
@@ -23,10 +25,12 @@
             --warn: #d29922;
             --danger: #f85149;
             --safe: #2ea043;
-            --radius-md: 18px;
+            --radius-md: 16px;
             --radius-sm: 12px;
-            --neu-raised: 6px 6px 14px var(--shadow-dark), -6px -6px 14px var(--shadow-light);
-            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --radius-xs: 8px;
+            --neu-raised: 4px 4px 12px var(--shadow-dark), -4px -4px 12px var(--shadow-light);
+            --neu-inset: inset 2px 2px 6px var(--shadow-dark), inset -2px -2px 6px var(--shadow-light);
+            --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         html, body {
@@ -38,6 +42,7 @@
         }
         body { padding-bottom: calc(20px + env(safe-area-inset-bottom)); }
 
+        /* Nav */
         .nav {
             background: rgba(31, 26, 22, 0.95);
             backdrop-filter: blur(20px);
@@ -55,82 +60,41 @@
         .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 0.9rem; transition: color var(--transition); }
         .nav-links a:hover, .nav-links a.active { color: var(--accent); }
 
-        .container { max-width: 1680px; margin: 0 auto; padding: 16px 20px; }
-        
-        /* 两列布局 - 大屏幕 */
-        @media (min-width: 1200px) {
-            .two-col-layout {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 12px;
-            }
-            .two-col-layout > .card {
-                margin-bottom: 0;
-            }
-        }
-
-        /* 三列网格布局 - 超宽屏幕 */
-        @media (min-width: 1400px) {
-            .three-col-grid {
-                display: grid;
-                grid-template-columns: 1fr 1fr 1fr;
-                gap: 12px;
-            }
-            .three-col-grid > .card {
-                margin-bottom: 0;
-            }
-            /* 底部区域两列布局 */
-            .bottom-two-col {
-                display: grid;
-                grid-template-columns: 2fr 1fr;
-                gap: 12px;
-            }
-            .bottom-two-col > .card {
-                margin-bottom: 0;
-            }
-            /* 资产曲线和K线图并排 */
-            .chart-row {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 12px;
-            }
-            .chart-row > .chart-area,
-            .chart-row > .card {
-                margin-bottom: 0;
-            }
-        }
-        .page-title { text-align: center; margin-bottom: 16px; }
+        .container { max-width: 1600px; margin: 0 auto; padding: 20px 24px; }
+        .page-title { text-align: center; margin-bottom: 24px; }
         .page-title h1 {
             font-family: 'Outfit', sans-serif;
-            font-size: 2rem;
+            font-size: 1.8rem;
             font-weight: 700;
             background: linear-gradient(135deg, var(--accent), #f39c12);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-        .page-title p { color: var(--text-dim); font-size: 0.9rem; margin-top: 8px; }
+        .page-title p { color: var(--text-dim); font-size: 0.85rem; margin-top: 6px; }
 
+        /* Utility Classes */
         .up { color: var(--up); }
         .down { color: var(--down); }
 
+        /* Cards */
         .card {
             background: var(--bg-raised);
             border-radius: var(--radius-md);
             padding: 16px;
-            margin-bottom: 12px;
+            margin-bottom: 20px;
             box-shadow: var(--neu-raised);
             border: 1px solid var(--border);
         }
-
         .card-title {
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 600;
-            margin-bottom: 16px;
+            margin-bottom: 14px;
             display: flex;
             align-items: center;
             gap: 8px;
         }
+        .card-title svg { color: var(--accent); flex-shrink: 0; }
 
         /* Mode Selector */
         .mode-selector {
@@ -142,164 +106,79 @@
         .mode-card {
             background: var(--bg-raised);
             border-radius: var(--radius-md);
-            padding: 20px;
+            padding: 16px;
             text-align: center;
             cursor: pointer;
             transition: all var(--transition);
             box-shadow: var(--neu-raised);
             border: 2px solid transparent;
         }
-        .mode-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 8px 8px 20px var(--shadow-dark), -8px -8px 20px var(--shadow-light);
-        }
-        .mode-card.active {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 1px var(--accent), var(--neu-raised);
-        }
+        .mode-card:hover { transform: translateY(-2px); }
+        .mode-card.active { border-color: var(--accent); }
         .mode-card .mode-icon {
-            width: 48px;
-            height: 48px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-            margin: 0 auto 12px;
+            margin: 0 auto 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
         }
-        .mode-card .mode-name {
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-        .mode-card .mode-desc {
-            font-size: 12px;
-            color: var(--text-dim);
-            line-height: 1.5;
-        }
-        .mode-card .mode-params {
-            margin-top: 12px;
-            font-size: 11px;
-            color: var(--text-muted);
-        }
+        .mode-card .mode-name { font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+        .mode-card .mode-desc { font-size: 12px; color: var(--text-dim); line-height: 1.4; }
+        .mode-card .mode-params { margin-top: 8px; font-size: 11px; color: var(--text-muted); }
         .mode-aggressive .mode-icon { background: rgba(248, 81, 73, 0.15); color: var(--up); }
         .mode-balanced .mode-icon { background: rgba(210, 153, 34, 0.15); color: var(--warn); }
         .mode-conservative .mode-icon { background: rgba(46, 160, 67, 0.15); color: var(--safe); }
 
-        /* Stats Grid */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 12px;
-            margin-bottom: 12px;
-        }
-        @media (max-width: 768px) {
-            .stats-grid { grid-template-columns: repeat(2, 1fr); }
-        }
-        @media (max-width: 640px) {
-            .stats-grid { grid-template-columns: repeat(2, 1fr); }
-            .mode-selector { grid-template-columns: 1fr; }
-        }
-        .stat-card {
-            background: var(--bg-raised);
-            border-radius: var(--radius-sm);
-            padding: 16px;
-            box-shadow: var(--neu-raised);
-            border: 1px solid var(--border);
-        }
-        .stat-card .stat-label {
-            font-size: 12px;
-            color: var(--text-muted);
-            margin-bottom: 8px;
-        }
-        .stat-card .stat-value {
-            font-size: 24px;
-            font-weight: 700;
-            font-variant-numeric: tabular-nums;
-        }
-        .stat-card .stat-sub {
-            font-size: 11px;
-            color: var(--text-dim);
-            margin-top: 4px;
-        }
-
-        /* Position Table */
-        .table-wrap {
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-        .position-table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            font-size: 13px;
-        }
-        .position-table th {
-            background: var(--bg);
-            color: var(--text-dim);
-            font-weight: 500;
-            padding: 12px 14px;
-            text-align: left;
-            white-space: nowrap;
-            position: sticky;
-            top: 0;
-        }
-        .position-table td {
-            padding: 12px 14px;
-            border-bottom: 1px solid var(--border);
-            font-variant-numeric: tabular-nums;
-            white-space: nowrap;
-        }
-        .position-table tr:hover td {
-            background: rgba(255, 255, 255, 0.02);
-        }
-
-        /* Trade History */
-        .trade-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid var(--border);
-        }
-        .trade-item:last-child { border-bottom: none; }
-        .trade-info { flex: 1; }
-        .trade-stock { font-weight: 500; }
-        .trade-time { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
-        .trade-action {
-            padding: 4px 12px;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: 500;
-        }
-        .trade-buy { background: rgba(248, 81, 73, 0.15); color: var(--up); }
-        .trade-sell { background: rgba(46, 160, 67, 0.15); color: var(--down); }
-
-        /* Control Buttons */
+        /* Control Bar */
         .control-bar {
             display: flex;
-            gap: 12px;
-            margin-bottom: 16px;
+            gap: 10px;
+            margin-bottom: 20px;
             flex-wrap: wrap;
+            align-items: center;
         }
         .btn {
-            padding: 12px 24px;
-            border-radius: 12px;
+            padding: 10px 20px;
+            border-radius: var(--radius-xs);
             border: none;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             cursor: pointer;
             transition: all var(--transition);
-            box-shadow: var(--neu-raised);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
-        .btn:hover { transform: translateY(-2px); }
-        .btn:active { transform: translateY(0); box-shadow: var(--neu-inset); }
+        .btn:hover { transform: translateY(-1px); }
+        .btn:active { transform: translateY(0); }
         .btn-primary { background: var(--accent); color: #fff; }
         .btn-success { background: var(--safe); color: #fff; }
         .btn-danger { background: var(--danger); color: #fff; }
         .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-dim); }
+        .btn-sm { padding: 6px 12px; font-size: 12px; }
 
-        /* Status */
+        .btn-refresh {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            border-radius: var(--radius-xs);
+            border: none;
+            background: var(--bg-raised);
+            color: var(--text-dim);
+            font-size: 13px;
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+        .btn-refresh:hover { color: var(--accent); }
+        .btn-refresh .refresh-icon { transition: transform 0.6s ease; display: inline-block; }
+        .btn-refresh.spinning .refresh-icon { transform: rotate(360deg); }
+        .btn-refresh .last-update { font-size: 10px; color: var(--text-muted); margin-left: 4px; }
+
+        .state-actions { display: flex; gap: 6px; margin-left: auto; }
+
         .status-badge {
             display: inline-flex;
             align-items: center;
@@ -312,24 +191,283 @@
         .status-running { background: rgba(46, 160, 67, 0.15); color: var(--safe); }
         .status-stopped { background: rgba(122, 132, 148, 0.15); color: var(--text-muted); }
         .status-dot {
-            width: 8px;
-            height: 8px;
+            width: 6px;
+            height: 6px;
             border-radius: 50%;
             background: currentColor;
             animation: pulse 1.5s infinite;
         }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
-        /* Chart Area */
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            background: var(--bg-raised);
+            border-radius: var(--radius-sm);
+            padding: 14px;
+            box-shadow: var(--neu-raised);
+            border: 1px solid var(--border);
+        }
+        .stat-card .stat-label { font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
+        .stat-card .stat-value { font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; }
+        .stat-card .stat-sub { font-size: 11px; color: var(--text-dim); margin-top: 4px; }
+
+        /* Performance Grid */
+        .perf-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .perf-card {
+            background: var(--bg-surface);
+            border-radius: var(--radius-xs);
+            padding: 12px;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+        .perf-card .perf-label { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; }
+        .perf-card .perf-value { font-size: 18px; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+        /* Main Layout */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        .main-grid > .card { margin-bottom: 0; }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        .charts-grid > .card { margin-bottom: 0; }
+
+        .tables-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        .tables-grid > .card { margin-bottom: 0; }
+
+        /* Tables */
+        .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        .position-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 13px;
+        }
+        .position-table th {
+            background: var(--bg-surface);
+            color: var(--text-dim);
+            font-weight: 500;
+            padding: 10px 12px;
+            text-align: left;
+            white-space: nowrap;
+            position: sticky;
+            top: 0;
+        }
+        .position-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border);
+            font-variant-numeric: tabular-nums;
+            white-space: nowrap;
+        }
+        .position-table tr:hover td { background: rgba(255, 255, 255, 0.02); }
+
+        /* Trade History */
+        .trade-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .trade-item:last-child { border-bottom: none; }
+        .trade-info { flex: 1; }
+        .trade-stock { font-weight: 500; font-size: 13px; }
+        .trade-time { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+        .trade-action {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+        .trade-buy { background: rgba(248, 81, 73, 0.15); color: var(--up); }
+        .trade-sell { background: rgba(46, 160, 67, 0.15); color: var(--down); }
+
+        /* AI Log */
+        .ai-log {
+            background: var(--bg-surface);
+            border-radius: var(--radius-xs);
+            padding: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            line-height: 1.6;
+            box-shadow: var(--neu-inset);
+        }
+        .ai-log .log-entry { margin-bottom: 4px; }
+        .ai-log .log-time { color: var(--text-muted); }
+        .ai-log .log-action { color: var(--accent); }
+        .ai-log .log-success { color: var(--safe); }
+        .ai-log .log-error { color: var(--danger); }
+
+        /* Charts */
         .chart-area {
             background: var(--bg-raised);
             border-radius: var(--radius-md);
             padding: 16px;
             box-shadow: var(--neu-raised);
             border: 1px solid var(--border);
-            margin-bottom: 12px;
+            margin-bottom: 20px;
         }
         .chart-area canvas { width: 100% !important; height: 200px !important; }
+
+        /* K-Line */
+        .kline-container {
+            background: var(--bg-surface);
+            border-radius: var(--radius-xs);
+            padding: 12px;
+            box-shadow: var(--neu-inset);
+            position: relative;
+            overflow: hidden;
+        }
+        .kline-legend { display: flex; gap: 12px; font-size: 10px; flex-wrap: wrap; margin-top: 8px; }
+        .kline-legend span { display: inline-flex; align-items: center; gap: 4px; }
+        .kline-legend .dot { width: 10px; height: 3px; border-radius: 1px; display: inline-block; }
+        .kline-legend .ema5 { background: #e67e22; }
+        .kline-legend .ema10 { background: #7c83db; }
+        .kline-legend .ema20 { background: #5cc4b0; }
+        .kline-legend .ema60 { background: #d4789b; }
+
+        /* Signal Dashboard */
+        .signal-dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .signal-gauge {
+            background: var(--bg-surface);
+            border-radius: var(--radius-xs);
+            padding: 10px;
+            box-shadow: var(--neu-inset);
+            text-align: center;
+        }
+        .signal-gauge .gauge-label {
+            font-size: 10px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .signal-gauge .gauge-value {
+            font-size: 16px;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+        }
+        .signal-gauge .gauge-bar {
+            height: 3px;
+            border-radius: 2px;
+            margin-top: 4px;
+            background: var(--bg-raised);
+            overflow: hidden;
+        }
+        .signal-gauge .gauge-fill {
+            height: 100%;
+            border-radius: 2px;
+            transition: width 0.5s ease;
+        }
+        .gauge-buy { color: var(--safe); }
+        .gauge-sell { color: var(--danger); }
+        .gauge-neutral { color: var(--text-muted); }
+
+        /* Select Inputs */
+        .select-input {
+            background: var(--bg);
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xs);
+            padding: 6px 10px;
+            font-size: 13px;
+        }
+
+        /* Backtest */
+        .backtest-controls { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; }
+        .backtest-results { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 12px; }
+        .backtest-stat {
+            background: var(--bg-surface);
+            border-radius: var(--radius-xs);
+            padding: 10px;
+            text-align: center;
+            box-shadow: var(--neu-inset);
+        }
+        .backtest-stat .bt-label { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; }
+        .backtest-stat .bt-value { font-size: 16px; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+        /* Batch Results */
+        .batch-results { margin-top: 12px; }
+        .batch-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 13px; }
+        .batch-table th { background: var(--bg-surface); color: var(--text-dim); font-weight: 500; padding: 8px 10px; text-align: left; white-space: nowrap; }
+        .batch-table td { padding: 8px 10px; border-bottom: 1px solid var(--border); font-variant-numeric: tabular-nums; }
+        .batch-table tr:hover td { background: rgba(255, 255, 255, 0.02); }
+
+        /* Indicators */
+        .indicators { display: flex; gap: 3px; flex-wrap: wrap; }
+        .ind-badge {
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-size: 9px;
+            font-weight: 600;
+        }
+        .ind-buy { background: rgba(46,160,67,0.2); color: var(--safe); }
+        .ind-sell { background: rgba(248,81,73,0.2); color: var(--danger); }
+        .ind-neutral { background: rgba(122,132,148,0.2); color: var(--text-muted); }
+
+        /* Trailing Stop */
+        .trailing-stop {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            margin-left: 4px;
+            background: rgba(210, 153, 34, 0.15);
+            color: var(--warn);
+        }
+
+        /* K-Line Mini Chart */
+        .kline-mini {
+            display: flex;
+            align-items: flex-end;
+            gap: 1px;
+            height: 32px;
+            padding: 2px 0;
+        }
+        .kline-bar {
+            width: 4px;
+            min-width: 2px;
+            border-radius: 1px;
+            position: relative;
+            flex-shrink: 0;
+        }
+        .kline-bar.up { background: var(--up); }
+        .kline-bar.down { background: var(--down); }
+
+        /* MACD Chart */
+        #macdChart { width: 100%; display: block; }
 
         /* Toast */
         .toast {
@@ -354,33 +492,7 @@
         .toast.error { border-left: 3px solid var(--danger); }
         .toast.success { border-left: 3px solid var(--safe); }
 
-        .footer {
-            text-align: center;
-            padding: 16px 16px;
-            color: var(--text-muted);
-            font-size: 0.8rem;
-        }
-        .footer a { color: var(--accent); text-decoration: none; }
-
-        /* AI Log */
-        .ai-log {
-            background: var(--bg);
-            border-radius: var(--radius-sm);
-            padding: 12px;
-            max-height: 300px;
-            overflow-y: auto;
-            font-family: 'Courier New', monospace;
-            font-size: 12px;
-            line-height: 1.6;
-            box-shadow: var(--neu-inset);
-        }
-        .ai-log .log-entry { margin-bottom: 4px; }
-        .ai-log .log-time { color: var(--text-muted); }
-        .ai-log .log-action { color: var(--accent); }
-        .ai-log .log-success { color: var(--safe); }
-        .ai-log .log-error { color: var(--danger); }
-
-        /* Confirm Modal */
+        /* Modal */
         .modal-overlay {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
@@ -389,183 +501,16 @@
         .modal-overlay.show { display: flex; }
         .modal-box {
             background: var(--bg-raised); border-radius: var(--radius-md);
-            padding: 28px; max-width: 380px; width: 90vw;
+            padding: 24px; max-width: 360px; width: 90vw;
             box-shadow: 0 12px 48px rgba(0,0,0,0.5); border: 1px solid var(--border);
             animation: modalIn 0.2s ease;
         }
         @keyframes modalIn { from { transform: scale(0.92); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        .modal-box h3 { font-size: 16px; font-weight: 600; margin-bottom: 12px; }
-        .modal-box p { color: var(--text-dim); font-size: 13px; margin-bottom: 20px; line-height: 1.6; }
+        .modal-box h3 { font-size: 15px; font-weight: 600; margin-bottom: 10px; }
+        .modal-box p { color: var(--text-dim); font-size: 13px; margin-bottom: 16px; line-height: 1.6; }
         .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
 
-        /* Performance Metrics */
-        .perf-grid {
-            display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 12px;
-        }
-        @media (max-width: 640px) { .perf-grid { grid-template-columns: repeat(2, 1fr); } }
-        .perf-card {
-            background: var(--bg-raised); border-radius: var(--radius-sm);
-            padding: 14px; box-shadow: var(--neu-raised); border: 1px solid var(--border);
-            text-align: center;
-        }
-        .perf-card .perf-label { font-size: 11px; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
-        .perf-card .perf-value { font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; }
-
-        /* Trailing Stop Badge */
-        .trailing-stop {
-            display: inline-block; padding: 2px 8px; border-radius: 6px;
-            font-size: 10px; font-weight: 600; margin-left: 4px;
-            background: rgba(210, 153, 34, 0.15); color: var(--warn);
-        }
-
-        /* K-Line Mini Chart */
-        .kline-mini {
-            display: flex; align-items: flex-end; gap: 1px; height: 36px;
-            padding: 2px 0;
-        }
-        .kline-bar {
-            width: 5px; min-width: 2px; border-radius: 1px; position: relative; flex-shrink: 0;
-        }
-        .kline-bar.up { background: var(--up); }
-        .kline-bar.down { background: var(--down); }
-
-        /* Indicator Badges */
-        .indicators { display: flex; gap: 3px; flex-wrap: wrap; }
-        .ind-badge {
-            padding: 2px 5px; border-radius: 4px; font-size: 9px; font-weight: 600;
-        }
-        .ind-buy { background: rgba(46,160,67,0.2); color: var(--safe); }
-        .ind-sell { background: rgba(248,81,73,0.2); color: var(--danger); }
-        .ind-neutral { background: rgba(122,132,148,0.2); color: var(--text-muted); }
-
-        /* Score indicator in log */
-        .log-score { color: var(--warn); }
-        /* Manual Refresh Button */
-        .btn-refresh {
-            display: inline-flex; align-items: center; gap: 6px;
-            padding: 8px 16px; border-radius: 10px; border: none;
-            background: var(--bg-raised); color: var(--text-dim);
-            font-size: 13px; cursor: pointer; transition: all var(--transition);
-            box-shadow: var(--neu-raised);
-        }
-        .btn-refresh:hover { color: var(--accent); transform: translateY(-2px); }
-        .btn-refresh:active { box-shadow: var(--neu-inset); transform: translateY(0); }
-        .btn-refresh .refresh-icon { transition: transform 0.6s ease; display: inline-block; }
-        .btn-refresh.spinning .refresh-icon { transform: rotate(360deg); }
-        .btn-refresh .last-update { font-size: 10px; color: var(--text-muted); margin-left: 4px; }
-
-
-        /* Backtest Section */
-        .backtest-controls { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 16px; }
-        .backtest-select { background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; font-size: 13px; }
-        .backtest-results { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-top: 16px; }
-        @media (max-width: 640px) { .backtest-results { grid-template-columns: repeat(2, 1fr); } }
-        .backtest-stat { background: var(--bg); border-radius: var(--radius-sm); padding: 12px; text-align: center; box-shadow: var(--neu-inset); }
-        .backtest-stat .bt-label { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; }
-        .backtest-stat .bt-value { font-size: 18px; font-weight: 700; font-variant-numeric: tabular-nums; }
-        /* Export/Import */
-        .state-actions { display: flex; gap: 8px; }
-        .btn-sm { padding: 6px 14px; font-size: 12px; border-radius: 8px; border: none; cursor: pointer; transition: all var(--transition); background: var(--bg-raised); color: var(--text-dim); box-shadow: var(--neu-raised); }
-        .btn-sm:hover { color: var(--accent); transform: translateY(-2px); }
-        .btn-sm:active { transform: scale(0.95); box-shadow: var(--neu-inset); }
-
-        /* Signal Strength Dashboard */
-        .signal-dashboard {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 10px;
-            margin-top: 12px;
-        }
-        .signal-gauge {
-            background: var(--bg);
-            border-radius: var(--radius-sm);
-            padding: 10px 12px;
-            box-shadow: var(--neu-inset);
-            text-align: center;
-        }
-        .signal-gauge .gauge-label {
-            font-size: 10px;
-            color: var(--text-muted);
-            margin-bottom: 6px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .signal-gauge .gauge-value {
-            font-size: 18px;
-            font-weight: 700;
-            font-variant-numeric: tabular-nums;
-        }
-        .signal-gauge .gauge-bar {
-            height: 3px;
-            border-radius: 2px;
-            margin-top: 6px;
-            background: var(--bg-raised);
-            overflow: hidden;
-        }
-        
-        /* MACD图表样式 */
-        #macdChart {
-            width: 100%;
-            display: block;
-        }
-        .signal-gauge .gauge-fill {
-            height: 100%;
-            border-radius: 2px;
-            transition: width 0.5s ease;
-        }
-        .gauge-buy { color: var(--safe); }
-        .gauge-sell { color: var(--danger); }
-        .gauge-neutral { color: var(--text-muted); }
-
-        /* Signal selector dropdown */
-        .signal-select-wrap {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 12px;
-        }
-        .signal-select-wrap label {
-            font-size: 13px;
-            color: var(--text-dim);
-        }
-        .signal-select {
-            background: var(--bg);
-            color: var(--text);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 6px 12px;
-            font-size: 13px;
-        }
-        /* Batch Backtest */
-        .batch-results { margin-top: 16px; }
-        .batch-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 13px; }
-        .batch-table th { background: var(--bg); color: var(--text-dim); font-weight: 500; padding: 10px 12px; text-align: left; white-space: nowrap; }
-        .batch-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); font-variant-numeric: tabular-nums; }
-        .batch-table tr:hover td { background: rgba(255, 255, 255, 0.02); }
-
-        /* K-Line Candlestick Chart */
-        .kline-container {
-            background: var(--bg);
-            border-radius: var(--radius-sm);
-            padding: 12px;
-            box-shadow: var(--neu-inset);
-            position: relative;
-            overflow: hidden;
-        }
-        .kline-header {
-            display: flex; align-items: center; gap: 12px; margin-bottom: 12px; flex-wrap: wrap;
-        }
-        .kline-header select { background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; font-size: 13px; }
-        .kline-header .kline-info { font-size: 12px; color: var(--text-dim); margin-left: auto; }
-        .kline-legend { display: flex; gap: 12px; font-size: 10px; flex-wrap: wrap; margin-top: 8px; }
-        .kline-legend span { display: inline-flex; align-items: center; gap: 4px; }
-        .kline-legend .dot { width: 10px; height: 3px; border-radius: 1px; display: inline-block; }
-        .kline-legend .ema5 { background: #e67e22; }
-        .kline-legend .ema10 { background: #7c83db; }
-        .kline-legend .ema20 { background: #5cc4b0; }
-        .kline-legend .ema60 { background: #d4789b; }
-
-        /* Keyboard shortcut hint */
+        /* Keyboard Hint */
         .kbd-hint {
             position: fixed; bottom: 20px; right: 20px;
             background: var(--bg-raised); border-radius: 10px;
@@ -580,7 +525,7 @@
             font-size: 10px; margin: 0 2px; color: var(--text);
         }
 
-        /* Price change animation */
+        /* Price Flash Animation */
         @keyframes flashGreen { 0% { background: rgba(46,160,67,0.3); } 100% { background: transparent; } }
         @keyframes flashRed { 0% { background: rgba(248,81,73,0.3); } 100% { background: transparent; } }
         .flash-up { animation: flashGreen 0.5s ease; }
@@ -595,8 +540,40 @@
             font-size: 11px; white-space: nowrap; z-index: 200; pointer-events: none;
             margin-bottom: 6px;
         }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 16px;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+        .footer a { color: var(--accent); text-decoration: none; }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .main-grid { grid-template-columns: 1fr; }
+            .tables-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 1024px) {
+            .stats-grid { grid-template-columns: repeat(3, 1fr); }
+            .perf-grid { grid-template-columns: repeat(2, 1fr); }
+            .charts-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 768px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .mode-selector { grid-template-columns: 1fr; }
+            .control-bar { flex-direction: column; align-items: stretch; }
+            .state-actions { margin-left: 0; justify-content: center; }
+            .backtest-controls { flex-direction: column; align-items: stretch; }
+            .backtest-results { grid-template-columns: repeat(2, 1fr); }
+            .signal-dashboard { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 480px) {
+            .stats-grid { grid-template-columns: 1fr; }
+            .stat-card .stat-value { font-size: 18px; }
+        }
     </style>
-</head>
 <body>
 
 <nav class="nav">
@@ -611,7 +588,7 @@
 <div class="container">
     <div class="page-title">
         <h1>量化交易系统</h1>
-        <p>AI 驱动的智能交易 · 选择股票加入交易池 · 每2分钟自动分析交易</p>
+        <p>v4.4 · 多指标AI引擎 · 37只股票池 · 14种技术指标 · TRIX涡旋增强</p>
     </div>
 
     <!-- Mode Selector -->
@@ -687,20 +664,44 @@
             <div class="stat-sub" id="totalProfitPct">0.00%</div>
         </div>
         <div class="stat-card">
-            <div class="stat-label">总收益</div>
-            <div class="stat-value" id="totalProfit">¥0.00</div>
-            <div class="stat-sub" id="totalProfitPct">0.00%</div>
-        </div>
-        <div class="stat-card">
             <div class="stat-label">今日盈亏</div>
             <div class="stat-value" id="todayPnl">¥0.00</div>
             <div class="stat-sub" id="todayPnlPct">0.00%</div>
         </div>
     </div>
 
-    <div class="two-col-layout">
+    <!-- Positions (Important - moved to top) -->
+    <div class="card" style="margin-bottom: 20px;">
+        <div class="card-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+            当前持仓
+        </div>
+        <div class="table-wrap">
+            <table class="position-table">
+                <thead>
+                    <tr>
+                        <th>股票</th>
+                        <th>代码</th>
+                        <th>数量</th>
+                        <th>成本价</th>
+                        <th>现价</th>
+                        <th>走势</th>
+                        <th>盈亏</th>
+                        <th>盈亏率</th>
+                        <th>信号</th>
+                        <th>风险比</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="positionBody">
+                    <tr><td colspan="11" style="text-align: center; color: var(--text-muted); padding: 32px;">暂无持仓</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
     <!-- Performance Metrics -->
-    <div class="perf-grid">
+    <div class="perf-grid" style="margin-bottom: 20px;">
         <div class="perf-card">
             <div class="perf-label">胜率</div>
             <div class="perf-value" id="winRate">--</div>
@@ -719,57 +720,68 @@
         </div>
     </div>
 
-    <!-- Portfolio Sector Allocation -->
-    <div class="card" id="sectorAllocationCard">
-        <div class="card-title">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 10 10"/><path d="M12 2v10l7.07 7.07"/></svg>
-            板块配置
-        </div>
-        <div id="sectorAllocation" style="display: flex; flex-wrap: wrap; gap: 8px;"></div>
-    </div>
-
-    <!-- Signal Strength Dashboard -->
-    <div class="card" id="signalDashboardCard">
-        <div class="card-title">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-            AI 综合分析
-            <div class="signal-select-wrap" style="margin-left: auto; margin-bottom: 0;">
-                <label>股票:</label>
-                <select class="signal-select" id="signalStockSelect"></select>
+    <!-- AI Analysis + Sector Allocation + Market Status -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;">
+        <!-- Signal Strength Dashboard -->
+        <div class="card">
+            <div class="card-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                AI 综合分析
+                <div style="margin-left: auto; display: flex; align-items: center; gap: 8px;">
+                    <label style="font-size: 12px; color: var(--text-dim);">股票:</label>
+                    <select class="select-input" id="signalStockSelect"></select>
+                </div>
+            </div>
+            <div id="aiAnalysisResult" style="background: var(--bg); border-radius: var(--radius-sm); padding: 16px; box-shadow: var(--neu-inset); margin-bottom: 16px;">
+                <div style="text-align: center; color: var(--text-muted); padding: 16px;">选择股票查看AI分析</div>
+            </div>
+            <div class="signal-dashboard" id="signalDashboard">
+                <div class="signal-gauge"><div class="gauge-label">RSI</div><div class="gauge-value" id="gRSI">--</div><div class="gauge-bar"><div class="gauge-fill" id="gRSIbar"></div></div></div>
+                <div class="signal-gauge"><div class="gauge-label">MACD</div><div class="gauge-value" id="gMACD">--</div><div class="gauge-bar"><div class="gauge-fill" id="gMACDbar"></div></div></div>
+                <div class="signal-gauge"><div class="gauge-label">KDJ-J</div><div class="gauge-value" id="gKDJ">--</div><div class="gauge-bar"><div class="gauge-fill" id="gKDJbar"></div></div></div>
+                <div class="signal-gauge"><div class="gauge-label">Williams</div><div class="gauge-value" id="gWR">--</div><div class="gauge-bar"><div class="gauge-fill" id="gWRbar"></div></div></div>
+                <div class="signal-gauge"><div class="gauge-label">StochRSI</div><div class="gauge-value" id="gSRSI">--</div><div class="gauge-bar"><div class="gauge-fill" id="gSRSIbar"></div></div></div>
+                <div class="signal-gauge"><div class="gauge-label">ADX</div><div class="gauge-value" id="gADX">--</div><div class="gauge-bar"><div class="gauge-fill" id="gADXbar"></div></div></div>
+                <div class="signal-gauge"><div class="gauge-label">综合评分</div><div class="gauge-value" id="gScore">--</div><div class="gauge-bar"><div class="gauge-fill" id="gScorebar"></div></div></div>
+                <div class="signal-gauge"><div class="gauge-label">Ichimoku</div><div class="gauge-value" id="gIchi">--</div><div class="gauge-bar"><div class="gauge-fill" id="gIchibar"></div></div></div>
+                <div class="signal-gauge"><div class="gauge-label">CCI</div><div class="gauge-value" id="gCCI">--</div><div class="gauge-bar"><div class="gauge-fill" id="gCCIbar"></div></div></div>
+                <div class="signal-gauge"><div class="gauge-label">MFI</div><div class="gauge-value" id="gMFI">--</div><div class="gauge-bar"><div class="gauge-fill" id="gMFIbar"></div></div></div>
+                <div class="signal-gauge"><div class="gauge-label">CMF</div><div class="gauge-value" id="gCMF">--</div><div class="gauge-bar"><div class="gauge-fill" id="gCMFbar"></div></div></div>
+                <div class="signal-gauge"><div class="gauge-label">ROC</div><div class="gauge-value" id="gROC">--</div><div class="gauge-bar"><div class="gauge-fill" id="gROCbar"></div></div></div>
+                <div class="signal-gauge"><div class="gauge-label">涡旋VI</div><div class="gauge-value" id="gVI">--</div><div class="gauge-bar"><div class="gauge-fill" id="gVIbar"></div></div></div>
+                <div class="signal-gauge"><div class="gauge-label">TRIX</div><div class="gauge-value" id="gTRIX">--</div><div class="gauge-bar"><div class="gauge-fill" id="gTRIXbar"></div></div></div>
+            </div>
+            <div id="signalDetails" style="margin-top: 12px; font-size: 12px; color: var(--text-dim); line-height: 1.8;"></div>
+            <!-- MACD柱状图 -->
+            <div style="margin-top: 16px; background: var(--bg); border-radius: var(--radius-sm); padding: 12px; box-shadow: var(--neu-inset);">
+                <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">MACD 柱状图</div>
+                <canvas id="macdChart" height="120"></canvas>
             </div>
         </div>
-        <div id="aiAnalysisResult" style="background: var(--bg); border-radius: var(--radius-sm); padding: 16px; box-shadow: var(--neu-inset); margin-bottom: 16px;">
-            <div style="text-align: center; color: var(--text-muted); padding: 16px;">选择股票查看AI分析</div>
-        </div>
-        <div class="signal-dashboard" id="signalDashboard">
-            <div class="signal-gauge"><div class="gauge-label">RSI</div><div class="gauge-value" id="gRSI">--</div><div class="gauge-bar"><div class="gauge-fill" id="gRSIbar"></div></div></div>
-            <div class="signal-gauge"><div class="gauge-label">MACD</div><div class="gauge-value" id="gMACD">--</div><div class="gauge-bar"><div class="gauge-fill" id="gMACDbar"></div></div></div>
-            <div class="signal-gauge"><div class="gauge-label">KDJ-J</div><div class="gauge-value" id="gKDJ">--</div><div class="gauge-bar"><div class="gauge-fill" id="gKDJbar"></div></div></div>
-            <div class="signal-gauge"><div class="gauge-label">Williams</div><div class="gauge-value" id="gWR">--</div><div class="gauge-bar"><div class="gauge-fill" id="gWRbar"></div></div></div>
-            <div class="signal-gauge"><div class="gauge-label">StochRSI</div><div class="gauge-value" id="gSRSI">--</div><div class="gauge-bar"><div class="gauge-fill" id="gSRSIbar"></div></div></div>
-            <div class="signal-gauge"><div class="gauge-label">ADX</div><div class="gauge-value" id="gADX">--</div><div class="gauge-bar"><div class="gauge-fill" id="gADXbar"></div></div></div>
-            <div class="signal-gauge"><div class="gauge-label">综合评分</div><div class="gauge-value" id="gScore">--</div><div class="gauge-bar"><div class="gauge-fill" id="gScorebar"></div></div></div>
-            <div class="signal-gauge"><div class="gauge-label">Ichimoku</div><div class="gauge-value" id="gIchi">--</div><div class="gauge-bar"><div class="gauge-fill" id="gIchibar"></div></div></div>
-            <div class="signal-gauge"><div class="gauge-label">CCI</div><div class="gauge-value" id="gCCI">--</div><div class="gauge-bar"><div class="gauge-fill" id="gCCIbar"></div></div></div>
-            <div class="signal-gauge"><div class="gauge-label">MFI</div><div class="gauge-value" id="gMFI">--</div><div class="gauge-bar"><div class="gauge-fill" id="gMFIbar"></div></div></div>
-            <div class="signal-gauge"><div class="gauge-label">CMF</div><div class="gauge-value" id="gCMF">--</div><div class="gauge-bar"><div class="gauge-fill" id="gCMFbar"></div></div></div>
-            <div class="signal-gauge"><div class="gauge-label">ROC</div><div class="gauge-value" id="gROC">--</div><div class="gauge-bar"><div class="gauge-fill" id="gROCbar"></div></div></div>
-            <div class="signal-gauge"><div class="gauge-label">涡旋VI</div><div class="gauge-value" id="gVI">--</div><div class="gauge-bar"><div class="gauge-fill" id="gVIbar"></div></div></div>
-        </div>
-        <div id="signalDetails" style="margin-top: 12px; font-size: 12px; color: var(--text-dim); line-height: 1.8;"></div>
-        <!-- MACD柱状图 -->
-        <div style="margin-top: 16px; background: var(--bg); border-radius: var(--radius-sm); padding: 12px; box-shadow: var(--neu-inset);">
-            <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">MACD 柱状图</div>
-            <canvas id="macdChart" height="120"></canvas>
+
+        <!-- Sector Allocation + Market Status -->
+        <div>
+            <div class="card" id="sectorAllocationCard" style="margin-bottom: 16px;">
+                <div class="card-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 10 10"/><path d="M12 2v10l7.07 7.07"/></svg>
+                    板块配置
+                </div>
+                <div id="sectorAllocation" style="display: flex; flex-wrap: wrap; gap: 8px;"></div>
+            </div>
+
+            <!-- Market Status Bar -->
+            <div class="card" id="marketStatusCard" style="display:flex; align-items:center; justify-content:space-between; padding: 14px 20px;">
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <span id="marketStatusDot" style="width:10px;height:10px;border-radius:50%;background:var(--text-muted);"></span>
+                    <span id="marketStatusText" style="font-size:13px;color:var(--text-dim);">市场状态检测中...</span>
+                </div>
+                <div style="font-size:12px;color:var(--text-muted);" id="stockCountInfo">股票池: 0 只</div>
+            </div>
         </div>
     </div>
-    <!-- Market Status Bar -->
-    <div class="card" id="marketStatusCard" style="display:flex; align-items:center; justify-content:space-between; padding: 14px 20px;">
-        <div style="display:flex; align-items:center; gap:12px;">
-            <span id="marketStatusDot" style="width:10px;height:10px;border-radius:50%;background:var(--text-muted);"></span>
-            <span id="marketStatusText" style="font-size:13px;color:var(--text-dim);">市场状态检测中...</span>
-        </div>
-        <div style="font-size:12px;color:var(--text-muted);" id="stockCountInfo">股票池: 0 只</div>
+
+    <!-- Main Grid: AI Recommendations + Favorites + Trading Pool -->
+    <div class="main-grid">
     <!-- AI Top Recommendations -->
     <div class="card" id="aiRecommendationsCard">
         <div class="card-title">
@@ -809,8 +821,8 @@
     </div>
     </div>
 
-    <!-- Equity Chart + K-Line -->
-    <div class="chart-row">
+    <!-- Charts Grid: Equity + K-Line -->
+    <div class="charts-grid">
     <div class="chart-area">
         <div class="card-title">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
@@ -825,8 +837,8 @@
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="8" width="4" height="12"/><rect x="10" y="4" width="4" height="16"/><rect x="17" y="10" width="4" height="10"/><line x1="5" y1="4" x2="5" y2="8"/><line x1="12" y1="0" x2="12" y2="4"/><line x1="19" y1="6" x2="19" y2="10"/></svg>
             K线图
             <div style="margin-left: auto; display: flex; gap: 8px; align-items: center;">
-                <select class="backtest-select" id="klineStockSelect"></select>
-                <select class="backtest-select" id="klinePeriod">
+                <select class="select-input" id="klineStockSelect"></select>
+                <select class="select-input" id="klinePeriod">
                     <option value="30">近30日</option>
                     <option value="60" selected>近60日</option>
                     <option value="90">近90日</option>
@@ -849,38 +861,8 @@
     </div>
     </div>
 
-    <!-- Positions + Trade History + AI Log -->
-    <div class="three-col-grid">
-    <!-- Positions -->
-    <div class="card">
-        <div class="card-title">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-            当前持仓
-        </div>
-        <div class="table-wrap">
-            <table class="position-table">
-                <thead>
-                    <tr>
-                        <th>股票</th>
-                        <th>代码</th>
-                        <th>数量</th>
-                        <th>成本价</th>
-                        <th>现价</th>
-                        <th>走势</th>
-                        <th>盈亏</th>
-                        <th>盈亏率</th>
-                        <th>信号</th>
-                        <th>风险比</th>
-                        <th>操作</th>
-                    </tr>
-                </thead>
-                <tbody id="positionBody">
-                    <tr><td colspan="11" style="text-align: center; color: var(--text-muted); padding: 32px;">暂无持仓</td></tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
+    <!-- Trade History + AI Log -->
+    <div class="tables-grid">
     <!-- Trade History -->
     <div class="card">
         <div class="card-title">
@@ -905,19 +887,19 @@
     </div>
 
     <!-- Backtest Section -->
-    <div class="card" id="backtestCard">
+    <div class="card" id="backtestCard" style="margin-bottom: 20px;">
         <div class="card-title">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
             策略回测
         </div>
         <div class="backtest-controls">
-            <select class="backtest-select" id="btStock"></select>
-            <select class="backtest-select" id="btPeriod">
+            <select class="select-input" id="btStock"></select>
+            <select class="select-input" id="btPeriod">
                 <option value="30">近30天</option>
                 <option value="60" selected>近60天</option>
                 <option value="90">近90天</option>
             </select>
-            <select class="backtest-select" id="btMode">
+            <select class="select-input" id="btMode">
                 <option value="aggressive">激进模式</option>
                 <option value="balanced">稳健模式</option>
                 <option value="conservative">保守模式</option>
@@ -955,7 +937,6 @@
     <kbd>R</kbd> 刷新行情 &nbsp; <kbd>Space</kbd> 启动/停止 &nbsp; <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd> 切换模式
 </div>
 
-</div> <!-- /container -->
 
 <script>
 // ============ 配置 ============
@@ -1543,6 +1524,37 @@ function calcVortex(prices, period) {
     return { viPlus: viPlus, viMinus: viMinus, trend: trend };
 }
 
+/**
+ * TRIX - Triple Exponential Average (momentum oscillator)
+ * Rate of change of triple-smoothed EMA.
+ * Positive & rising = bullish, Negative & falling = bearish.
+ * Zero-line crossover = strong trend change signal.
+ */
+function calcTRIX(prices, period) {
+    period = period || 15;
+    if (prices.length < period * 3) return { trix: 0, signal: 0, trend: 'neutral' };
+    // Triple smooth
+    var ema1 = calcEMA(prices, period);
+    var ema2 = calcEMA(ema1, period);
+    var ema3 = calcEMA(ema2, period);
+    if (ema3.length < 2) return { trix: 0, signal: 0, trend: 'neutral' };
+    var cur = ema3[ema3.length - 1];
+    var prev = ema3[ema3.length - 2];
+    var trix = prev !== 0 ? (cur - prev) / prev * 10000 : 0; // basis points
+    // Signal line: 9-period EMA of TRIX values
+    var trixArr = [];
+    for (var i = 1; i < ema3.length; i++) {
+        trixArr.push(ema3[i - 1] !== 0 ? (ema3[i] - ema3[i - 1]) / ema3[i - 1] * 10000 : 0);
+    }
+    var signal = 0;
+    if (trixArr.length >= 9) {
+        var sigEma = calcEMA(trixArr, 9);
+        signal = sigEma[sigEma.length - 1] || 0;
+    }
+    var trend = trix > 0 ? 'up' : trix < 0 ? 'down' : 'neutral';
+    return { trix: trix, signal: signal, trend: trend };
+}
+
 
 /**
  * Compute composite signal score for a stock.
@@ -1769,6 +1781,25 @@ function computeSignalScore(code, quote) {
                 score += 1; signals.push({ label: 'VI金叉', type: 'buy' });
             } else if (prevVortex.viPlus > prevVortex.viMinus && vortex.viMinus > vortex.viPlus) {
                 score -= 1; signals.push({ label: 'VI死叉', type: 'sell' });
+            }
+        }
+    }
+
+    // TRIX (Triple Exponential Average - momentum oscillator)
+    if (prices.length >= 45) {
+        const trixData = calcTRIX(prices, 15);
+        if (trixData.trix > 0 && trixData.trix > trixData.signal) {
+            score += 0.8; signals.push({ label: 'TRIX看多', type: 'buy' });
+        } else if (trixData.trix < 0 && trixData.trix < trixData.signal) {
+            score -= 0.8; signals.push({ label: 'TRIX看空', type: 'sell' });
+        }
+        // Zero-line crossover
+        if (prices.length >= 46) {
+            var prevTrix = calcTRIX(prices.slice(0, -1), 15);
+            if (prevTrix.trix <= 0 && trixData.trix > 0) {
+                score += 1.2; signals.push({ label: 'TRIX金叉', type: 'buy' });
+            } else if (prevTrix.trix >= 0 && trixData.trix < 0) {
+                score -= 1.2; signals.push({ label: 'TRIX死叉', type: 'sell' });
             }
         }
     }
@@ -3472,7 +3503,7 @@ function updateSignalDashboard(code) {
     // Composite Score
     var scoreEl = document.getElementById('gScore');
     var scoreBar = document.getElementById('gScorebar');
-    var scoreNorm = Math.max(0, Math.min(100, (sig.score + 14) / 28 * 100));
+    var scoreNorm = Math.max(0, Math.min(100, (sig.score + 16) / 32 * 100));
     scoreEl.textContent = sig.score > 0 ? '+' + sig.score : sig.score;
     scoreEl.className = 'gauge-value ' + (sig.score > 2 ? 'gauge-buy' : sig.score < -2 ? 'gauge-sell' : 'gauge-neutral');
     scoreBar.style.width = scoreNorm + '%';
@@ -3543,14 +3574,24 @@ function updateSignalDashboard(code) {
         var vortex = calcVortex(prices, 14);
         var viEl = document.getElementById('gVI');
         var viBar = document.getElementById('gVIbar');
-        var viDiff = vortex.viPlus - vortex.viMinus;
-        var viNorm = Math.max(0, Math.min(100, (viDiff + 1) / 2 * 100));
-        viEl.textContent = (viDiff >= 0 ? '+' : '') + viDiff.toFixed(2);
-        viEl.className = 'gauge-value ' + (vortex.trend === 'up' ? 'gauge-buy' : vortex.trend === 'down' ? 'gauge-sell' : 'gauge-neutral');
+        var viNorm = Math.max(0, Math.min(100, (vortex.viPlus - vortex.viMinus + 1) * 50));
+        viEl.textContent = vortex.viPlus > vortex.viMinus ? '看多' : vortex.viMinus > vortex.viPlus ? '看空' : '中性';
+        viEl.className = 'gauge-value ' + (vortex.viPlus > 1.0 && vortex.viPlus > vortex.viMinus ? 'gauge-buy' : vortex.viMinus > 1.0 && vortex.viMinus > vortex.viPlus ? 'gauge-sell' : 'gauge-neutral');
         viBar.style.width = viNorm + '%';
-        viBar.style.background = vortex.trend === 'up' ? 'var(--safe)' : vortex.trend === 'down' ? 'var(--danger)' : 'var(--text-muted)';
+        viBar.style.background = vortex.viPlus > vortex.viMinus ? 'var(--safe)' : vortex.viMinus > vortex.viPlus ? 'var(--danger)' : 'var(--text-muted)';
     }
 
+    // TRIX (Triple Exponential Average)
+    if (prices.length >= 45) {
+        var trixD = calcTRIX(prices, 15);
+        var trixEl = document.getElementById('gTRIX');
+        var trixBar = document.getElementById('gTRIXbar');
+        var trixNorm = Math.max(0, Math.min(100, (trixD.trix + 50) / 100 * 100));
+        trixEl.textContent = (trixD.trix >= 0 ? '+' : '') + trixD.trix.toFixed(1);
+        trixEl.className = 'gauge-value ' + (trixD.trix > 0 && trixD.trix > trixD.signal ? 'gauge-buy' : trixD.trix < 0 && trixD.trix < trixD.signal ? 'gauge-sell' : 'gauge-neutral');
+        trixBar.style.width = trixNorm + '%';
+        trixBar.style.background = trixD.trix > 0 ? 'var(--safe)' : trixD.trix < 0 ? 'var(--danger)' : 'var(--text-muted)';
+    }
 
     
     // Signal details text
@@ -3909,7 +3950,25 @@ function renderTrades() {
         return;
     }
 
-    container.innerHTML = state.trades.slice(0, 20).map(t => {
+    // Daily trade summary
+    var today = new Date().toISOString().slice(0, 10);
+    var todayTrades = state.trades.filter(function(t) { return t.time && t.time.slice(0, 10) === today; });
+    var todayBuys = todayTrades.filter(function(t) { return t.action === 'buy'; });
+    var todaySells = todayTrades.filter(function(t) { return t.action === 'sell'; });
+    var todayBuyAmt = todayBuys.reduce(function(s, t) { return s + (t.amount || 0); }, 0);
+    var todaySellAmt = todaySells.reduce(function(s, t) { return s + (t.amount || 0); }, 0);
+    var todayComm = todayTrades.reduce(function(s, t) { return s + (t.commission || 0); }, 0);
+    var todayNet = todaySellAmt - todayBuyAmt - todayComm;
+
+    var summaryHtml = '<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px;padding:10px;background:var(--bg);border-radius:8px;font-size:12px;">' +
+        '<div style="text-align:center;flex:1;min-width:60px;"><div style="color:var(--text-muted);font-size:10px;">今日交易</div><div style="font-weight:600;">' + todayTrades.length + '笔</div></div>' +
+        '<div style="text-align:center;flex:1;min-width:60px;"><div style="color:var(--text-muted);font-size:10px;">买入</div><div style="font-weight:600;color:var(--up);">' + todayBuys.length + '笔</div></div>' +
+        '<div style="text-align:center;flex:1;min-width:60px;"><div style="color:var(--text-muted);font-size:10px;">卖出</div><div style="font-weight:600;color:var(--down);">' + todaySells.length + '笔</div></div>' +
+        '<div style="text-align:center;flex:1;min-width:80px;"><div style="color:var(--text-muted);font-size:10px;">手续费</div><div style="font-weight:600;">' + todayComm.toFixed(0) + '</div></div>' +
+        '<div style="text-align:center;flex:1;min-width:80px;"><div style="color:var(--text-muted);font-size:10px;">净额</div><div style="font-weight:600;color:' + (todayNet >= 0 ? 'var(--safe)' : 'var(--danger)') + ';">' + (todayNet >= 0 ? '+' : '') + todayNet.toFixed(0) + '</div></div>' +
+        '</div>';
+
+    container.innerHTML = summaryHtml + state.trades.slice(0, 20).map(t => {
         const time = new Date(t.time);
         return '<div class="trade-item">' +
             '<div class="trade-info">' +
@@ -4338,6 +4397,18 @@ function calcBacktestSignalScore(prices, price, modeKey) {
             var prevVtx = calcVortex(prices.slice(0, -1), 14);
             if (prevVtx.viMinus > prevVtx.viPlus && vtx.viPlus > vtx.viMinus) score += 1;
             else if (prevVtx.viPlus > prevVtx.viMinus && vtx.viMinus > vtx.viPlus) score -= 1;
+        }
+    }
+
+    // TRIX (Triple Exponential Average - momentum oscillator)
+    if (prices.length >= 45) {
+        var trixBt = calcTRIX(prices, 15);
+        if (trixBt.trix > 0 && trixBt.trix > trixBt.signal) score += 0.8;
+        else if (trixBt.trix < 0 && trixBt.trix < trixBt.signal) score -= 0.8;
+        if (prices.length >= 46) {
+            var prevTrixBt = calcTRIX(prices.slice(0, -1), 15);
+            if (prevTrixBt.trix <= 0 && trixBt.trix > 0) score += 1.2;
+            else if (prevTrixBt.trix >= 0 && trixBt.trix < 0) score -= 1.2;
         }
     }
 
