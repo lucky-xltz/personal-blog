@@ -1486,7 +1486,7 @@ function calcROC(prices, period) {
 /**
  * Compute composite signal score for a stock.
  * Positive = bullish, Negative = bearish.
- * Range roughly -6 to +6.
+ * Range roughly -14 to +14 (20+ indicators).
  */
 function computeSignalScore(code, quote) {
     const prices = priceHistory[code];
@@ -2144,10 +2144,11 @@ function evaluateAllStrategies(code, quote) {
     const buyScore = buySignals.reduce((sum, s) => sum + (s.strength || 0), 0);
     const sellScore = sellSignals.reduce((sum, s) => sum + (s.strength || 0), 0);
     
-    // 决策逻辑
+    // 决策逻辑（mode-specific thresholds matching backtest）
     let action = 'wait';
     let reason = '';
     let confidence = 0;
+    const modeThreshold = state.mode === 'aggressive' ? 0.5 : state.mode === 'balanced' ? 0.7 : 0.9;
     
     // 至少需要2个策略确认才行动
     if (buySignals.length >= 2 && buyScore > sellScore) {
@@ -2167,6 +2168,12 @@ function evaluateAllStrategies(code, quote) {
         action = 'sell';
         reason = sellSignals[0].name + ':' + sellSignals[0].reason;
         confidence = sellSignals[0].strength;
+    }
+    
+    // Mode-specific confidence gate: conservative mode requires higher confidence
+    if (action === 'buy' && confidence < modeThreshold) {
+        action = 'wait';
+        reason = '信心不足(' + confidence.toFixed(2) + ' < ' + modeThreshold + ')';
     }
     
     return {
@@ -2212,6 +2219,15 @@ function calculatePositionSize(code, price, signalStrength, mode) {
     // 基础仓位比例
     const baseRatio = mode === 'aggressive' ? 0.25 : mode === 'balanced' ? 0.15 : 0.08;
     
+    // ATR 波动率自适应仓位（高波动缩小仓位，低波动放大仓位）
+    const atrPrices = priceHistory[code];
+    let atrMultiplier = 1.0;
+    if (atrPrices && atrPrices.length >= 15) {
+        const atr = calcATR(atrPrices, 14);
+        const atrPct = price > 0 ? (atr / price) * 100 : 1;
+        atrMultiplier = Math.max(0.6, Math.min(1.3, 2.0 / atrPct));
+    }
+    
     // 信号强度调整
     const strengthMultiplier = 0.5 + signalStrength * 1.0;  // 0.5 - 1.5
     
@@ -2221,7 +2237,7 @@ function calculatePositionSize(code, price, signalStrength, mode) {
     const maxPositionValue = totalAssets * TRADING_RULES.MAX_SINGLE_POSITION - existingValue;
     
     // 计算可买金额
-    let buyAmount = availableCash * baseRatio * strengthMultiplier;
+    let buyAmount = availableCash * baseRatio * strengthMultiplier * atrMultiplier;
     buyAmount = Math.min(buyAmount, maxPositionValue);
     
     // 转换为手数
@@ -2266,7 +2282,19 @@ function executeBuyWithStrategy(code, quote, evaluation) {
     }
 
     const price = quote.price;
-    const position = calculatePositionSize(code, price, evaluation.confidence, state.mode);
+    
+    // Volume confirmation boost: if OBV trending up or high volume, boost confidence
+    let adjustedConfidence = evaluation.confidence;
+    const _vols = volumeHistory[code];
+    if (_vols && _vols.length >= 6) {
+        const obvTrend = calcOBVTrend(priceHistory[code] || [], _vols);
+        if (obvTrend === 'up' || quote.amount > 5e8) {
+            adjustedConfidence = Math.min(adjustedConfidence * 1.15, 2.0);
+            addLog('📊 量能确认: ' + poolItem.name + (obvTrend === 'up' ? ' OBV上升' : ' 放量'), 'info');
+        }
+    }
+    
+    const position = calculatePositionSize(code, price, adjustedConfidence, state.mode);
     
     if (position.lots <= 0) {
         addLog('⚠️ ' + poolItem.name + ' 仓位已满或资金不足', 'warn');
@@ -2397,6 +2425,13 @@ function tradingDecision() {
                 // 更新峰值价格（用于移动止损）
                 if (quote.price > (pos.peakPrice || 0)) {
                     pos.peakPrice = quote.price;
+                }
+
+                // 动态收紧移动止损（盈利越多止损越紧）
+                if (profitPct > 0.10) {
+                    pos.trailingStopPct = Math.min(pos.trailingStopPct || 0.04, 0.015);
+                } else if (profitPct > 0.05) {
+                    pos.trailingStopPct = Math.min(pos.trailingStopPct || 0.04, 0.02);
                 }
 
                 let sold = false;
@@ -2542,7 +2577,7 @@ function renderFavorites() {
         var cls = changePct >= 0 ? 'up' : 'down';
         var sign = changePct >= 0 ? '+' : '';
         
-        html += `<div style="background:var(--bg);border-radius:8px;padding:6px 10px;cursor:pointer;display:flex;align-items:center;gap:6px;" data-scode=${a.code} onclick="handleSignalClick(this)">` +
+        html += `<div style="background:var(--bg);border-radius:8px;padding:6px 10px;cursor:pointer;display:flex;align-items:center;gap:6px;" data-scode=${code} onclick="handleSignalClick(this)">` +
             `<span style="font-size:11px;font-weight:600;">${name}</span>` +
             `<span style="font-size:10px;color:var(--${cls});">${sign}${changePct.toFixed(2)}%</span>` +
             `<span style="font-size:14px;color:var(--warn);cursor:pointer;" onclick="event.stopPropagation();toggleFavorite(\x27${code}\x27);">&#9733;</span>` +
@@ -2815,8 +2850,8 @@ function renderAIRecommendations(scored) {
             `<div style="font-size: 12px; color: ${rec.color};">${rec.text} (${a.score})</div>` +
             `</div>` +
             `<div style="display:flex;gap:6px;align-items:center;">` +
-            `<span style="font-size:18px;cursor:pointer;color:var(--warn);" onclick="toggleFavorite(${a.code});">&#9733;</span>` +
-            `<button class="btn btn-sm ${inPool ? "btn-outline" : "btn-primary"}" style="padding: 4px 10px; font-size: 11px;" onclick="addToTradingPool(${a.code})">${inPool ? "已添加" : "加入交易池"}</button>` +
+            `<span style="font-size:18px;cursor:pointer;color:var(--warn);" onclick="toggleFavorite('${a.code}');">&#9733;</span>` +
+            `<button class="btn btn-sm ${inPool ? "btn-outline" : "btn-primary"}" style="padding: 4px 10px; font-size: 11px;" onclick="addToTradingPool('${a.code}')">${inPool ? "已添加" : "加入交易池"}</button>` +
             `</div>` +
             `</div>`;
     });
@@ -4319,8 +4354,9 @@ async function runBacktest() {
             var pPct = (price - avgCost) / avgCost;
             var dropFromPeak = (peakPrice - price) / peakPrice;
             var trailPct = modeKey === 'aggressive' ? 0.04 : modeKey === 'balanced' ? 0.025 : 0.015;
+            var sellThreshold = modeKey === 'aggressive' ? -2.5 : modeKey === 'balanced' ? -3 : -3.5;
             // Sell logic: stop loss > take profit > trailing stop > signal sell
-            if (pPct <= -dynStop || pPct >= mode.takeProfit || (dropFromPeak >= trailPct && pPct > 0) || (sigScore <= -3 && pPct > 0)) {
+            if (pPct <= -dynStop || pPct >= mode.takeProfit || (dropFromPeak >= trailPct && pPct > 0) || (sigScore <= sellThreshold && pPct > 0)) {
             var sellAmount = position * 100 * price;
             var sellCommission = sellAmount * 0.0003;
             var stampTax = sellAmount * 0.001;
