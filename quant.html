@@ -921,6 +921,8 @@
     <kbd>R</kbd> 刷新行情 &nbsp; <kbd>Space</kbd> 启动/停止 &nbsp; <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd> 切换模式
 </div>
 
+</div> <!-- /container -->
+
 <script>
 // ============ 配置 ============
 const INITIAL_CASH = 100000;
@@ -988,6 +990,68 @@ function sinaCode(code) {
     return 'sh' + code;
 }
 
+// ============ 东方财富备用数据源 ============
+function eastmoneySecid(code) {
+    if (/^6/.test(code)) return '1.' + code;
+    if (/^0|^3/.test(code)) return '0.' + code;
+    if (/^8|^4/.test(code)) return '0.' + code;
+    return '1.' + code;
+}
+
+async function fetchRealtimeFromEastMoney(codes) {
+    try {
+        var secids = codes.map(function(c) { return eastmoneySecid(c); }).join(',');
+        var fields = 'f2,f3,f4,f5,f6,f7,f8,f9,f10,f12,f14,f15,f16,f17,f18';
+        var url = 'https://push2.eastmoney.com/api/qt/ulist.np/get?fltt=2&fields=' + fields + '&secids=' + secids;
+        var resp = await fetch(url, { cache: 'no-store' });
+        var data = await resp.json();
+        if (data.data && data.data.diff) {
+            data.data.diff.forEach(function(item) {
+                var pureCode = item.f12;
+                var prefix = /^6/.test(pureCode) ? 'sh' : 'sz';
+                var sc = prefix + pureCode;
+                realtimeQuotes[sc] = {
+                    name: item.f14 || '',
+                    code: pureCode,
+                    price: item.f2 || 0,
+                    prevClose: item.f18 || 0,
+                    open: item.f17 || 0,
+                    high: item.f15 || 0,
+                    low: item.f16 || 0,
+                    changePct: item.f3 || 0,
+                    volume: item.f5 || 0,
+                    amount: item.f6 || 0
+                };
+            });
+            return true;
+        }
+    } catch (e) {
+        console.warn('东方财富行情获取失败:', e);
+    }
+    return false;
+}
+
+async function fetchKlineFromEastMoney(code, days) {
+    try {
+        var secid = eastmoneySecid(code);
+        var url = 'https://push2his.eastmoney.com/api/qt/stock/kline/get?secid=' + secid + '&fields1=f1,f2,f3,f4,f5,f6&fields2=f51,f52,f53,f54,f55,f56,f57,f58,f59,f60,f61&klt=101&fqt=1&end=20500101&lmt=' + days;
+        var resp = await fetch(url, { cache: 'no-store' });
+        var data = await resp.json();
+        if (data.data && data.data.klines) {
+            return data.data.klines.map(function(line) {
+                var parts = line.split(',');
+                return { date: parts[0], open: parseFloat(parts[1]), close: parseFloat(parts[2]), high: parseFloat(parts[3]), low: parseFloat(parts[4]), volume: parseFloat(parts[5]) };
+            });
+        }
+    } catch (e) {
+        console.warn('东方财富K线获取失败:', e);
+    }
+    return [];
+}
+
+// 数据源状态
+let dataSourceStatus = { realtime: 'tencent', kline: 'tencent' };
+
 async function fetchRealtimeQuotes() {
     try {
         const codes = STOCK_POOL.map(s => sinaCode(s.code)).join(',');
@@ -1014,7 +1078,10 @@ async function fetchRealtimeQuotes() {
             }
         });
     } catch (e) {
-        console.warn('行情获取失败:', e);
+        console.warn('腾讯行情获取失败，切换到东方财富:', e);
+        var pureCodes = STOCK_POOL.map(s => s.code);
+        var ok = await fetchRealtimeFromEastMoney(pureCodes);
+        dataSourceStatus.realtime = ok ? 'eastmoney' : 'failed';
     }
     // Track price history for technical analysis
     Object.keys(realtimeQuotes).forEach(sc => {
@@ -1653,21 +1720,28 @@ let autoTradingTimer = null;
 const TRADING_POOL_KEY = 'quant_trading_pool';
 
 // 加载交易池
-function loadTradingPool() {
+async function loadTradingPool() {
+    try {
+        if (kvAvailable) {
+            var cloudData = await kvGet(TRADING_POOL_KEY);
+            if (cloudData) {
+                tradingPool = typeof cloudData === 'string' ? JSON.parse(cloudData) : cloudData;
+                localStorage.setItem(TRADING_POOL_KEY, JSON.stringify(tradingPool));
+                return;
+            }
+        }
+    } catch (e) {}
     try {
         const saved = localStorage.getItem(TRADING_POOL_KEY);
-        if (saved) {
-            tradingPool = JSON.parse(saved);
-        }
-    } catch (e) {
-        tradingPool = [];
-    }
+        if (saved) tradingPool = JSON.parse(saved);
+    } catch (e) { tradingPool = []; }
 }
 
 // 保存交易池
 function saveTradingPool() {
     try {
         localStorage.setItem(TRADING_POOL_KEY, JSON.stringify(tradingPool));
+        if (kvAvailable) kvSet(TRADING_POOL_KEY, JSON.stringify(tradingPool)).catch(function() {});
     } catch (e) {}
 }
 
@@ -1751,8 +1825,7 @@ document.getElementById('addStockInput').addEventListener('keypress', function(e
 });
 
 // 加载交易池
-loadTradingPool();
-renderTradingPool();
+(async function() { await loadTradingPool(); renderTradingPool(); })();
 
 
 // ============ 交易规则定义 ============
@@ -2392,18 +2465,27 @@ function tradingDecision() {
 const FAVORITES_KEY = 'quant_favorites';
 let favorites = [];
 
-function loadFavorites() {
+async function loadFavorites() {
+    try {
+        if (kvAvailable) {
+            var cloudData = await kvGet(FAVORITES_KEY);
+            if (cloudData) {
+                favorites = typeof cloudData === 'string' ? JSON.parse(cloudData) : cloudData;
+                localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
+                return;
+            }
+        }
+    } catch (e) {}
     try {
         var saved = localStorage.getItem(FAVORITES_KEY);
         if (saved) favorites = JSON.parse(saved);
-    } catch (e) {
-        favorites = [];
-    }
+    } catch (e) { favorites = []; }
 }
 
 function saveFavorites() {
     try {
         localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
+        if (kvAvailable) kvSet(FAVORITES_KEY, JSON.stringify(favorites)).catch(function() {});
     } catch (e) {}
 }
 
@@ -2457,7 +2539,7 @@ function renderFavorites() {
 }
 
 // 加载自选
-loadFavorites();
+(async function() { await loadFavorites(); })();
 
 // ============ AI 分析引擎 ============
 
@@ -2738,14 +2820,71 @@ function renderAIRecommendations(scored) {
     lastTradeDate: null
 };
 
+// ============ Cloudflare KV 云存储配置 ============
+const KV_API_BASE = 'https://quant-kv.xltz.workers.dev';
+let kvAvailable = false;
+
+async function testKVConnection() {
+    try {
+        var resp = await fetch(KV_API_BASE + '/health', { method: 'GET', signal: AbortSignal.timeout(3000) });
+        if (resp.ok) {
+            kvAvailable = true;
+            console.log('Cloudflare KV 已连接');
+            return true;
+        }
+    } catch (e) {
+        console.log('Cloudflare KV 不可用，使用本地存储');
+    }
+    kvAvailable = false;
+    return false;
+}
+
+async function kvGet(key) {
+    try {
+        var resp = await fetch(KV_API_BASE + '/get?key=' + encodeURIComponent(key));
+        if (resp.ok) {
+            var data = await resp.json();
+            return data.value || null;
+        }
+    } catch (e) {}
+    return null;
+}
+
+async function kvSet(key, value) {
+    try {
+        var resp = await fetch(KV_API_BASE + '/set', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ key: key, value: value })
+        });
+        return resp.ok;
+    } catch (e) {}
+    return false;
+}
+
 // ============ 持久化 ============
 const STORAGE_KEY = 'quant_trading_state';
 
 function saveState() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    if (kvAvailable) kvSet(STORAGE_KEY, JSON.stringify(state)).catch(function() {});
 }
 
-function loadState() {
+async function loadState() {
+    try {
+        if (kvAvailable) {
+            var cloudData = await kvGet(STORAGE_KEY);
+            if (cloudData) {
+                var parsed = typeof cloudData === 'string' ? JSON.parse(cloudData) : cloudData;
+                state = { ...state, ...parsed };
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+                console.log('从云端加载状态成功');
+                return;
+            }
+        }
+    } catch (e) {
+        console.warn('云端加载失败，使用本地缓存:', e);
+    }
     try {
         const saved = localStorage.getItem(STORAGE_KEY);
         if (saved) {
@@ -3779,7 +3918,9 @@ function updateMarketStatus() {
     }
     // Count stocks with valid quotes
     const validCount = Object.values(realtimeQuotes).filter(q => q.price > 0).length;
-    info.textContent = '股票池: ' + STOCK_POOL.length + ' 只 · 行情: ' + validCount + ' 只';
+    var dsLabel = dataSourceStatus.realtime === 'tencent' ? '腾讯' : dataSourceStatus.realtime === 'eastmoney' ? '东方财富' : '离线';
+    var kvLabel = kvAvailable ? '[云同步]' : '[本地]';
+    info.textContent = '股票池: ' + STOCK_POOL.length + ' 只 · 行情: ' + validCount + ' 只 · 数据源: ' + dsLabel + ' · ' + kvLabel;
 }
 updateMarketStatus();
 
@@ -3802,10 +3943,12 @@ document.getElementById('stopBtn').addEventListener('click', stopAI);
 document.getElementById('resetBtn').addEventListener('click', resetAccount);
 
 // ============ 启动 ============
-loadState();
-fetchRealtimeQuotes().then(() => {
+(async function() {
+    await testKVConnection();
+    await loadState();
+    await fetchRealtimeQuotes();
     renderAll();
-});
+})();
 
 // Seed priceHistory from position data if available
 function seedPriceHistory() {
@@ -4079,6 +4222,7 @@ function populateBacktestStocks() {
 }
 
 async function fetchHistoricalKline(code, days) {
+    // 优先使用腾讯接口
     try {
         var sc = sinaCode(code);
         var endDate = new Date().toISOString().slice(0, 10);
@@ -4087,11 +4231,20 @@ async function fetchHistoricalKline(code, days) {
         var resp = await fetch(url, { cache: 'no-store' });
         var data = await resp.json();
         var kd = data.data && data.data[sc] ? (data.data[sc].day || data.data[sc].qfqday || []) : [];
-        return kd.map(function(k) { return { date: k[0], open: parseFloat(k[1]), close: parseFloat(k[2]), high: parseFloat(k[3]), low: parseFloat(k[4]), volume: parseFloat(k[5]) }; });
+        if (kd.length > 0) {
+            dataSourceStatus.kline = 'tencent';
+            return kd.map(function(k) { return { date: k[0], open: parseFloat(k[1]), close: parseFloat(k[2]), high: parseFloat(k[3]), low: parseFloat(k[4]), volume: parseFloat(k[5]) }; });
+        }
     } catch (e) {
-        console.warn('K线获取失败:', e);
-        return [];
+        console.warn('腾讯K线获取失败，切换到东方财富:', e);
     }
+    // 备用：东方财富
+    var emData = await fetchKlineFromEastMoney(code, days);
+    if (emData.length > 0) {
+        dataSourceStatus.kline = 'eastmoney';
+        return emData;
+    }
+    return [];
 }
 
 async function runBacktest() {

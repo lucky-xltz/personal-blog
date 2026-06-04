@@ -1,0 +1,10 @@
+name = "quant-kv"
+main = "quant-kv-worker.js"
+compatibility_date = "2024-01-01"
+
+# KV Namespace binding
+# Create namespace first: npx wrangler kv namespace create QUANT_KV
+# Then fill in the id below
+[[kv_namespaces]]
+binding = "QUANT_KV"
+id = "YOUR_KV_NAMESPACE_ID"  # Replace with actual ID from: npx wrangler kv namespace create QUANT_KV
