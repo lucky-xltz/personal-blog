@@ -1330,6 +1330,11 @@ function computeSignalScore(code, quote) {
         if (price < bb.lower) { score += 2; signals.push({ label: '突破下轨', type: 'buy' }); }
         else if (price > bb.upper) { score -= 2; signals.push({ label: '突破上轨', type: 'sell' }); }
         if (bb.bandwidth < 3) { signals.push({ label: '缩量收敛', type: 'neutral' }); }
+        // Bollinger Band Squeeze Breakout: narrow bandwidth + price break = amplified signal
+        if (bb.bandwidth < 4) {
+            if (price < bb.lower) { score += 1; signals.push({ label: '挤压突破↓', type: 'buy' }); }
+            else if (price > bb.upper) { score -= 1; signals.push({ label: '挤压突破↑', type: 'sell' }); }
+        }
     }
 
     // MA Cross (5/20)
@@ -1704,6 +1709,29 @@ let aiTimer = null;
 async function aiDecide() {
     if (!state.isRunning) return;
 
+    // Market hours check: only trade during A-share trading hours
+    const _now = new Date();
+    const _h = _now.getHours(), _m = _now.getMinutes();
+    const _day = _now.getDay();
+    const _isWeekday = _day >= 1 && _day <= 5;
+    const _isMorning = _isWeekday && ((_h === 9 && _m >= 30) || (_h === 10) || (_h === 11 && _m <= 30));
+    const _isAfternoon = _isWeekday && (_h >= 13 && _h < 15);
+    const _marketOpen = _isMorning || _isAfternoon;
+
+    if (!_marketOpen) {
+        // Outside trading hours: still update equity curve with last known prices
+        Object.keys(state.positions).forEach(code => {
+            const pq = getStockPrice(code);
+            if (pq) state.positions[code].currentPrice = pq.price;
+        });
+        const totalAssetsCheck = calculateTotalAssets();
+        state.equityHistory.push({ time: _now.toISOString(), value: totalAssetsCheck });
+        if (state.equityHistory.length > 200) state.equityHistory = state.equityHistory.slice(-200);
+        saveState();
+        renderAll();
+        return;
+    }
+
     const mode = MODES[state.mode];
     const today = new Date().toDateString();
 
@@ -1762,13 +1790,21 @@ async function aiDecide() {
             continue;
         }
 
-        // 3) Trailing stop - dynamic: tighten when profitable, standard when not
+        // 3) Trailing stop - Chandelier Exit (ATR-based dynamic trailing)
+        const chandelierATR = calcATR(priceHistory[code] || [currentPrice], 14);
+        const chandelierMult = state.mode === 'aggressive' ? 3.5 : state.mode === 'balanced' ? 3 : 2.5;
+        const chandelierStop = pos.peakPrice - chandelierATR * chandelierMult;
         let trailingPct = pos.trailingStopPct || (mode.stopLoss * 0.7);
+        // Dynamic tightening based on profit level
         if (profitPct > 0.10) trailingPct = Math.min(trailingPct, 0.015);      // 10%+ profit: very tight 1.5%
         else if (profitPct > 0.05) trailingPct = Math.min(trailingPct, 0.02);   // 5%+ profit: tighten 2%
         const dropFromPeak = (pos.peakPrice - currentPrice) / pos.peakPrice;
-        if (dropFromPeak >= trailingPct && profitPct > 0) {
-            addLog('📉 移动止损: ' + pos.name + ' 从高点回撤 ' + (dropFromPeak * 100).toFixed(2) + '% (峰值' + pos.peakPrice.toFixed(2) + ')', 'error');
+        // Use the tighter of: percentage trailing stop or chandelier exit
+        const pctTrailingTrigger = dropFromPeak >= trailingPct && profitPct > 0;
+        const chandelierTrigger = currentPrice < chandelierStop && profitPct > 0;
+        if (pctTrailingTrigger || chandelierTrigger) {
+            const triggerType = chandelierTrigger && !pctTrailingTrigger ? 'Chandelier' : '移动止损';
+            addLog('📉 ' + triggerType + ': ' + pos.name + ' 从高点回撤 ' + (dropFromPeak * 100).toFixed(2) + '% (峰值' + pos.peakPrice.toFixed(2) + ')', 'error');
             executeSell(code, pos.quantity, currentPrice);
             continue;
         }
@@ -1879,7 +1915,10 @@ async function aiDecide() {
         const maxPositionVal = totalAssets * 0.30 - existingPosVal;
         const baseRatio = state.mode === 'aggressive' ? 0.25 : state.mode === 'balanced' ? 0.15 : 0.08;
         const strengthMultiplier = Math.min(1.5, 1 + (candidate.score - buyThreshold) * 0.15);
-        const cashRatio = baseRatio * strengthMultiplier;
+        // Volume confirmation boost: increase size when volume confirms signal
+        const hasVolConfirm = candidate.signals.some(s => s.label.includes('放量') || s.label.includes('OBV上升') || s.label.includes('放量确认'));
+        const volumeBoost = hasVolConfirm ? 1.15 : 1.0;
+        const cashRatio = baseRatio * strengthMultiplier * volumeBoost;
         let maxShares = Math.floor(state.cash * cashRatio / (q2.price * 100));
         // Cap by concentration limit
         const concShares = Math.floor(maxPositionVal / (q2.price * 100));
@@ -2122,7 +2161,7 @@ function updateSignalDashboard(code) {
     // Composite Score
     var scoreEl = document.getElementById('gScore');
     var scoreBar = document.getElementById('gScorebar');
-    var scoreNorm = Math.max(0, Math.min(100, (sig.score + 6) / 12 * 100));
+    var scoreNorm = Math.max(0, Math.min(100, (sig.score + 14) / 28 * 100));
     scoreEl.textContent = sig.score > 0 ? '+' + sig.score : sig.score;
     scoreEl.className = 'gauge-value ' + (sig.score > 2 ? 'gauge-buy' : sig.score < -2 ? 'gauge-sell' : 'gauge-neutral');
     scoreBar.style.width = scoreNorm + '%';
@@ -2660,10 +2699,10 @@ function calcBacktestSignalScore(prices, price, modeKey) {
         else if (rsi > 65 && rsi6 > 70) score -= 0.8;
     }
 
-    // Bollinger Bands
+    // Bollinger Bands (with squeeze detection)
     var bb = calcBollingerBands(prices, 20, 2);
-    if (bb && price < bb.lower) score += 2;
-    else if (bb && price > bb.upper) score -= 2;
+    if (bb && price < bb.lower) { score += 2; if (bb.bandwidth < 4) score += 1; }
+    else if (bb && price > bb.upper) { score -= 2; if (bb.bandwidth < 4) score -= 1; }
 
     // Williams %R
     var wr = calcWilliamsR(prices, 14);
@@ -2760,10 +2799,35 @@ function calcBacktestSignalScore(prices, price, modeKey) {
     if (trend === 'down') score *= 0.7;
     else if (trend === 'up') score *= 1.15;
 
-    // Adaptive threshold for strong trends / choppy
-    if (prices.length >= 28) {
-        var adxData = calcADX(prices, 14);
-        // no additional score change, threshold adapts externally
+    // Support/Resistance levels
+    if (prices.length >= 20) {
+        var sr = calcSupportResistance(prices);
+        if (sr.support > 0 && price > 0) {
+            var distToSup = (price - sr.support) / price * 100;
+            var distToRes = (sr.resistance - price) / price * 100;
+            if (distToSup < 2 && distToSup >= 0) score += 1;
+            if (distToRes < 2 && distToRes >= 0) score -= 0.8;
+        }
+    }
+
+    // OBV trend (using price momentum as proxy when volume unavailable)
+    if (prices.length >= 6) {
+        var obvProxy = 0;
+        for (var oi = prices.length - 5; oi < prices.length; oi++) {
+            if (prices[oi] > prices[oi-1]) obvProxy++;
+            else if (prices[oi] < prices[oi-1]) obvProxy--;
+        }
+        if (obvProxy >= 3) score += 0.5;
+        else if (obvProxy <= -3) score -= 0.5;
+    }
+
+    // Short-term momentum (enhanced with 3-period check)
+    if (prices.length >= 5) {
+        var mom5 = (prices[prices.length - 1] - prices[prices.length - 5]) / prices[prices.length - 5] * 100;
+        if (mom5 > 5) score -= 0.8;
+        else if (mom5 > 3) score -= 0.5;
+        else if (mom5 < -5) score += 0.8;
+        else if (mom5 < -3) score += 0.5;
     }
 
     return score;
@@ -2847,11 +2911,11 @@ async function runBacktest() {
             var trailPct = modeKey === 'aggressive' ? 0.04 : modeKey === 'balanced' ? 0.025 : 0.015;
             // Sell logic: stop loss > take profit > trailing stop > signal sell
             if (pPct <= -dynStop || pPct >= mode.takeProfit || (dropFromPeak >= trailPct && pPct > 0) || (sigScore <= -3 && pPct > 0)) {
-                var sellAmount = position * 100 * price;
-                var sellCommission = sellAmount * 0.0003;
-                var stampTax = sellAmount * 0.001;
-                cash += sellAmount - sellCommission - stampTax;
-                totalCommission += (position * 100 * avgCost * 0.0003) + sellCommission + stampTax;
+            var sellAmount = position * 100 * price;
+            var sellCommission = sellAmount * 0.0003;
+            var stampTax = sellAmount * 0.001;
+            cash += sellAmount - sellCommission - stampTax;
+            totalCommission += sellCommission + stampTax;
                 if (pPct > 0) wins++;
                 position = 0; trades++;
             }
