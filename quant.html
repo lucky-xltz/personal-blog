@@ -26,8 +26,6 @@
             --radius-md: 18px;
             --radius-sm: 12px;
             --neu-raised: 6px 6px 14px var(--shadow-dark), -6px -6px 14px var(--shadow-light);
-            --neu-raised-sm: 3px 3px 8px var(--shadow-dark), -3px -3px 8px var(--shadow-light);
-            --neu-inset-sm: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
             --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -292,10 +290,10 @@
             font-weight: 600;
             cursor: pointer;
             transition: all var(--transition);
-            box-shadow: var(--neu-raised-sm);
+            box-shadow: var(--neu-raised);
         }
         .btn:hover { transform: translateY(-2px); }
-        .btn:active { transform: translateY(0); box-shadow: var(--neu-inset-sm); }
+        .btn:active { transform: translateY(0); box-shadow: var(--neu-inset); }
         .btn-primary { background: var(--accent); color: #fff; }
         .btn-success { background: var(--safe); color: #fff; }
         .btn-danger { background: var(--danger); color: #fff; }
@@ -374,7 +372,7 @@
             font-family: 'Courier New', monospace;
             font-size: 12px;
             line-height: 1.6;
-            box-shadow: var(--neu-inset-sm);
+            box-shadow: var(--neu-inset);
         }
         .ai-log .log-entry { margin-bottom: 4px; }
         .ai-log .log-time { color: var(--text-muted); }
@@ -407,7 +405,7 @@
         @media (max-width: 640px) { .perf-grid { grid-template-columns: repeat(2, 1fr); } }
         .perf-card {
             background: var(--bg-raised); border-radius: var(--radius-sm);
-            padding: 14px; box-shadow: var(--neu-raised-sm); border: 1px solid var(--border);
+            padding: 14px; box-shadow: var(--neu-raised); border: 1px solid var(--border);
             text-align: center;
         }
         .perf-card .perf-label { font-size: 11px; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
@@ -448,10 +446,10 @@
             padding: 8px 16px; border-radius: 10px; border: none;
             background: var(--bg-raised); color: var(--text-dim);
             font-size: 13px; cursor: pointer; transition: all var(--transition);
-            box-shadow: var(--neu-raised-sm);
+            box-shadow: var(--neu-raised);
         }
         .btn-refresh:hover { color: var(--accent); transform: translateY(-2px); }
-        .btn-refresh:active { box-shadow: var(--neu-inset-sm); transform: translateY(0); }
+        .btn-refresh:active { box-shadow: var(--neu-inset); transform: translateY(0); }
         .btn-refresh .refresh-icon { transition: transform 0.6s ease; display: inline-block; }
         .btn-refresh.spinning .refresh-icon { transform: rotate(360deg); }
         .btn-refresh .last-update { font-size: 10px; color: var(--text-muted); margin-left: 4px; }
@@ -462,14 +460,14 @@
         .backtest-select { background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; font-size: 13px; }
         .backtest-results { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-top: 16px; }
         @media (max-width: 640px) { .backtest-results { grid-template-columns: repeat(2, 1fr); } }
-        .backtest-stat { background: var(--bg); border-radius: var(--radius-sm); padding: 12px; text-align: center; box-shadow: var(--neu-inset-sm); }
+        .backtest-stat { background: var(--bg); border-radius: var(--radius-sm); padding: 12px; text-align: center; box-shadow: var(--neu-inset); }
         .backtest-stat .bt-label { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; }
         .backtest-stat .bt-value { font-size: 18px; font-weight: 700; font-variant-numeric: tabular-nums; }
         /* Export/Import */
         .state-actions { display: flex; gap: 8px; }
-        .btn-sm { padding: 6px 14px; font-size: 12px; border-radius: 8px; border: none; cursor: pointer; transition: all var(--transition); background: var(--bg-raised); color: var(--text-dim); box-shadow: var(--neu-raised-sm); }
+        .btn-sm { padding: 6px 14px; font-size: 12px; border-radius: 8px; border: none; cursor: pointer; transition: all var(--transition); background: var(--bg-raised); color: var(--text-dim); box-shadow: var(--neu-raised); }
         .btn-sm:hover { color: var(--accent); transform: translateY(-2px); }
-        .btn-sm:active { transform: scale(0.95); box-shadow: var(--neu-inset-sm); }
+        .btn-sm:active { transform: scale(0.95); box-shadow: var(--neu-inset); }
 
         /* Signal Strength Dashboard */
         .signal-dashboard {
@@ -482,7 +480,7 @@
             background: var(--bg);
             border-radius: var(--radius-sm);
             padding: 10px 12px;
-            box-shadow: var(--neu-inset-sm);
+            box-shadow: var(--neu-inset);
             text-align: center;
         }
         .signal-gauge .gauge-label {
@@ -550,7 +548,7 @@
             background: var(--bg);
             border-radius: var(--radius-sm);
             padding: 12px;
-            box-shadow: var(--neu-inset-sm);
+            box-shadow: var(--neu-inset);
             position: relative;
             overflow: hidden;
         }
@@ -572,13 +570,13 @@
             position: fixed; bottom: 20px; right: 20px;
             background: var(--bg-raised); border-radius: 10px;
             padding: 10px 14px; font-size: 11px; color: var(--text-muted);
-            box-shadow: var(--neu-raised-sm); border: 1px solid var(--border);
+            box-shadow: var(--neu-raised); border: 1px solid var(--border);
             opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 99;
         }
         .kbd-hint.show { opacity: 1; }
         .kbd-hint kbd {
             display: inline-block; padding: 2px 6px; border-radius: 4px;
-            background: var(--bg); box-shadow: var(--neu-inset-sm);
+            background: var(--bg); box-shadow: var(--neu-inset);
             font-size: 10px; margin: 0 2px; color: var(--text);
         }
 
@@ -740,13 +738,12 @@
                 <select class="signal-select" id="signalStockSelect"></select>
             </div>
         </div>
-        <div id="aiAnalysisResult" style="background: var(--bg); border-radius: var(--radius-sm); padding: 16px; box-shadow: var(--neu-inset-sm); margin-bottom: 16px;">
+        <div id="aiAnalysisResult" style="background: var(--bg); border-radius: var(--radius-sm); padding: 16px; box-shadow: var(--neu-inset); margin-bottom: 16px;">
             <div style="text-align: center; color: var(--text-muted); padding: 16px;">选择股票查看AI分析</div>
         </div>
         <div class="signal-dashboard" id="signalDashboard">
             <div class="signal-gauge"><div class="gauge-label">RSI</div><div class="gauge-value" id="gRSI">--</div><div class="gauge-bar"><div class="gauge-fill" id="gRSIbar"></div></div></div>
             <div class="signal-gauge"><div class="gauge-label">MACD</div><div class="gauge-value" id="gMACD">--</div><div class="gauge-bar"><div class="gauge-fill" id="gMACDbar"></div></div></div>
-            <div class="signal-gauge"><div class="gauge-label">KDJ-J</div><div class="gauge-value" id="gKDJ">--</div><div class="gauge-bar"><div class="gauge-fill" id="gKDJbar"></div></div></div>
             <div class="signal-gauge"><div class="gauge-label">KDJ-J</div><div class="gauge-value" id="gKDJ">--</div><div class="gauge-bar"><div class="gauge-fill" id="gKDJbar"></div></div></div>
             <div class="signal-gauge"><div class="gauge-label">Williams</div><div class="gauge-value" id="gWR">--</div><div class="gauge-bar"><div class="gauge-fill" id="gWRbar"></div></div></div>
             <div class="signal-gauge"><div class="gauge-label">StochRSI</div><div class="gauge-value" id="gSRSI">--</div><div class="gauge-bar"><div class="gauge-fill" id="gSRSIbar"></div></div></div>
@@ -757,10 +754,11 @@
             <div class="signal-gauge"><div class="gauge-label">MFI</div><div class="gauge-value" id="gMFI">--</div><div class="gauge-bar"><div class="gauge-fill" id="gMFIbar"></div></div></div>
             <div class="signal-gauge"><div class="gauge-label">CMF</div><div class="gauge-value" id="gCMF">--</div><div class="gauge-bar"><div class="gauge-fill" id="gCMFbar"></div></div></div>
             <div class="signal-gauge"><div class="gauge-label">ROC</div><div class="gauge-value" id="gROC">--</div><div class="gauge-bar"><div class="gauge-fill" id="gROCbar"></div></div></div>
+            <div class="signal-gauge"><div class="gauge-label">涡旋VI</div><div class="gauge-value" id="gVI">--</div><div class="gauge-bar"><div class="gauge-fill" id="gVIbar"></div></div></div>
         </div>
         <div id="signalDetails" style="margin-top: 12px; font-size: 12px; color: var(--text-dim); line-height: 1.8;"></div>
         <!-- MACD柱状图 -->
-        <div style="margin-top: 16px; background: var(--bg); border-radius: var(--radius-sm); padding: 12px; box-shadow: var(--neu-inset-sm);">
+        <div style="margin-top: 16px; background: var(--bg); border-radius: var(--radius-sm); padding: 12px; box-shadow: var(--neu-inset);">
             <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">MACD 柱状图</div>
             <canvas id="macdChart" height="120"></canvas>
         </div>
@@ -779,7 +777,7 @@
             AI 推荐股票
             <span style="margin-left: auto; font-size: 12px; color: var(--text-muted);">点击加入交易池</span>
         </div>
-        <div id="aiRecommendations" style="background: var(--bg); border-radius: var(--radius-sm); padding: 16px; box-shadow: var(--neu-inset-sm);">
+        <div id="aiRecommendations" style="background: var(--bg); border-radius: var(--radius-sm); padding: 16px; box-shadow: var(--neu-inset);">
             <div style="text-align: center; color: var(--text-muted); padding: 16px;">点击"启动 AI 交易"后显示推荐</div>
         </div>
     </div>
@@ -790,7 +788,7 @@
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
             自选股
         </div>
-        <div id="favoritesList" style="background: var(--bg); border-radius: var(--radius-sm); padding: 12px; box-shadow: var(--neu-inset-sm);">
+        <div id="favoritesList" style="background: var(--bg); border-radius: var(--radius-sm); padding: 12px; box-shadow: var(--neu-inset);">
             <div style="text-align:center;color:var(--text-muted);padding:12px;font-size:12px;">点击星星收藏股票</div>
         </div>
     </div>
@@ -805,7 +803,7 @@
                 <button class="btn btn-outline btn-sm" id="addStockBtn">添加</button>
             </div>
         </div>
-        <div id="tradingPool" style="background: var(--bg); border-radius: var(--radius-sm); padding: 16px; box-shadow: var(--neu-inset-sm);">
+        <div id="tradingPool" style="background: var(--bg); border-radius: var(--radius-sm); padding: 16px; box-shadow: var(--neu-inset);">
             <div style="text-align: center; color: var(--text-muted); padding: 16px;">从AI推荐中选择或手动添加股票</div>
         </div>
     </div>
@@ -1516,7 +1514,34 @@ function calcROC(prices, period) {
     return previous > 0 ? ((current - previous) / previous) * 100 : 0;
 }
 
-
+/**
+ * Vortex Indicator (VI) - trend detection
+ * VI+ measures upward trend, VI- measures downward trend
+ * VI+ > VI- = uptrend, crossover = trend change signal
+ */
+function calcVortex(prices, period) {
+    period = period || 14;
+    if (prices.length < period + 1) return { viPlus: 0, viMinus: 0, trend: 'neutral' };
+    var vmPlusSum = 0, vmMinusSum = 0, trSum = 0;
+    for (var i = prices.length - period; i < prices.length; i++) {
+        var high = prices[i];
+        var low = prices[i];
+        var prevHigh = prices[i - 1];
+        var prevLow = prices[i - 1];
+        var prevClose = prices[i - 1];
+        // For price-only data, approximate high/low with price movement
+        var vmPlus = Math.abs(high - prevLow);
+        var vmMinus = Math.abs(low - prevHigh);
+        var tr = Math.max(high - low, Math.abs(high - prevClose), Math.abs(low - prevClose));
+        vmPlusSum += vmPlus;
+        vmMinusSum += vmMinus;
+        trSum += tr;
+    }
+    var viPlus = trSum > 0 ? vmPlusSum / trSum : 0;
+    var viMinus = trSum > 0 ? vmMinusSum / trSum : 0;
+    var trend = viPlus > viMinus ? 'up' : viMinus > viPlus ? 'down' : 'neutral';
+    return { viPlus: viPlus, viMinus: viMinus, trend: trend };
+}
 
 
 /**
@@ -1727,6 +1752,25 @@ function computeSignalScore(code, quote) {
         else if (roc < -5) { score += 0.5; signals.push({ label: 'ROC超跌', type: 'buy' }); }
         else if (roc > 2) { score += 0.3; }
         else if (roc < -2) { score -= 0.3; }
+    }
+
+    // Vortex Indicator (trend detection + crossover)
+    if (prices.length >= 16) {
+        const vortex = calcVortex(prices, 14);
+        if (vortex.viPlus > 1.0 && vortex.viPlus > vortex.viMinus) {
+            score += 0.8; signals.push({ label: '涡旋看多', type: 'buy' });
+        } else if (vortex.viMinus > 1.0 && vortex.viMinus > vortex.viPlus) {
+            score -= 0.8; signals.push({ label: '涡旋看空', type: 'sell' });
+        }
+        // Crossover detection using previous period
+        if (prices.length >= 17) {
+            var prevVortex = calcVortex(prices.slice(0, -1), 14);
+            if (prevVortex.viMinus > prevVortex.viPlus && vortex.viPlus > vortex.viMinus) {
+                score += 1; signals.push({ label: 'VI金叉', type: 'buy' });
+            } else if (prevVortex.viPlus > prevVortex.viMinus && vortex.viMinus > vortex.viPlus) {
+                score -= 1; signals.push({ label: 'VI死叉', type: 'sell' });
+            }
+        }
     }
 
     // Support/Resistance levels
@@ -3494,6 +3538,19 @@ function updateSignalDashboard(code) {
         rocBar.style.background = roc > 5 ? 'var(--danger)' : roc < -5 ? 'var(--safe)' : 'var(--text-muted)';
     }
 
+    // Vortex Indicator
+    if (prices.length >= 16) {
+        var vortex = calcVortex(prices, 14);
+        var viEl = document.getElementById('gVI');
+        var viBar = document.getElementById('gVIbar');
+        var viDiff = vortex.viPlus - vortex.viMinus;
+        var viNorm = Math.max(0, Math.min(100, (viDiff + 1) / 2 * 100));
+        viEl.textContent = (viDiff >= 0 ? '+' : '') + viDiff.toFixed(2);
+        viEl.className = 'gauge-value ' + (vortex.trend === 'up' ? 'gauge-buy' : vortex.trend === 'down' ? 'gauge-sell' : 'gauge-neutral');
+        viBar.style.width = viNorm + '%';
+        viBar.style.background = vortex.trend === 'up' ? 'var(--safe)' : vortex.trend === 'down' ? 'var(--danger)' : 'var(--text-muted)';
+    }
+
 
     
     // Signal details text
@@ -3548,14 +3605,14 @@ function renderSectorAllocation() {
         var pct = totalVal > 0 ? (val / totalVal * 100) : 0;
         var color = colors[colorIdx % colors.length];
         colorIdx++;
-        return '<div style="background:var(--bg);border-radius:var(--radius-sm);padding:10px 14px;box-shadow:var(--neu-inset-sm);flex:1;min-width:100px;text-align:center;">' +
+        return '<div style="background:var(--bg);border-radius:var(--radius-sm);padding:10px 14px;box-shadow:var(--neu-inset);flex:1;min-width:100px;text-align:center;">' +
             '<div style="font-size:11px;color:var(--text-muted);margin-bottom:4px;">' + sector + '</div>' +
             '<div style="font-size:16px;font-weight:700;color:' + color + ';">' + pct.toFixed(1) + '%</div>' +
             '<div style="font-size:11px;color:var(--text-dim);">\u00a5' + (val/10000).toFixed(1) + '\u4e07</div>' +
         '</div>';
     }).join('');
     var cashPct = state.cash / calculateTotalAssets() * 100;
-    html += '<div style="background:var(--bg);border-radius:var(--radius-sm);padding:10px 14px;box-shadow:var(--neu-inset-sm);flex:1;min-width:100px;text-align:center;">' +
+    html += '<div style="background:var(--bg);border-radius:var(--radius-sm);padding:10px 14px;box-shadow:var(--neu-inset);flex:1;min-width:100px;text-align:center;">' +
         '<div style="font-size:11px;color:var(--text-muted);margin-bottom:4px;">\u73b0\u91d1</div>' +
         '<div style="font-size:16px;font-weight:700;color:var(--text-dim);">' + cashPct.toFixed(1) + '%</div>' +
         '<div style="font-size:11px;color:var(--text-dim);">\u00a5' + (state.cash/10000).toFixed(1) + '\u4e07</div>' +
@@ -4272,7 +4329,38 @@ function calcBacktestSignalScore(prices, price, modeKey) {
         else if (roc < -2) score += 0.3;
     }
 
-    // Trend filter
+    // Vortex Indicator (trend detection)
+    if (prices.length >= 16) {
+        var vtx = calcVortex(prices, 14);
+        if (vtx.viPlus > 1.0 && vtx.viPlus > vtx.viMinus) score += 0.8;
+        else if (vtx.viMinus > 1.0 && vtx.viMinus > vtx.viPlus) score -= 0.8;
+        if (prices.length >= 17) {
+            var prevVtx = calcVortex(prices.slice(0, -1), 14);
+            if (prevVtx.viMinus > prevVtx.viPlus && vtx.viPlus > vtx.viMinus) score += 1;
+            else if (prevVtx.viPlus > prevVtx.viMinus && vtx.viMinus > vtx.viPlus) score -= 1;
+        }
+    }
+
+    // Ichimoku TK cross (in addition to cloud position)
+    if (prices.length >= 52) {
+        var ichi2 = calcIchimoku(prices);
+        if (ichi2 && ichi2.tkCross === 'bullish') score += 1.5;
+        else if (ichi2 && ichi2.tkCross === 'bearish') score -= 1.5;
+    }
+
+    // Volume-price divergence proxy (price-based)
+    if (prices.length >= 10) {
+        var recentUp = 0, recentDown = 0;
+        for (var vi = prices.length - 5; vi < prices.length; vi++) {
+            if (prices[vi] > prices[vi-1]) recentUp++;
+            else if (prices[vi] < prices[vi-1]) recentDown++;
+        }
+        var priceMom5 = (prices[prices.length-1] - prices[prices.length-5]) / prices[prices.length-5] * 100;
+        if (recentUp >= 4 && priceMom5 > 2) score += 0.5; // consistent upward = bullish confirm
+        else if (recentDown >= 4 && priceMom5 < -2) score -= 0.5; // consistent downward = bearish confirm
+    }
+
+    // Trend filter (EMA20 slope - suppress signals against trend)
     var trend = calcTrendFilter(prices);
     if (trend === 'down') score *= 0.7;
     else if (trend === 'up') score *= 1.15;
@@ -4804,7 +4892,7 @@ document.getElementById('btBatchBtn').addEventListener('click', async function()
                 var pPct = (price - avgCost) / avgCost;
                 var dropFromPeak = (peakPrice - price) / peakPrice;
                 var trailPct = modeKey === 'aggressive' ? 0.04 : modeKey === 'balanced' ? 0.025 : 0.015;
-                if (pPct <= -dynStop || pPct >= mode.takeProfit || (dropFromPeak >= trailPct && pPct > 0) || (sigScore <= -3 && pPct > 0)) {
+                if (pPct <= -dynStop || pPct >= mode.takeProfit || (dropFromPeak >= trailPct && pPct > 0) || (sigScore <= (modeKey === 'aggressive' ? -2.5 : modeKey === 'balanced' ? -3 : -3.5) && pPct > 0)) {
                     var sellAmt = position * 100 * price;
                     cash += sellAmt - sellAmt * 0.0003 - sellAmt * 0.001;
                     if (pPct > 0) wins++;
@@ -4923,7 +5011,7 @@ document.getElementById('btCompareBtn').addEventListener('click', async function
                 var pPct = (price - avgCost) / avgCost;
                 var dropFromPeak = (peakPrice - price) / peakPrice;
                 var trailPct = modeKey === 'aggressive' ? 0.04 : modeKey === 'balanced' ? 0.025 : 0.015;
-                if (pPct <= -dynStop || pPct >= mode.takeProfit || (dropFromPeak >= trailPct && pPct > 0) || (sigScore <= -3 && pPct > 0)) {
+                if (pPct <= -dynStop || pPct >= mode.takeProfit || (dropFromPeak >= trailPct && pPct > 0) || (sigScore <= (modeKey === 'aggressive' ? -2.5 : modeKey === 'balanced' ? -3 : -3.5) && pPct > 0)) {
                     var sellAmt = position * 100 * price;
                     cash += sellAmt - sellAmt * 0.0003 - sellAmt * 0.001;
                     if (pPct > 0) wins++;
