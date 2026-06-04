@@ -1,5 +1,23 @@
 [
   {
+    "slug": "post-quantum-tls-merkle-tree-certificates-2026",
+    "title": "量子计算机还没来，TLS 证书已经要换了：后量子密码学与 Merkle Tree Certificates 深度解析",
+    "date": "2026-06-04",
+    "category": "技术",
+    "tags": [
+      "后量子密码学",
+      "TLS",
+      "证书透明度",
+      "Let's Encrypt",
+      "网络安全",
+      "Merkle Tree"
+    ],
+    "excerpt": "Let's Encrypt宣布采用Merkle Tree Certificates作为后量子时代的证书方案。ML-DSA签名是ECDSA的37倍，直接替换会让TLS握手膨胀32倍——MTC用Merkle树的批量签名+包含证明，把二次方增长变成线性增长。2026年底测试，2027年生产。本文深入解析密码学原理、工程约束和开发者应对策略。",
+    "cover": "https://images.unsplash.com/photo-1504639725590-34d0984388bd?w=600&h=400&fit=crop",
+    "readtime": 13,
+    "views": 0
+  },
+  {
     "slug": "elixir-v120-gradual-set-theoretic-types-2026",
     "title": "Elixir v1.20：集合论类型系统的渐进式革命——不写类型注解也能抓 Bug",
     "date": "2026-06-04",
