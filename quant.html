@@ -561,7 +561,7 @@
 <div class="container">
     <div class="page-title">
         <h1>量化交易系统</h1>
-        <p>AI 驱动的智能交易 · 综合分析（技术面+基本面+行业+情绪） · 模拟运行</p>
+        <p>AI 驱动的智能交易 · 选择股票加入交易池 · 每2分钟自动分析交易</p>
     </div>
 
     <!-- Mode Selector -->
@@ -711,9 +711,25 @@
         <div class="card-title">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
             AI 推荐股票
+            <span style="margin-left: auto; font-size: 12px; color: var(--text-muted);">点击加入交易池</span>
         </div>
         <div id="aiRecommendations" style="background: var(--bg); border-radius: var(--radius-sm); padding: 16px; box-shadow: var(--neu-inset-sm);">
             <div style="text-align: center; color: var(--text-muted); padding: 16px;">点击"启动 AI 交易"后显示推荐</div>
+        </div>
+    </div>
+
+    <!-- 我的交易池 -->
+    <div class="card" id="tradingPoolCard">
+        <div class="card-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+            我的交易池
+            <div style="margin-left: auto; display: flex; gap: 8px; align-items: center;">
+                <input type="text" id="addStockInput" placeholder="输入股票代码" maxlength="6" style="width: 100px; padding: 4px 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: 12px;">
+                <button class="btn btn-outline btn-sm" id="addStockBtn">添加</button>
+            </div>
+        </div>
+        <div id="tradingPool" style="background: var(--bg); border-radius: var(--radius-sm); padding: 16px; box-shadow: var(--neu-inset-sm);">
+            <div style="text-align: center; color: var(--text-muted); padding: 16px;">从AI推荐中选择或手动添加股票</div>
         </div>
     </div>
 
@@ -1574,6 +1590,114 @@ function computeSignalScore(code, quote) {
     return { score: Math.round(score * 10) / 10, signals, rsi: Math.round(rsi), bb, atrPct: Math.round(atrPct * 10) / 10, trend };
 }
 
+
+// ============ 交易池管理 ============
+let tradingPool = []; // 用户选择的交易池
+let autoTradingTimer = null;
+const TRADING_POOL_KEY = 'quant_trading_pool';
+
+// 加载交易池
+function loadTradingPool() {
+    try {
+        const saved = localStorage.getItem(TRADING_POOL_KEY);
+        if (saved) {
+            tradingPool = JSON.parse(saved);
+        }
+    } catch (e) {
+        tradingPool = [];
+    }
+}
+
+// 保存交易池
+function saveTradingPool() {
+    try {
+        localStorage.setItem(TRADING_POOL_KEY, JSON.stringify(tradingPool));
+    } catch (e) {}
+}
+
+// 添加股票到交易池
+function addToTradingPool(code) {
+    const poolItem = STOCK_POOL.find(s => s.code === code);
+    if (!poolItem) {
+        showToast('股票代码不存在', 'error');
+        return;
+    }
+    if (tradingPool.find(s => s.code === code)) {
+        showToast(poolItem.name + ' 已在交易池中', 'info');
+        return;
+    }
+    tradingPool.push({ code: poolItem.code, name: poolItem.name, sector: poolItem.sector });
+    saveTradingPool();
+    renderTradingPool();
+    showToast('已添加 ' + poolItem.name + ' 到交易池', 'success');
+}
+
+// 从交易池移除
+function removeFromTradingPool(code) {
+    tradingPool = tradingPool.filter(s => s.code !== code);
+    saveTradingPool();
+    renderTradingPool();
+    showToast('已从交易池移除', 'info');
+}
+
+// 渲染交易池
+function renderTradingPool() {
+    const container = document.getElementById('tradingPool');
+    if (!container) return;
+
+    if (tradingPool.length === 0) {
+        container.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 16px;">从AI推荐中选择或手动添加股票</div>';
+        return;
+    }
+
+    let html = '<div style="display: flex; flex-direction: column; gap: 8px;">';
+
+    tradingPool.forEach(function(item) {
+        const q = getStockPrice(item.code);
+        const price = q ? q.price.toFixed(2) : '--';
+        const changePct = q ? (q.changePct >= 0 ? '+' : '') + q.changePct.toFixed(2) + '%' : '--';
+        const changeCls = q && q.changePct >= 0 ? 'up' : 'down';
+        const pos = state.positions[item.code];
+        const posInfo = pos ? ' · 持仓' + pos.quantity + '手' : '';
+
+        html += '<div style="display: flex; align-items: center; gap: 12px; padding: 10px; background: var(--bg-raised); border-radius: 8px;">' +
+            '<div style="flex: 1;">' +
+            '<div style="font-weight: 600; font-size: 14px;">' + item.name + ' <span style="color: var(--text-muted); font-size: 12px;">' + item.code + '</span></div>' +
+            '<div style="font-size: 11px; color: var(--text-dim);">' + item.sector + posInfo + '</div>' +
+            '</div>' +
+            '<div style="text-align: right;">' +
+            '<div style="font-weight: 600;">' + price + ' <span class="' + changeCls + '" style="font-size: 12px;">' + changePct + '</span></div>' +
+            '</div>' +
+            '<button class="btn btn-outline btn-sm" style="padding: 2px 8px; font-size: 11px;" onclick="removeFromTradingPool(\'' + item.code + '\')">移除</button>' +
+            '</div>';
+    });
+
+    html += '</div>';
+    container.innerHTML = html;
+}
+
+// 添加股票按钮事件
+document.getElementById('addStockBtn').addEventListener('click', function() {
+    const input = document.getElementById('addStockInput');
+    const code = input.value.trim();
+    if (code.length === 6) {
+        addToTradingPool(code);
+        input.value = '';
+    } else {
+        showToast('请输入6位股票代码', 'error');
+    }
+});
+
+document.getElementById('addStockInput').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        document.getElementById('addStockBtn').click();
+    }
+});
+
+// 加载交易池
+loadTradingPool();
+renderTradingPool();
+
 // ============ AI 分析引擎 ============
 
 // 获取股票基本面数据（模拟）
@@ -1813,10 +1937,11 @@ function renderAIRecommendations(scored) {
         const price = q ? q.price.toFixed(2) : '--';
         const changePct = q ? (q.changePct >= 0 ? '+' : '') + q.changePct.toFixed(2) + '%' : '--';
         const changeCls = q && q.changePct >= 0 ? 'up' : 'down';
+        const inPool = tradingPool.find(t => t.code === a.code);
 
-        html += '<div style="display: flex; align-items: center; gap: 12px; padding: 10px; background: var(--bg-raised); border-radius: 8px; cursor: pointer;" onclick="document.getElementById(\'signalStockSelect\').value=\'' + a.code + '\';updateSignalDashboard(\'' + a.code + '\');">' +
+        html += '<div style="display: flex; align-items: center; gap: 12px; padding: 10px; background: var(--bg-raised); border-radius: 8px;">' +
             '<div style="width: 24px; height: 24px; border-radius: 50%; background: ' + rec.color + '; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff;">' + (i + 1) + '</div>' +
-            '<div style="flex: 1;">' +
+            '<div style="flex: 1; cursor: pointer;" onclick="document.getElementById(\'signalStockSelect\').value=\'' + a.code + '\';updateSignalDashboard(\'' + a.code + '\');">' +
             '<div style="font-weight: 600; font-size: 14px;">' + a.name + ' <span style="color: var(--text-muted); font-size: 12px;">' + a.code + '</span></div>' +
             '<div style="font-size: 11px; color: var(--text-dim);">' + a.sectorName + ' · ' + (a.sector.catalyst || '') + '</div>' +
             '</div>' +
@@ -1824,6 +1949,7 @@ function renderAIRecommendations(scored) {
             '<div style="font-weight: 600;">' + price + ' <span class="' + changeCls + '" style="font-size: 12px;">' + changePct + '</span></div>' +
             '<div style="font-size: 12px; color: ' + rec.color + ';">' + rec.text + ' (' + a.score + ')</div>' +
             '</div>' +
+            '<button class="btn btn-sm ' + (inPool ? 'btn-outline' : 'btn-primary') + '" style="padding: 4px 10px; font-size: 11px;" onclick="addToTradingPool(\'' + a.code + '\')">' + (inPool ? '已添加' : '加入交易池') + '</button>' +
             '</div>';
     });
 
@@ -2158,7 +2284,9 @@ async function aiDecide() {
     }
 
     // ========== BUY LOGIC: score all candidates and pick the best =========
-    const candidates = STOCK_POOL.filter(s => {
+    // 优先使用交易池，如果为空则使用完整股票池
+    const poolToUse = tradingPool.length > 0 ? tradingPool : STOCK_POOL;
+    const candidates = poolToUse.filter(s => {
         const q = getStockPrice(s.code);
         return q && q.price > 0 && !state.positions[s.code];
     });
@@ -2289,8 +2417,11 @@ function startAI() {
     if (state.isRunning) return;
     state.isRunning = true;
     saveState();
-    addLog('AI 交易引擎启动 [' + MODES[state.mode].name + '模式]', 'success');
-    aiTimer = setInterval(aiDecide, 15000); // 每15秒决策一次（真实行情）
+    const poolInfo = tradingPool.length > 0 ? '交易池' + tradingPool.length + '只' : '全股票池';
+    addLog('AI 交易引擎启动 [' + MODES[state.mode].name + '模式] ' + poolInfo + ' 每2分钟分析一次', 'success');
+    aiTimer = setInterval(aiDecide, 120000); // 每2分钟决策一次
+    // 立即执行一次分析
+    aiDecide();
     renderAll();
 }
 
