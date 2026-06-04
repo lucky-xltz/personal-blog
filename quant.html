@@ -636,6 +636,11 @@
             <div class="stat-value" id="totalProfit">¥0.00</div>
             <div class="stat-sub" id="totalProfitPct">0.00%</div>
         </div>
+        <div class="stat-card">
+            <div class="stat-label">今日盈亏</div>
+            <div class="stat-value" id="todayPnl">¥0.00</div>
+            <div class="stat-sub" id="todayPnlPct">0.00%</div>
+        </div>
     </div>
 
 
@@ -916,7 +921,15 @@ const STOCK_POOL = [
     { code: '002714', name: '牧原股份', sector: '农业' },
     { code: '300033', name: '同花顺', sector: '金融科技' },
     { code: '688256', name: '寒武纪', sector: 'AI芯片' },
-    { code: '603986', name: '兆易创新', sector: '半导体' }
+    { code: '603986', name: '兆易创新', sector: '半导体' },
+    { code: '002049', name: '紫光国微', sector: '半导体' },
+    { code: '600745', name: '闻泰科技', sector: '半导体' },
+    { code: '300124', name: '汇川技术', sector: '工控' },
+    { code: '002472', name: '双环传动', sector: '机器人' },
+    { code: '300073', name: '当升科技', sector: '锂电' },
+    { code: '600438', name: '通威股份', sector: '光伏' },
+    { code: '601127', name: '赛力斯', sector: '新能源车' },
+    { code: '002352', name: '顺丰控股', sector: '物流' }
 ];
 
 // ============ 实时行情获取 ============
@@ -2047,6 +2060,24 @@ function evaluateAllStrategies(code, quote) {
 function calculatePositionSize(code, price, signalStrength, mode) {
     const totalAssets = calculateTotalAssets();
     const availableCash = state.cash;
+
+    // 板块暴露检查
+    const poolItem = STOCK_POOL.find(s => s.code === code);
+    if (poolItem) {
+        let sectorValue = 0;
+        Object.keys(state.positions).forEach(posCode => {
+            const posStock = STOCK_POOL.find(s => s.code === posCode);
+            if (posStock && posStock.sector === poolItem.sector) {
+                const pos = state.positions[posCode];
+                sectorValue += pos.quantity * 100 * (pos.currentPrice || pos.avgCost);
+            }
+        });
+        const sectorPct = totalAssets > 0 ? sectorValue / totalAssets : 0;
+        if (sectorPct >= TRADING_RULES.MAX_SECTOR_EXPOSURE) {
+            addLog('⚠️ ' + poolItem.sector + '板块仓位已达' + (sectorPct * 100).toFixed(0) + '%，跳过', 'warn');
+            return { lots: 0, shares: 0, amount: 0, ratio: 0 };
+        }
+    }
     
     // 基础仓位比例
     const baseRatio = mode === 'aggressive' ? 0.25 : mode === 'balanced' ? 0.15 : 0.08;
@@ -2088,6 +2119,22 @@ function executeBuyWithStrategy(code, quote, evaluation) {
     const poolItem = STOCK_POOL.find(s => s.code === code);
     if (!poolItem) return false;
     
+    // 每日交易次数限制
+    const maxTrades = MODES[state.mode] ? MODES[state.mode].maxDailyTrades : 5;
+    if (state.dailyTrades >= maxTrades) {
+        addLog('⚠️ 今日交易已达上限(' + state.dailyTrades + '/' + maxTrades + ')，跳过 ' + poolItem.name, 'warn');
+        return false;
+    }
+
+    // 总仓位暴露检查
+    const totalAssets = calculateTotalAssets();
+    const investedValue = totalAssets - state.cash;
+    const exposurePct = totalAssets > 0 ? investedValue / totalAssets : 0;
+    if (exposurePct >= TRADING_RULES.MAX_TOTAL_EXPOSURE) {
+        addLog('⚠️ 总仓位已达' + (exposurePct * 100).toFixed(0) + '%，超过' + (TRADING_RULES.MAX_TOTAL_EXPOSURE * 100) + '%上限', 'warn');
+        return false;
+    }
+
     const price = quote.price;
     const position = calculatePositionSize(code, price, evaluation.confidence, state.mode);
     
@@ -2213,20 +2260,70 @@ function tradingDecision() {
                 // 卖出信号且已持有
                 executeSellWithStrategy(item.code, quote, evaluation);
             } else if (hasPosition) {
-                // 检查止损止盈
+                // 检查止损止盈 + 移动止损 + ATR自适应止损
                 const pos = state.positions[item.code];
                 const profitPct = (quote.price - pos.avgCost) / pos.avgCost;
-                
-                // 止损检查
-                if (pos.strategy && pos.strategy.stopLoss && quote.price <= pos.strategy.stopLoss) {
+
+                // 更新峰值价格（用于移动止损）
+                if (quote.price > (pos.peakPrice || 0)) {
+                    pos.peakPrice = quote.price;
+                }
+
+                let sold = false;
+
+                // 1. 硬止损（最高优先级）
+                if (!sold && pos.strategy && pos.strategy.stopLoss && quote.price <= pos.strategy.stopLoss) {
                     addLog('🛑 止损触发: ' + pos.name + ' 价格 ' + quote.price.toFixed(2) + ' <= 止损价 ' + pos.strategy.stopLoss.toFixed(2), 'error');
                     executeSell(item.code, pos.quantity, quote.price);
+                    sold = true;
                 }
-                
-                // 止盈检查
-                if (pos.strategy && pos.strategy.takeProfit && quote.price >= pos.strategy.takeProfit) {
+
+                // 2. 止盈
+                if (!sold && pos.strategy && pos.strategy.takeProfit && quote.price >= pos.strategy.takeProfit) {
                     addLog('🎯 止盈触发: ' + pos.name + ' 价格 ' + quote.price.toFixed(2) + ' >= 止盈价 ' + pos.strategy.takeProfit.toFixed(2), 'success');
                     executeSell(item.code, pos.quantity, quote.price);
+                    sold = true;
+                }
+
+                // 3. 移动止损（Trailing Stop）- 盈利后保护利润
+                if (!sold && profitPct > 0 && pos.peakPrice && pos.trailingStopPct) {
+                    const dropFromPeak = (pos.peakPrice - quote.price) / pos.peakPrice;
+                    if (dropFromPeak >= pos.trailingStopPct) {
+                        addLog('📉 移动止损: ' + pos.name + ' 从峰值' + pos.peakPrice.toFixed(2) + ' 回落' + (dropFromPeak * 100).toFixed(1) + '%', 'error');
+                        executeSell(item.code, pos.quantity, quote.price);
+                        sold = true;
+                    }
+                }
+
+                // 4. ATR 动态止损 - 基于波动率自适应（盈利时更紧，亏损时更宽）
+                if (!sold && profitPct > 0) {
+                    const atrPrices = priceHistory[item.code];
+                    if (atrPrices && atrPrices.length >= 15) {
+                        const atr = calcATR(atrPrices, 14);
+                        const atrMult = profitPct > 0.1 ? 1.5 : profitPct > 0.05 ? 2.0 : 2.5;
+                        const atrStop = pos.peakPrice - atr * atrMult;
+                        if (quote.price < atrStop) {
+                            addLog('📊 ATR止损: ' + pos.name + ' 价格' + quote.price.toFixed(2) + ' < ATR止损线' + atrStop.toFixed(2), 'error');
+                            executeSell(item.code, pos.quantity, quote.price);
+                            sold = true;
+                        }
+                    }
+                }
+
+                // 5. 动态锁利止损 - 盈利越多止损越紧
+                if (!sold && profitPct > 0.10 && pos.peakPrice) {
+                    const tightStop = pos.peakPrice * 0.985;
+                    if (quote.price < tightStop) {
+                        addLog('🔒 锁利止损: ' + pos.name + ' 盈利' + (profitPct * 100).toFixed(1) + '%，保护利润', 'success');
+                        executeSell(item.code, pos.quantity, quote.price);
+                        sold = true;
+                    }
+                } else if (!sold && profitPct > 0.05 && pos.peakPrice) {
+                    const midStop = pos.peakPrice * 0.98;
+                    if (quote.price < midStop) {
+                        addLog('🔒 锁利止损: ' + pos.name + ' 盈利' + (profitPct * 100).toFixed(1) + '%，保护利润', 'success');
+                        executeSell(item.code, pos.quantity, quote.price);
+                    }
                 }
             }
         });
@@ -2283,7 +2380,15 @@ function getFundamentalData(code) {
         '002714': { pe: 18.5, pb: 3.2, roe: 18.2, revenue_growth: 15.8, profit_growth: 22.5, debt_ratio: 52.8, dividend_yield: 2.2, sector_rank: 1 },
         '300033': { pe: 45.2, pb: 8.5, roe: 18.8, revenue_growth: 22.5, profit_growth: 28.2, debt_ratio: 32.5, dividend_yield: 0.5, sector_rank: 2 },
         '688256': { pe: -25.8, pb: 8.2, roe: -12.5, revenue_growth: 45.2, profit_growth: -28.5, debt_ratio: 28.5, dividend_yield: 0, sector_rank: 8 },
-        '603986': { pe: 35.2, pb: 5.8, roe: 15.2, revenue_growth: 18.8, profit_growth: 22.5, debt_ratio: 42.5, dividend_yield: 0.8, sector_rank: 3 }
+        '603986': { pe: 35.2, pb: 5.8, roe: 15.2, revenue_growth: 18.8, profit_growth: 22.5, debt_ratio: 42.5, dividend_yield: 0.8, sector_rank: 3 },
+        '002049': { pe: 32.5, pb: 4.2, roe: 15.8, revenue_growth: 12.5, profit_growth: 18.2, debt_ratio: 38.5, dividend_yield: 0.6, sector_rank: 3 },
+        '600745': { pe: 28.2, pb: 3.8, roe: 12.5, revenue_growth: 15.8, profit_growth: 20.2, debt_ratio: 45.2, dividend_yield: 0.5, sector_rank: 4 },
+        '300124': { pe: 38.5, pb: 6.2, roe: 18.5, revenue_growth: 22.8, profit_growth: 28.5, debt_ratio: 35.2, dividend_yield: 0.4, sector_rank: 1 },
+        '002472': { pe: 42.8, pb: 5.5, roe: 15.2, revenue_growth: 28.5, profit_growth: 35.8, debt_ratio: 32.5, dividend_yield: 0.3, sector_rank: 2 },
+        '300073': { pe: 25.8, pb: 3.5, roe: 12.8, revenue_growth: 18.5, profit_growth: 22.8, debt_ratio: 48.5, dividend_yield: 0.8, sector_rank: 3 },
+        '600438': { pe: 15.2, pb: 2.2, roe: 18.5, revenue_growth: 12.8, profit_growth: 15.5, debt_ratio: 58.5, dividend_yield: 2.5, sector_rank: 1 },
+        '601127': { pe: -18.5, pb: 8.5, roe: -8.2, revenue_growth: 125.8, profit_growth: -15.2, debt_ratio: 68.5, dividend_yield: 0, sector_rank: 5 },
+        '002352': { pe: 22.5, pb: 2.8, roe: 12.5, revenue_growth: 8.5, profit_growth: 12.8, debt_ratio: 55.2, dividend_yield: 1.8, sector_rank: 1 }
     };
 
     return fundamentals[code] || null;
@@ -2555,7 +2660,7 @@ function showConfirm(title, message) {
     return new Promise(resolve => {
         _modalResolve = resolve;
         document.getElementById('modalTitle').textContent = title;
-        document.getElementById('modalMessage').textContent = message;
+        document.getElementById('modalMessage').innerHTML = message;
         document.getElementById('modalOverlay').classList.add('show');
     });
 }
@@ -2699,7 +2804,6 @@ let aiTimer = null;
 async function aiDecide() {
     // 使用新的策略引擎
     tradingDecision();
-}
 
     // Fetch realtime quotes
     await fetchRealtimeQuotes();
@@ -2715,23 +2819,16 @@ async function aiDecide() {
 
 function calculateTotalAssets() {
     let total = state.cash;
-    const investedValue = totalAssetsCheck - state.cash;
-    const exposurePct = totalAssetsCheck > 0 ? investedValue / totalAssetsCheck : 0;
-    const maxExposure = 0.80; // Max 80% invested
-    if (exposurePct >= maxExposure) {
-        addLog('⚠️ 仓位已达 ' + (exposurePct * 100).toFixed(0) + '%，超过 ' + (maxExposure * 100) + '% 上限，暂停买入', 'action');
-        // Still update equity curve
-        Object.keys(state.positions).forEach(code => {
-            const pq = getStockPrice(code);
-            if (pq) state.positions[code].currentPrice = pq.price;
-        });
-        totalAssetsCheck = calculateTotalAssets();
-        state.equityHistory.push({ time: new Date().toISOString(), value: totalAssetsCheck });
-        if (state.equityHistory.length > 200) state.equityHistory = state.equityHistory.slice(-200);
-        saveState();
-        renderAll();
-        return;
-    }
+    Object.keys(state.positions).forEach(code => {
+        const pos = state.positions[code];
+        // Use realtime price if available, otherwise use avg cost
+        const quote = getStockPrice(code);
+        const currentPrice = quote ? quote.price : pos.avgCost;
+        total += pos.quantity * 100 * currentPrice;
+        // Update currentPrice for display
+        pos.currentPrice = currentPrice;
+    });
+    return total;
 }
 
 function startAI() {
@@ -3171,6 +3268,27 @@ function renderStats() {
     profitEl.className = 'stat-value ' + (profit >= 0 ? 'up' : 'down');
     profitPctEl.textContent = (profitPct >= 0 ? '+' : '') + profitPct.toFixed(2) + '%';
     profitPctEl.className = 'stat-sub ' + (profitPct >= 0 ? 'up' : 'down');
+
+    // 今日盈亏计算
+    const today = new Date().toISOString().slice(0, 10);
+    const todayEntries = state.equityHistory.filter(e => e.time && e.time.slice(0, 10) === today);
+    let todayPnl = 0;
+    let todayPnlPct = 0;
+    if (todayEntries.length > 0) {
+        const todayStart = todayEntries[0].value;
+        todayPnl = totalAssets - todayStart;
+        todayPnlPct = todayStart > 0 ? (todayPnl / todayStart * 100) : 0;
+    }
+    const todayPnlEl = document.getElementById('todayPnl');
+    const todayPnlPctEl = document.getElementById('todayPnlPct');
+    if (todayPnlEl) {
+        todayPnlEl.textContent = (todayPnl >= 0 ? '+' : '') + formatMoney(todayPnl);
+        todayPnlEl.className = 'stat-value ' + (todayPnl >= 0 ? 'up' : 'down');
+    }
+    if (todayPnlPctEl) {
+        todayPnlPctEl.textContent = (todayPnlPct >= 0 ? '+' : '') + todayPnlPct.toFixed(2) + '%';
+        todayPnlPctEl.className = 'stat-sub ' + (todayPnlPct >= 0 ? 'up' : 'down');
+    }
 }
 
 function renderPositions() {
@@ -3679,8 +3797,8 @@ function calcBacktestSignalScore(prices, price, modeKey) {
         var roc = calcROC(prices, 12);
         if (roc > 5) score -= 0.5;
         else if (roc < -5) score += 0.5;
-        else if (roc > 2) score += 0.3;
-        else if (roc < -2) score -= 0.3;
+        else if (roc > 2) score -= 0.3;
+        else if (roc < -2) score += 0.3;
     }
 
     // Trend filter
@@ -3710,14 +3828,7 @@ function calcBacktestSignalScore(prices, price, modeKey) {
         else if (obvProxy <= -3) score -= 0.5;
     }
 
-    // Short-term momentum (enhanced with 3-period check)
-    if (prices.length >= 5) {
-        var mom5 = (prices[prices.length - 1] - prices[prices.length - 5]) / prices[prices.length - 5] * 100;
-        if (mom5 > 5) score -= 0.8;
-        else if (mom5 > 3) score -= 0.5;
-        else if (mom5 < -5) score += 0.8;
-        else if (mom5 < -3) score += 0.5;
-    }
+
 
     return score;
 }
