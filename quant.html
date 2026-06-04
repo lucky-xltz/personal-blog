@@ -890,6 +890,7 @@
             </select>
             <button class="btn btn-primary btn-sm" id="btRunBtn">运行回测</button>
             <button class="btn btn-outline btn-sm" id="btBatchBtn" data-tip="回测全部股票池">批量回测</button>
+            <button class="btn btn-outline btn-sm" id="btCompareBtn" data-tip="三种模式同时回测对比">策略对比</button>
         </div>
         <div class="batch-results" id="batchResults" style="display:none;"></div>
         <canvas id="btChart" height="180" style="display:none;"></canvas>
@@ -4630,6 +4631,196 @@ document.getElementById('btBatchBtn').addEventListener('click', async function()
     addLog('批量回测完成: ' + results.length + '只股票, 最佳' + (results[0] ? results[0].name : '') + ' ' + (bestRet >= 0 ? '+' : '') + bestRet.toFixed(1) + '%', 'action');
     showToast('批量回测完成', 'success');
 });
+
+// ============ 策略对比功能 ============
+document.getElementById('btCompareBtn').addEventListener('click', async function() {
+    var btn = this;
+    btn.textContent = '对比中...'; btn.disabled = true;
+    var period = parseInt(document.getElementById('btPeriod').value);
+    var stockCode = document.getElementById('btStock').value;
+    var stockItem = STOCK_POOL.find(function(s) { return s.code === stockCode; });
+    var stockName = stockItem ? stockItem.name : stockCode;
+    
+    var modes = ['aggressive', 'balanced', 'conservative'];
+    var modeNames = { aggressive: '激进', balanced: '稳健', conservative: '保守' };
+    var results = [];
+    
+    for (var mi = 0; mi < modes.length; mi++) {
+        var modeKey = modes[mi];
+        var mode = MODES[modeKey];
+        var buyThreshold = modeKey === 'aggressive' ? 1.5 : modeKey === 'balanced' ? 2.5 : 3.5;
+        
+        var klines = await fetchHistoricalKline(stockCode, period + 10);
+        if (klines.length < 20) {
+            showToast('K线数据不足', 'error');
+            btn.textContent = '策略对比'; btn.disabled = false;
+            return;
+        }
+        var testPrices = klines.map(function(k) { return k.close; });
+        
+        var cash = 100000, position = 0, avgCost = 0, peakPrice = 0, trades = 0, wins = 0;
+        var equity = [cash], peak = cash, maxDD = 0;
+        
+        for (var i = 20; i < testPrices.length; i++) {
+            var sl = testPrices.slice(0, i + 1);
+            var price = testPrices[i];
+            var sigScore = calcBacktestSignalScore(sl, price, modeKey);
+            
+            var btATR = calcATR(sl, 14);
+            var btATRPct = price > 0 ? btATR / price : 0;
+            var btATRMult = modeKey === 'aggressive' ? 2.5 : modeKey === 'balanced' ? 2 : 1.5;
+            var dynStop = Math.max(mode.stopLoss, btATRPct * btATRMult);
+            
+            if (position === 0 && sigScore >= buyThreshold && cash > price * 100) {
+                var ratio = modeKey === 'aggressive' ? 0.25 : modeKey === 'balanced' ? 0.15 : 0.08;
+                var qty = Math.floor(cash * ratio / (price * 100));
+                if (qty > 0) { var bc = qty * 100 * price * 0.0003; position = qty; avgCost = price; peakPrice = price; cash -= qty * 100 * price + bc; trades++; }
+            }
+            if (position > 0) {
+                if (price > peakPrice) peakPrice = price;
+                var pPct = (price - avgCost) / avgCost;
+                var dropFromPeak = (peakPrice - price) / peakPrice;
+                var trailPct = modeKey === 'aggressive' ? 0.04 : modeKey === 'balanced' ? 0.025 : 0.015;
+                if (pPct <= -dynStop || pPct >= mode.takeProfit || (dropFromPeak >= trailPct && pPct > 0) || (sigScore <= -3 && pPct > 0)) {
+                    var sellAmt = position * 100 * price;
+                    cash += sellAmt - sellAmt * 0.0003 - sellAmt * 0.001;
+                    if (pPct > 0) wins++;
+                    position = 0; trades++;
+                }
+            }
+            var totalVal = cash + position * 100 * price;
+            equity.push(totalVal);
+            if (totalVal > peak) peak = totalVal;
+            var dd = (peak - totalVal) / peak;
+            if (dd > maxDD) maxDD = dd;
+        }
+        
+        var finalVal = cash + position * 100 * (testPrices[testPrices.length - 1] || 0);
+        var ret = (finalVal - 100000) / 100000 * 100;
+        var closedT = Math.floor(trades / 2);
+        var wr = closedT > 0 ? (wins / closedT * 100) : 0;
+        
+        // Calculate Sortino ratio
+        var btRet = [];
+        for (var ri = 1; ri < equity.length; ri++) btRet.push((equity[ri] - equity[ri-1]) / equity[ri-1]);
+        var avgR = btRet.reduce(function(s,v){return s+v;},0) / (btRet.length || 1);
+        var negR = btRet.filter(function(r){return r<0;});
+        var ddDev = negR.length > 0 ? Math.sqrt(negR.reduce(function(s,v){return s+v*v;},0) / negR.length) : 0;
+        var sortino = ddDev > 0 ? (avgR / ddDev) * Math.sqrt(252) : 0;
+        
+        results.push({
+            mode: modeKey,
+            modeName: modeNames[modeKey],
+            return: ret,
+            winRate: wr,
+            maxDD: maxDD,
+            trades: closedT,
+            sortino: sortino,
+            equity: equity.slice()
+        });
+    }
+    
+    // 渲染对比结果
+    var container = document.getElementById('batchResults');
+    container.style.display = 'block';
+    
+    var colors = { aggressive: 'var(--danger)', balanced: 'var(--warn)', conservative: 'var(--safe)' };
+    
+    var summaryHtml = '<div style="margin-bottom:16px;font-weight:600;">' + stockName + ' (' + stockCode + ') 策略对比</div>';
+    summaryHtml += '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px;">';
+    
+    results.forEach(function(r) {
+        summaryHtml += '<div class="backtest-stat" style="border-left:3px solid ' + colors[r.mode] + ';">' +
+            '<div class="bt-label">' + r.modeName + '模式</div>' +
+            '<div class="bt-value ' + (r.return >= 0 ? 'up' : 'down') + '">' + (r.return >= 0 ? '+' : '') + r.return.toFixed(2) + '%</div>' +
+            '<div style="font-size:11px;color:var(--text-muted);margin-top:4px;">胜率' + r.winRate.toFixed(0) + '% | 回撤' + (r.maxDD * 100).toFixed(1) + '% | ' + r.trades + '笔</div>' +
+            '</div>';
+    });
+    summaryHtml += '</div>';
+    
+    // 找出最佳模式
+    var bestMode = results.reduce(function(best, r) { return r.return > best.return ? r : best; }, results[0]);
+    summaryHtml += '<div style="background:var(--bg);padding:12px;border-radius:8px;margin-bottom:16px;">' +
+        '<span style="color:var(--safe);">&#10003;</span> 最佳模式: <b>' + bestMode.modeName + '</b>，收益率 ' + (bestMode.return >= 0 ? '+' : '') + bestMode.return.toFixed(2) + '%</div>';
+    
+    // 绘制对比图表
+    summaryHtml += '<canvas id="compareChart" height="200"></canvas>';
+    
+    container.innerHTML = summaryHtml;
+    
+    // 绘制收益曲线对比
+    var canvas = document.getElementById('compareChart');
+    if (canvas) {
+        var ctx = canvas.getContext('2d');
+        var dpr = window.devicePixelRatio || 1;
+        var w = canvas.parentElement.clientWidth - 40;
+        var h = 200;
+        canvas.width = w * dpr;
+        canvas.height = h * dpr;
+        canvas.style.width = w + 'px';
+        canvas.style.height = h + 'px';
+        ctx.scale(dpr, dpr);
+        ctx.clearRect(0, 0, w, h);
+        
+        // 找到所有equity的范围
+        var allVals = [];
+        results.forEach(function(r) { allVals = allVals.concat(r.equity); });
+        var minVal = Math.min.apply(null, allVals) * 0.99;
+        var maxVal = Math.max.apply(null, allVals) * 1.01;
+        var range = maxVal - minVal || 1;
+        
+        // 绘制网格
+        ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+        ctx.lineWidth = 1;
+        for (var gi = 0; gi <= 4; gi++) {
+            var gy = h - (gi / 4) * h;
+            ctx.beginPath();
+            ctx.moveTo(0, gy);
+            ctx.lineTo(w, gy);
+            ctx.stroke();
+        }
+        
+        // 绘制初始资金线
+        var initY = h - ((100000 - minVal) / range) * h;
+        ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        ctx.moveTo(0, initY);
+        ctx.lineTo(w, initY);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        
+        // 绘制各模式曲线
+        results.forEach(function(r) {
+            ctx.strokeStyle = colors[r.mode];
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            r.equity.forEach(function(v, i) {
+                var x = (i / (r.equity.length - 1)) * w;
+                var y = h - ((v - minVal) / range) * h;
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            });
+            ctx.stroke();
+        });
+        
+        // 图例
+        var legendX = 10;
+        results.forEach(function(r) {
+            ctx.fillStyle = colors[r.mode];
+            ctx.fillRect(legendX, 8, 12, 3);
+            ctx.fillStyle = '#e0e5ec';
+            ctx.font = '11px Inter';
+            ctx.fillText(r.modeName + ' ' + (r.return >= 0 ? '+' : '') + r.return.toFixed(1) + '%', legendX + 16, 14);
+            legendX += ctx.measureText(r.modeName + ' ' + (r.return >= 0 ? '+' : '') + r.return.toFixed(1) + '%').width + 30;
+        });
+    }
+    
+    btn.textContent = '策略对比'; btn.disabled = false;
+    addLog('策略对比完成: ' + stockName + ' 最佳' + bestMode.modeName + '模式 +' + bestMode.return.toFixed(2) + '%', 'success');
+    showToast('策略对比完成', 'success');
+});
+
 </script>
 </body>
 </html>
