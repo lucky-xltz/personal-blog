@@ -943,6 +943,12 @@ function selectSignalStock(code) {
     updateSignalDashboard(code);
 }
 
+function handleSignalClick(el) {
+    var code = el.getAttribute('data-scode');
+    if (code) selectSignalStock(code);
+}
+
+
 
 // ============ 股票池（含实时行情） ============
 const STOCK_POOL = [
@@ -2536,11 +2542,11 @@ function renderFavorites() {
         var cls = changePct >= 0 ? 'up' : 'down';
         var sign = changePct >= 0 ? '+' : '';
         
-        html += '<div style="background:var(--bg);border-radius:8px;padding:6px 10px;cursor:pointer;display:flex;align-items:center;gap:6px;" data-c='" + a.code + "' onclick="selectSignalStock(this.dataset.c)">' +
-            '<span style="font-size:11px;font-weight:600;">' + name + '</span>' +
-            '<span style="font-size:10px;color:var(--' + cls + ');">' + sign + changePct.toFixed(2) + '%</span>' +
-            '<span style="font-size:14px;color:var(--warn);cursor:pointer;" onclick="event.stopPropagation();toggleFavorite(\'' + code + '\');">&#9733;</span>' +
-            '</div>';
+        html += `<div style="background:var(--bg);border-radius:8px;padding:6px 10px;cursor:pointer;display:flex;align-items:center;gap:6px;" data-scode=${a.code} onclick="handleSignalClick(this)">` +
+            `<span style="font-size:11px;font-weight:600;">${name}</span>` +
+            `<span style="font-size:10px;color:var(--${cls});">${sign}${changePct.toFixed(2)}%</span>` +
+            `<span style="font-size:14px;color:var(--warn);cursor:pointer;" onclick="event.stopPropagation();toggleFavorite(\x27${code}\x27);">&#9733;</span>` +
+            `</div>`;
     });
     html += '</div>';
     container.innerHTML = html;
@@ -2798,21 +2804,21 @@ function renderAIRecommendations(scored) {
         const changeCls = q && q.changePct >= 0 ? 'up' : 'down';
         const inPool = tradingPool.find(t => t.code === a.code);
 
-        html += '<div style="display: flex; align-items: center; gap: 12px; padding: 10px; background: var(--bg-raised); border-radius: 8px;">' +
-            '<div style="width: 24px; height: 24px; border-radius: 50%; background: ' + rec.color + '; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff;">' + (i + 1) + '</div>' +
-            '<div style="flex: 1; cursor: pointer;" data-c='" + a.code + "' onclick="selectSignalStock(this.dataset.c)">' +
-            '<div style="font-weight: 600; font-size: 14px;">' + a.name + ' <span style="color: var(--text-muted); font-size: 12px;">' + a.code + '</span></div>' +
-            '<div style="font-size: 11px; color: var(--text-dim);">' + a.sectorName + ' · ' + (a.sector.catalyst || '') + '</div>' +
-            '</div>' +
-            '<div style="text-align: right;">' +
-            '<div style="font-weight: 600;">' + price + ' <span class="' + changeCls + '" style="font-size: 12px;">' + changePct + '</span></div>' +
-            '<div style="font-size: 12px; color: ' + rec.color + ';">' + rec.text + ' (' + a.score + ')</div>' +
-            '</div>' +
-            '<div style="display:flex;gap:6px;align-items:center;">' +
-            '<span style="font-size:18px;cursor:pointer;color:var(--warn);" onclick="toggleFavorite('' + a.code + '');">&#9733;</span>' +
-            '<button class="btn btn-sm ' + (inPool ? 'btn-outline' : 'btn-primary') + '" style="padding: 4px 10px; font-size: 11px;" onclick="addToTradingPool('' + a.code + '')">' + (inPool ? '已添加' : '加入交易池') + '</button>' +
-            '</div>' +
-            '</div>';
+        html += `<div style="display: flex; align-items: center; gap: 12px; padding: 10px; background: var(--bg-raised); border-radius: 8px;">` +
+            `<div style="width: 24px; height: 24px; border-radius: 50%; background: ${rec.color}; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff;">${i + 1}</div>` +
+            `<div style="flex: 1; cursor: pointer;" data-scode=${a.code} onclick="handleSignalClick(this)">` +
+            `<div style="font-weight: 600; font-size: 14px;">${a.name} <span style="color: var(--text-muted); font-size: 12px;">${a.code}</span></div>` +
+            `<div style="font-size: 11px; color: var(--text-dim);">${a.sectorName} · ${a.sector.catalyst || ""}</div>` +
+            `</div>` +
+            `<div style="text-align: right;">` +
+            `<div style="font-weight: 600;">${price} <span class="${changeCls}" style="font-size: 12px;">${changePct}</span></div>` +
+            `<div style="font-size: 12px; color: ${rec.color};">${rec.text} (${a.score})</div>` +
+            `</div>` +
+            `<div style="display:flex;gap:6px;align-items:center;">` +
+            `<span style="font-size:18px;cursor:pointer;color:var(--warn);" onclick="toggleFavorite(${a.code});">&#9733;</span>` +
+            `<button class="btn btn-sm ${inPool ? "btn-outline" : "btn-primary"}" style="padding: 4px 10px; font-size: 11px;" onclick="addToTradingPool(${a.code})">${inPool ? "已添加" : "加入交易池"}</button>` +
+            `</div>` +
+            `</div>`;
     });
 
     html += '</div>';
