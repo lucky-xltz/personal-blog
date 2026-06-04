@@ -1698,6 +1698,529 @@ document.getElementById('addStockInput').addEventListener('keypress', function(e
 loadTradingPool();
 renderTradingPool();
 
+
+// ============ 交易规则定义 ============
+const TRADING_RULES = {
+    // 基本规则
+    T_PLUS_1: true,           // T+1: 今天买入明天才能卖
+    MIN_LOT: 100,             // 最小交易单位: 100股(1手)
+    COMMISSION_RATE: 0.0003,  // 佣金费率: 万三
+    MIN_COMMISSION: 5,        // 最低佣金: 5元
+    STAMP_TAX_RATE: 0.001,    // 印花税: 千一(卖出时收取)
+    
+    // 涨跌停规则
+    DAILY_LIMIT: {
+        main: 0.10,           // 主板: 10%
+        gem: 0.20,            // 创业板: 20%
+        star: 0.20,           // 科创板: 20%
+        st: 0.05              // ST股: 5%
+    },
+    
+    // 交易时间
+    MARKET_OPEN: { hour: 9, minute: 30 },
+    MARKET_CLOSE: { hour: 15, minute: 0 },
+    LUNCH_START: { hour: 11, minute: 30 },
+    LUNCH_END: { hour: 13, minute: 0 },
+    
+    // 风险控制
+    MAX_SINGLE_POSITION: 0.30,  // 单只股票最大仓位: 30%
+    MAX_SECTOR_EXPOSURE: 0.40,  // 单一板块最大仓位: 40%
+    MAX_TOTAL_EXPOSURE: 0.80,   // 最大总仓位: 80%
+    STOP_LOSS_PCT: {
+        aggressive: 0.08,       // 激进止损: 8%
+        balanced: 0.05,         // 稳健止损: 5%
+        conservative: 0.03      // 保守止损: 3%
+    },
+    TAKE_PROFIT_PCT: {
+        aggressive: 0.20,       // 激进止盈: 20%
+        balanced: 0.12,         // 稳健止盈: 12%
+        conservative: 0.06      // 保守止盈: 6%
+    }
+};
+
+// ============ 策略算法定义 ============
+
+/**
+ * 策略1: 趋势跟踪策略
+ * 识别上升趋势的股票，在回调时买入
+ */
+function trendFollowingStrategy(code, quote, prices) {
+    if (!prices || prices.length < 30) return { signal: 'wait', reason: '数据不足' };
+    
+    // 计算均线
+    const ma5 = calcMA(prices, 5);
+    const ma10 = calcMA(prices, 10);
+    const ma20 = calcMA(prices, 20);
+    const ma60 = prices.length >= 60 ? calcMA(prices, 60) : null;
+    
+    const currentPrice = quote.price;
+    
+    // 判断趋势
+    const trendUp = ma5 > ma10 && ma10 > ma20;
+    const trendDown = ma5 < ma10 && ma10 < ma20;
+    
+    // 判断回调
+    const pullback = currentPrice < ma5 && currentPrice > ma10;
+    const deepPullback = currentPrice < ma10 && currentPrice > ma20;
+    
+    // 判断突破
+    const breakout = currentPrice > ma5 && prices[prices.length - 2] <= ma5;
+    
+    // 买入信号: 上升趋势中的回调买入
+    if (trendUp && (pullback || deepPullback)) {
+        return {
+            signal: 'buy',
+            strength: deepPullback ? 0.8 : 0.6,
+            reason: '上升趋势回调买入',
+            entry: currentPrice,
+            stopLoss: ma20 * 0.97,  // 跌破20日均线3%止损
+            takeProfit: currentPrice * 1.15
+        };
+    }
+    
+    // 买入信号: 突破买入
+    if (trendUp && breakout) {
+        return {
+            signal: 'buy',
+            strength: 0.7,
+            reason: '突破5日均线',
+            entry: currentPrice,
+            stopLoss: ma10 * 0.97,
+            takeProfit: currentPrice * 1.12
+        };
+    }
+    
+    // 卖出信号: 趋势反转
+    if (trendDown && currentPrice < ma20) {
+        return {
+            signal: 'sell',
+            strength: 0.9,
+            reason: '趋势反转，跌破20日均线',
+            exit: currentPrice
+        };
+    }
+    
+    return { signal: 'wait', reason: '无明确信号' };
+}
+
+/**
+ * 策略2: 均值回归策略
+ * 价格偏离均值过多时，预期会回归
+ */
+function meanReversionStrategy(code, quote, prices) {
+    if (!prices || prices.length < 20) return { signal: 'wait', reason: '数据不足' };
+    
+    const currentPrice = quote.price;
+    const ma20 = calcMA(prices, 20);
+    
+    // 计算布林带
+    const bb = calcBollingerBands(prices, 20, 2);
+    if (!bb) return { signal: 'wait', reason: '数据不足' };
+    
+    // 计算偏离度
+    const deviation = (currentPrice - ma20) / ma20;
+    
+    // 计算RSI
+    const rsi = calcRSI(prices, 14);
+    
+    // 买入信号: 价格触及下轨且RSI超卖
+    if (currentPrice <= bb.lower && rsi < 30) {
+        return {
+            signal: 'buy',
+            strength: 0.85,
+            reason: '触及布林带下轨+RSI超卖(' + rsi + ')',
+            entry: currentPrice,
+            stopLoss: bb.lower * 0.97,
+            takeProfit: ma20  // 目标回归均线
+        };
+    }
+    
+    // 卖出信号: 价格触及上轨且RSI超买
+    if (currentPrice >= bb.upper && rsi > 70) {
+        return {
+            signal: 'sell',
+            strength: 0.8,
+            reason: '触及布林带上轨+RSI超买(' + rsi + ')',
+            exit: currentPrice
+        };
+    }
+    
+    return { signal: 'wait', reason: '无明确信号' };
+}
+
+/**
+ * 策略3: 动量突破策略
+ * 识别放量突破的股票
+ */
+function momentumBreakoutStrategy(code, quote, prices, volumes) {
+    if (!prices || prices.length < 20 || !volumes || volumes.length < 20) {
+        return { signal: 'wait', reason: '数据不足' };
+    }
+    
+    const currentPrice = quote.price;
+    const currentVolume = quote.volume || 0;
+    
+    // 计算20日最高价
+    const high20 = Math.max.apply(null, prices.slice(-20));
+    
+    // 计算平均成交量
+    const avgVolume = volumes.slice(-20).reduce((s, v) => s + v, 0) / 20;
+    
+    // 计算成交量放大倍数
+    const volumeRatio = avgVolume > 0 ? currentVolume / avgVolume : 0;
+    
+    // 计算ATR
+    const atr = calcATR(prices, 14);
+    const atrPct = currentPrice > 0 ? atr / currentPrice : 0;
+    
+    // 买入信号: 突破20日高点 + 放量
+    const isBreakout = currentPrice > high20 * 0.99;  // 接近或突破
+    const isVolumeConfirm = volumeRatio > 1.5;  // 成交量放大1.5倍以上
+    
+    if (isBreakout && isVolumeConfirm) {
+        return {
+            signal: 'buy',
+            strength: 0.9,
+            reason: '突破20日高点+放量(' + volumeRatio.toFixed(1) + '倍)',
+            entry: currentPrice,
+            stopLoss: currentPrice - atr * 2,  // 2倍ATR止损
+            takeProfit: currentPrice + atr * 3  // 3倍ATR止盈
+        };
+    }
+    
+    return { signal: 'wait', reason: '无明确信号' };
+}
+
+/**
+ * 策略4: MACD金叉死叉策略
+ * 经典的技术指标策略
+ */
+function macdCrossoverStrategy(code, quote, prices) {
+    if (!prices || prices.length < 35) return { signal: 'wait', reason: '数据不足' };
+    
+    const macd = calcMACD(prices);
+    const prevPrices = prices.slice(0, -1);
+    const prevMacd = calcMACD(prevPrices);
+    
+    // 金叉: DIF从下方穿越DEA
+    const goldenCross = prevMacd.dif < prevMacd.dea && macd.dif > macd.dea;
+    
+    // 死叉: DIF从上方穿越DEA
+    const deathCross = prevMacd.dif > prevMacd.dea && macd.dif < macd.dea;
+    
+    // 零轴上方金叉更强
+    const aboveZero = macd.dif > 0 && macd.dea > 0;
+    
+    if (goldenCross) {
+        return {
+            signal: 'buy',
+            strength: aboveZero ? 0.8 : 0.6,
+            reason: 'MACD金叉' + (aboveZero ? '(零轴上方)' : ''),
+            entry: quote.price,
+            stopLoss: quote.price * 0.95,
+            takeProfit: quote.price * 1.10
+        };
+    }
+    
+    if (deathCross) {
+        return {
+            signal: 'sell',
+            strength: aboveZero ? 0.7 : 0.9,
+            reason: 'MACD死叉' + (aboveZero ? '(零轴上方)' : ''),
+            exit: quote.price
+        };
+    }
+    
+    return { signal: 'wait', reason: '无明确信号' };
+}
+
+/**
+ * 策略5: KDJ超买超卖策略
+ */
+function kdjStrategy(code, quote, prices) {
+    if (!prices || prices.length < 15) return { signal: 'wait', reason: '数据不足' };
+    
+    const kdj = calcKDJ(prices, 9);
+    
+    // 超卖区域金叉
+    const oversoldCross = kdj.k < 20 && kdj.d < 20 && kdj.j > kdj.k;
+    
+    // 超买区域死叉
+    const overboughtCross = kdj.k > 80 && kdj.d > 80 && kdj.j < kdj.k;
+    
+    if (oversoldCross) {
+        return {
+            signal: 'buy',
+            strength: 0.75,
+            reason: 'KDJ超卖金叉(K:' + kdj.k + ' D:' + kdj.d + ' J:' + kdj.j + ')',
+            entry: quote.price,
+            stopLoss: quote.price * 0.95,
+            takeProfit: quote.price * 1.08
+        };
+    }
+    
+    if (overboughtCross) {
+        return {
+            signal: 'sell',
+            strength: 0.75,
+            reason: 'KDJ超买死叉(K:' + kdj.k + ' D:' + kdj.d + ' J:' + kdj.j + ')',
+            exit: quote.price
+        };
+    }
+    
+    return { signal: 'wait', reason: '无明确信号' };
+}
+
+// ============ 综合策略评估 ============
+
+/**
+ * 综合评估所有策略，给出最终建议
+ */
+function evaluateAllStrategies(code, quote) {
+    const prices = priceHistory[code];
+    const volumes = volumeHistory[code];
+    
+    if (!prices || prices.length < 15) {
+        return { action: 'wait', reason: '数据积累中', strategies: [] };
+    }
+    
+    // 运行所有策略
+    const strategies = [
+        { name: '趋势跟踪', ...trendFollowingStrategy(code, quote, prices) },
+        { name: '均值回归', ...meanReversionStrategy(code, quote, prices) },
+        { name: '动量突破', ...momentumBreakoutStrategy(code, quote, prices, volumes) },
+        { name: 'MACD', ...macdCrossoverStrategy(code, quote, prices) },
+        { name: 'KDJ', ...kdjStrategy(code, quote, prices) }
+    ];
+    
+    // 统计买入/卖出信号
+    const buySignals = strategies.filter(s => s.signal === 'buy');
+    const sellSignals = strategies.filter(s => s.signal === 'sell');
+    
+    // 计算综合得分
+    const buyScore = buySignals.reduce((sum, s) => sum + (s.strength || 0), 0);
+    const sellScore = sellSignals.reduce((sum, s) => sum + (s.strength || 0), 0);
+    
+    // 决策逻辑
+    let action = 'wait';
+    let reason = '';
+    let confidence = 0;
+    
+    // 至少需要2个策略确认才行动
+    if (buySignals.length >= 2 && buyScore > sellScore) {
+        action = 'buy';
+        reason = buySignals.map(s => s.name + ':' + s.reason).join(' | ');
+        confidence = buyScore / buySignals.length;
+    } else if (sellSignals.length >= 2 && sellScore > buyScore) {
+        action = 'sell';
+        reason = sellSignals.map(s => s.name + ':' + s.reason).join(' | ');
+        confidence = sellScore / sellSignals.length;
+    } else if (buySignals.length === 1 && buySignals[0].strength > 0.8) {
+        // 单一强信号也可以行动
+        action = 'buy';
+        reason = buySignals[0].name + ':' + buySignals[0].reason;
+        confidence = buySignals[0].strength;
+    } else if (sellSignals.length === 1 && sellSignals[0].strength > 0.8) {
+        action = 'sell';
+        reason = sellSignals[0].name + ':' + sellSignals[0].reason;
+        confidence = sellSignals[0].strength;
+    }
+    
+    return {
+        action: action,
+        reason: reason,
+        confidence: Math.round(confidence * 100) / 100,
+        buySignals: buySignals.length,
+        sellSignals: sellSignals.length,
+        strategies: strategies,
+        // 计算建议的止损止盈
+        stopLoss: action === 'buy' ? Math.max(...buySignals.map(s => s.stopLoss || 0)) : null,
+        takeProfit: action === 'buy' ? Math.min(...buySignals.map(s => s.takeProfit || Infinity)) : null
+    };
+}
+
+// ============ 仓位计算 ============
+
+/**
+ * 根据信号强度和风险控制计算买入数量
+ */
+function calculatePositionSize(code, price, signalStrength, mode) {
+    const totalAssets = calculateTotalAssets();
+    const availableCash = state.cash;
+    
+    // 基础仓位比例
+    const baseRatio = mode === 'aggressive' ? 0.25 : mode === 'balanced' ? 0.15 : 0.08;
+    
+    // 信号强度调整
+    const strengthMultiplier = 0.5 + signalStrength * 1.0;  // 0.5 - 1.5
+    
+    // 已有仓位检查
+    const existingPosition = state.positions[code];
+    const existingValue = existingPosition ? existingPosition.quantity * 100 * price : 0;
+    const maxPositionValue = totalAssets * TRADING_RULES.MAX_SINGLE_POSITION - existingValue;
+    
+    // 计算可买金额
+    let buyAmount = availableCash * baseRatio * strengthMultiplier;
+    buyAmount = Math.min(buyAmount, maxPositionValue);
+    
+    // 转换为手数
+    let lots = Math.floor(buyAmount / (price * 100));
+    
+    // 确保至少1手
+    if (lots < 1 && availableCash >= price * 100) {
+        lots = 1;
+    }
+    
+    return {
+        lots: lots,
+        shares: lots * 100,
+        amount: lots * 100 * price,
+        ratio: (lots * 100 * price) / totalAssets
+    };
+}
+
+// ============ 交易执行器 ============
+
+/**
+ * 执行买入操作
+ */
+function executeBuyWithStrategy(code, quote, evaluation) {
+    const poolItem = STOCK_POOL.find(s => s.code === code);
+    if (!poolItem) return false;
+    
+    const price = quote.price;
+    const position = calculatePositionSize(code, price, evaluation.confidence, state.mode);
+    
+    if (position.lots <= 0) {
+        addLog('⚠️ ' + poolItem.name + ' 仓位已满或资金不足', 'warn');
+        return false;
+    }
+    
+    // 执行买入
+    const success = executeBuy(code, poolItem.name, position.lots, price);
+    
+    if (success) {
+        // 记录策略信息
+        state.positions[code].strategy = {
+            entryTime: new Date().toISOString(),
+            reason: evaluation.reason,
+            stopLoss: evaluation.stopLoss,
+            takeProfit: evaluation.takeProfit,
+            confidence: evaluation.confidence
+        };
+        saveState();
+        
+        addLog('📈 买入 ' + poolItem.name + ' ' + position.lots + '手 @ ' + price.toFixed(2), 'success');
+        addLog('   策略: ' + evaluation.reason, 'info');
+        addLog('   止损: ' + (evaluation.stopLoss ? evaluation.stopLoss.toFixed(2) : '无') + 
+               ' 止盈: ' + (evaluation.takeProfit ? evaluation.takeProfit.toFixed(2) : '无'), 'info');
+    }
+    
+    return success;
+}
+
+/**
+ * 执行卖出操作
+ */
+function executeSellWithStrategy(code, quote, evaluation) {
+    const pos = state.positions[code];
+    if (!pos) return false;
+    
+    const price = quote.price;
+    const profitPct = (price - pos.avgCost) / pos.avgCost;
+    
+    // 执行卖出
+    const success = executeSell(code, pos.quantity, price);
+    
+    if (success) {
+        addLog('📉 卖出 ' + pos.name + ' ' + pos.quantity + '手 @ ' + price.toFixed(2), 'success');
+        addLog('   盈亏: ' + (profitPct * 100).toFixed(2) + '%', profitPct >= 0 ? 'success' : 'error');
+        addLog('   原因: ' + evaluation.reason, 'info');
+    }
+    
+    return success;
+}
+
+// ============ 主交易循环 ============
+
+/**
+ * 交易决策主函数
+ */
+function tradingDecision() {
+    if (!state.isRunning) return;
+    
+    // 检查市场状态
+    const now = new Date();
+    const h = now.getHours(), m = now.getMinutes();
+    const day = now.getDay();
+    const isWeekday = day >= 1 && day <= 5;
+    const isMorning = isWeekday && ((h === 9 && m >= 30) || (h === 10) || (h === 11 && m <= 30));
+    const isAfternoon = isWeekday && (h >= 13 && h < 15);
+    const marketOpen = isMorning || isAfternoon;
+    
+    if (!marketOpen) {
+        addLog('⏸ 非交易时间，等待中...', 'action');
+        return;
+    }
+    
+    addLog('🔄 开始分析交易池...', 'action');
+    
+    // 获取实时行情
+    fetchRealtimeQuotes().then(() => {
+        // 分析交易池中的股票
+        const poolToAnalyze = tradingPool.length > 0 ? tradingPool : STOCK_POOL;
+        
+        poolToAnalyze.forEach(item => {
+            const quote = getStockPrice(item.code);
+            if (!quote || quote.price <= 0) return;
+            
+            // 评估策略
+            const evaluation = evaluateAllStrategies(item.code, quote);
+            
+            // 检查是否持有该股票
+            const hasPosition = state.positions[item.code];
+            
+            if (evaluation.action === 'buy' && !hasPosition) {
+                // 买入信号且未持有
+                executeBuyWithStrategy(item.code, quote, evaluation);
+            } else if (evaluation.action === 'sell' && hasPosition) {
+                // 卖出信号且已持有
+                executeSellWithStrategy(item.code, quote, evaluation);
+            } else if (hasPosition) {
+                // 检查止损止盈
+                const pos = state.positions[item.code];
+                const profitPct = (quote.price - pos.avgCost) / pos.avgCost;
+                
+                // 止损检查
+                if (pos.strategy && pos.strategy.stopLoss && quote.price <= pos.strategy.stopLoss) {
+                    addLog('🛑 止损触发: ' + pos.name + ' 价格 ' + quote.price.toFixed(2) + ' <= 止损价 ' + pos.strategy.stopLoss.toFixed(2), 'error');
+                    executeSell(item.code, pos.quantity, quote.price);
+                }
+                
+                // 止盈检查
+                if (pos.strategy && pos.strategy.takeProfit && quote.price >= pos.strategy.takeProfit) {
+                    addLog('🎯 止盈触发: ' + pos.name + ' 价格 ' + quote.price.toFixed(2) + ' >= 止盈价 ' + pos.strategy.takeProfit.toFixed(2), 'success');
+                    executeSell(item.code, pos.quantity, quote.price);
+                }
+            }
+        });
+        
+        // 更新持仓价格
+        Object.keys(state.positions).forEach(code => {
+            const q = getStockPrice(code);
+            if (q) state.positions[code].currentPrice = q.price;
+        });
+        
+        // 记录权益曲线
+        const totalAssets = calculateTotalAssets();
+        state.equityHistory.push({ time: new Date().toISOString(), value: totalAssets });
+        if (state.equityHistory.length > 500) state.equityHistory = state.equityHistory.slice(-500);
+        
+        saveState();
+        renderAll();
+    });
+}
+
 // ============ AI 分析引擎 ============
 
 // 获取股票基本面数据（模拟）
@@ -2148,120 +2671,12 @@ function executeSell(stockCode, quantity, price) {
 let aiTimer = null;
 
 async function aiDecide() {
-    if (!state.isRunning) return;
-
-    // Market hours check: only trade during A-share trading hours
-    const _now = new Date();
-    const _h = _now.getHours(), _m = _now.getMinutes();
-    const _day = _now.getDay();
-    const _isWeekday = _day >= 1 && _day <= 5;
-    const _isMorning = _isWeekday && ((_h === 9 && _m >= 30) || (_h === 10) || (_h === 11 && _m <= 30));
-    const _isAfternoon = _isWeekday && (_h >= 13 && _h < 15);
-    const _marketOpen = _isMorning || _isAfternoon;
-
-    if (!_marketOpen) {
-        // Outside trading hours: still update equity curve with last known prices
-        Object.keys(state.positions).forEach(code => {
-            const pq = getStockPrice(code);
-            if (pq) state.positions[code].currentPrice = pq.price;
-        });
-        const totalAssetsCheck = calculateTotalAssets();
-        state.equityHistory.push({ time: _now.toISOString(), value: totalAssetsCheck });
-        if (state.equityHistory.length > 200) state.equityHistory = state.equityHistory.slice(-200);
-        saveState();
-        renderAll();
-        return;
-    }
-
-    const mode = MODES[state.mode];
-    const today = new Date().toDateString();
-
-    // Reset daily trade count
-    if (state.lastTradeDate !== today) {
-        state.dailyTrades = 0;
-        state.lastTradeDate = today;
-    }
-
-    // Check daily limit
-    if (state.dailyTrades >= mode.maxDailyTrades) {
-        addLog('今日交易次数已达上限 (' + mode.maxDailyTrades + '次)', 'action');
-        return;
-    }
+    // 使用新的策略引擎
+    tradingDecision();
+}
 
     // Fetch realtime quotes
     await fetchRealtimeQuotes();
-
-    // ========== SELL LOGIC: check positions for stop loss / trailing stop / signals ==========
-    for (const code of Object.keys(state.positions)) {
-        const pos = state.positions[code];
-        const q = getStockPrice(code);
-        if (!q) continue;
-
-        const currentPrice = q.price;
-        const profitPct = (currentPrice - pos.avgCost) / pos.avgCost;
-
-        // Update peak price for trailing stop
-        if (!pos.peakPrice || currentPrice > pos.peakPrice) {
-            pos.peakPrice = currentPrice;
-        }
-
-        // 1) Hard stop loss (ATR-based dynamic)
-        const _atr = calcATR(priceHistory[code] || [currentPrice], 14);
-        const _atrPct = currentPrice > 0 ? (_atr / currentPrice) : 0;
-        const _atrMult = state.mode === 'aggressive' ? 2.5 : state.mode === 'balanced' ? 2 : 1.5;
-        const dynamicStop = Math.max(mode.stopLoss, _atrPct * _atrMult);
-        if (profitPct <= -dynamicStop) {
-            addLog('🛑 止损触发: ' + pos.name + ' 亏损 ' + (profitPct * 100).toFixed(2) + '% (动态止损' + (dynamicStop*100).toFixed(1) + '%)', 'error');
-            executeSell(code, pos.quantity, currentPrice);
-            continue;
-        }
-
-        // 2) Take profit - sell half at target, rest trails
-        if (profitPct >= mode.takeProfit) {
-            if (pos.quantity > 1 && !pos.partialSold) {
-                const halfQty = Math.floor(pos.quantity / 2);
-                addLog('🎯 止盈减仓: ' + pos.name + ' 盈利 ' + (profitPct * 100).toFixed(2) + '%，卖出' + halfQty + '手锁定利润', 'success');
-                executeSell(code, halfQty, currentPrice);
-                pos.partialSold = true;
-                pos.trailingStopPct *= 0.6; // tighten trailing stop after partial profit
-                continue;
-            }
-            addLog('🎯 全部止盈: ' + pos.name + ' 盈利 ' + (profitPct * 100).toFixed(2) + '%', 'success');
-            executeSell(code, pos.quantity, currentPrice);
-            continue;
-        }
-
-        // 3) Trailing stop - Chandelier Exit (ATR-based dynamic trailing)
-        const chandelierATR = calcATR(priceHistory[code] || [currentPrice], 14);
-        const chandelierMult = state.mode === 'aggressive' ? 3.5 : state.mode === 'balanced' ? 3 : 2.5;
-        const chandelierStop = pos.peakPrice - chandelierATR * chandelierMult;
-        let trailingPct = pos.trailingStopPct || (mode.stopLoss * 0.7);
-        // Dynamic tightening based on profit level
-        if (profitPct > 0.10) trailingPct = Math.min(trailingPct, 0.015);      // 10%+ profit: very tight 1.5%
-        else if (profitPct > 0.05) trailingPct = Math.min(trailingPct, 0.02);   // 5%+ profit: tighten 2%
-        const dropFromPeak = (pos.peakPrice - currentPrice) / pos.peakPrice;
-        // Use the tighter of: percentage trailing stop or chandelier exit
-        const pctTrailingTrigger = dropFromPeak >= trailingPct && profitPct > 0;
-        const chandelierTrigger = currentPrice < chandelierStop && profitPct > 0;
-        if (pctTrailingTrigger || chandelierTrigger) {
-            const triggerType = chandelierTrigger && !pctTrailingTrigger ? 'Chandelier' : '移动止损';
-            addLog('📉 ' + triggerType + ': ' + pos.name + ' 从高点回撤 ' + (dropFromPeak * 100).toFixed(2) + '% (峰值' + pos.peakPrice.toFixed(2) + ')', 'error');
-            executeSell(code, pos.quantity, currentPrice);
-            continue;
-        }
-
-        // 4) Signal-based sell (lower threshold for already-profitable positions)
-        const analysis = analyzeStock(code, q);
-        if (analysis) {
-            const sellThreshold = profitPct > 0.03 ? -2.5 : -3;
-            if (analysis.score <= sellThreshold && profitPct > 0) {
-                const reasons = analysis.reasons.length > 0 ? analysis.reasons.slice(0, 2).join('+') : '综合看空';
-                addLog('📊 AI信号卖出: ' + pos.name + ' 评分' + analysis.score + ' (' + reasons + ')', 'action');
-                executeSell(code, pos.quantity, currentPrice);
-                continue;
-            }
-        }
-    }
 
     // ========== PORTFOLIO EXPOSURE CHECK ==========
     let totalAssetsCheck = calculateTotalAssets();

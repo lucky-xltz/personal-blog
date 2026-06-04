@@ -1,5 +1,25 @@
 [
   {
+    "slug": "ai-news-2026-06-04",
+    "title": "AI 日报：2026年06月04日 | Google开源Gemma 4引爆社区，数学界联合声明挑战AI入侵",
+    "date": "2026-06-04",
+    "category": "技术",
+    "tags": [
+      "AI日报",
+      "Google",
+      "Gemma 4",
+      "AI意识",
+      "数学与AI",
+      "Anthropic",
+      "AI安全",
+      "本地推理"
+    ],
+    "excerpt": "Google发布仅需16GB内存即可运行的开源多模态模型Gemma 4 12B，采用无编码器架构突破性设计；Ted Chiang在《大西洋月刊》断言AI没有意识引发哲学论战；国际数学联合会背书的莱顿宣言呼吁审慎应对AI冲击；Anthropic公开Claude安全防护工程细节；企业操纵Reddit影响AI搜索结果。",
+    "cover": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&h=400&fit=crop",
+    "readtime": 12,
+    "views": 0
+  },
+  {
     "slug": "gpu-vram-as-linux-swap-deep-dive-2026",
     "title": "把显卡显存当内存用：NBD-VRAM 的 Linux 内存分层实战与技术深潜",
     "date": "2026-06-03",
