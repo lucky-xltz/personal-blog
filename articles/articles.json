@@ -1,5 +1,23 @@
 [
   {
+    "slug": "elixir-v120-gradual-set-theoretic-types-2026",
+    "title": "Elixir v1.20：集合论类型系统的渐进式革命——不写类型注解也能抓 Bug",
+    "date": "2026-06-04",
+    "category": "技术",
+    "tags": [
+      "Elixir",
+      "类型系统",
+      "函数式编程",
+      "BEAM",
+      "编程语言",
+      "静态分析"
+    ],
+    "excerpt": "Elixir v1.20 正式引入集合论类型系统，成为渐进类型化语言。不需要写任何类型注解，编译器就能从现有代码中发现已验证 Bug——那些只要执行到就必然崩溃的代码路径。本文深入分析 dynamic() 类型的收窄机制、与 TypeScript/Gleam 的对比，以及四年来从论文到生产的技术旅程。",
+    "cover": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&h=400&fit=crop",
+    "readtime": 14,
+    "views": 0
+  },
+  {
     "slug": "ai-news-2026-06-04",
     "title": "AI 日报：2026年06月04日 | Google开源Gemma 4引爆社区，数学界联合声明挑战AI入侵",
     "date": "2026-06-04",

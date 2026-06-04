@@ -99,9 +99,44 @@
             padding:20px; box-shadow:var(--neu-raised); border:1px solid var(--border);
             display:flex; flex-direction:column;
         }
-        .chart-title { font-size:14px; font-weight:600; margin-bottom:16px; color:var(--text-dim); }
-        .chart-container { flex:1; position:relative; min-height:0; }
+        .chart-header {
+            display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;
+        }
+        .chart-title { font-size:14px; font-weight:600; color:var(--text-dim); }
+        .chart-tabs { display:flex; gap:8px; }
+        .chart-tab {
+            background:var(--bg); border:1px solid var(--border); border-radius:8px;
+            padding:6px 12px; font-size:12px; color:var(--text-muted); cursor:pointer;
+            transition:all var(--transition);
+        }
+        .chart-tab:hover, .chart-tab.active {
+            background:var(--accent); color:#fff; border-color:var(--accent);
+        }
+        .chart-container { flex:1; position:relative; min-height:0; cursor:crosshair; }
         .chart-container canvas { width:100%; height:100%; }
+
+        /* 悬浮信息框 */
+        .tooltip {
+            position:absolute; background:rgba(42,35,28,0.95); border:1px solid var(--border);
+            border-radius:12px; padding:12px 16px; pointer-events:none; z-index:100;
+            opacity:0; transition:opacity 0.15s ease; min-width:180px;
+            box-shadow:0 8px 32px rgba(0,0,0,0.4);
+        }
+        .tooltip.visible { opacity:1; }
+        .tooltip-title { font-size:12px; color:var(--text-muted); margin-bottom:8px; }
+        .tooltip-row { display:flex; justify-content:space-between; gap:16px; margin-bottom:4px; }
+        .tooltip-label { font-size:12px; color:var(--text-dim); }
+        .tooltip-value { font-size:12px; font-weight:600; font-variant-numeric:tabular-nums; }
+
+        /* 十字线 */
+        .crosshair { position:absolute; pointer-events:none; z-index:50; }
+        .crosshair-line { position:absolute; background:rgba(255,255,255,0.2); }
+        .crosshair-h { height:1px; left:0; right:0; }
+        .crosshair-v { width:1px; top:0; bottom:0; }
+        .crosshair-label {
+            position:absolute; background:var(--accent); color:#fff; padding:2px 8px;
+            border-radius:4px; font-size:10px; font-weight:600; white-space:nowrap;
+        }
 
         /* 右侧指标面板 */
         .indicators-panel {
@@ -186,6 +221,9 @@ const CORS_PROXY = "https://api.codetabs.com/v1/proxy/?quest=";
 let currentStock = null;
 let refreshTimer = null;
 let klineData = [];
+let timelineData = [];
+let currentChart = 'timeline'; // 'timeline' or 'kline'
+let currentQuote = null;
 
 // 股票代码转换
 function sinaCode(code) {
@@ -217,8 +255,38 @@ function fetchQuote(code) {
                     high: parseFloat(f[33]) || 0, low: parseFloat(f[34]) || 0,
                     changePct: parseFloat(f[32]) || 0, change: parseFloat(f[31]) || 0,
                     turnover: parseFloat(f[38]) || 0, pe: parseFloat(f[39]) || 0,
-                    marketCap: parseFloat(f[44]) || 0,流通市值: parseFloat(f[45]) || 0,
+                    marketCap: parseFloat(f[44]) || 0, 流通市值: parseFloat(f[45]) || 0,
                 });
+            })
+            .catch(e => { clearTimeout(timeout); reject(e); });
+    });
+}
+
+// 获取分时数据
+function fetchTimeline(code) {
+    return new Promise((resolve, reject) => {
+        const sc = sinaCode(code);
+        const targetUrl = "https://web.ifzq.gtimg.cn/appstock/app/minute/query?code=" + sc;
+        const proxyUrl = CORS_PROXY + encodeURIComponent(targetUrl);
+        const timeout = setTimeout(() => reject(new Error("分时数据请求超时")), 10000);
+        fetch(proxyUrl, { cache: "no-store" })
+            .then(r => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+            .then(data => {
+                clearTimeout(timeout);
+                if (data && data.code !== 0) return reject(new Error("分时数据返回错误"));
+                const minutes = data && data.data && data.data[sc] && data.data[sc].data && data.data[sc].data.data;
+                if (!minutes || minutes.length === 0) return reject(new Error("无分时数据"));
+                
+                const prevClose = parseFloat(data.data[sc].qt[sc][4]) || 0;
+                const result = minutes.map(item => {
+                    const parts = item.split(" ");
+                    const time = parts[0];
+                    const price = parseFloat(parts[1]) || 0;
+                    const volume = parseFloat(parts[2]) || 0;
+                    const amount = parseFloat(parts[3]) || 0;
+                    return { time, price, volume, amount, changePct: prevClose ? ((price - prevClose) / prevClose * 100) : 0 };
+                });
+                resolve(result);
             })
             .catch(e => { clearTimeout(timeout); reject(e); });
     });
@@ -262,6 +330,137 @@ function fmtCap(v) {
     if (v >= 1e8) return (v/1e8).toFixed(2) + "亿";
     if (v >= 1e4) return (v/1e4).toFixed(0) + "万";
     return v.toFixed(0);
+}
+
+// 绘制分时图
+function drawTimelineChart(canvas, data, quote) {
+    if (!data || data.length === 0 || !quote) return;
+    
+    const ctx = canvas.getContext('2d');
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    ctx.scale(dpr, dpr);
+    
+    const width = rect.width;
+    const height = rect.height;
+    const padding = { top: 20, right: 60, bottom: 30, left: 10 };
+    const chartWidth = width - padding.left - padding.right;
+    const chartHeight = height - padding.top - padding.bottom;
+    
+    // 计算价格范围
+    const prices = data.map(d => d.price);
+    const minPrice = Math.min(...prices, quote.prevClose);
+    const maxPrice = Math.max(...prices, quote.prevClose);
+    const priceRange = Math.max(maxPrice - minPrice, quote.prevClose * 0.02) || 1;
+    
+    // 清空画布
+    ctx.clearRect(0, 0, width, height);
+    
+    // 绘制昨收线
+    const prevCloseY = padding.top + ((maxPrice - quote.prevClose) / priceRange * chartHeight);
+    ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([5, 5]);
+    ctx.beginPath();
+    ctx.moveTo(padding.left, prevCloseY);
+    ctx.lineTo(width - padding.right, prevCloseY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    
+    // 绘制网格线
+    ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+    ctx.lineWidth = 1;
+    for (let i = 0; i <= 4; i++) {
+        const y = padding.top + (chartHeight * i / 4);
+        ctx.beginPath();
+        ctx.moveTo(padding.left, y);
+        ctx.lineTo(width - padding.right, y);
+        ctx.stroke();
+    }
+    
+    // 绘制分时线
+    const stepX = chartWidth / (data.length - 1);
+    
+    // 绘制填充区域
+    ctx.beginPath();
+    ctx.moveTo(padding.left, prevCloseY);
+    data.forEach((d, i) => {
+        const x = padding.left + (i * stepX);
+        const y = padding.top + ((maxPrice - d.price) / priceRange * chartHeight);
+        ctx.lineTo(x, y);
+    });
+    ctx.lineTo(padding.left + ((data.length - 1) * stepX), prevCloseY);
+    ctx.closePath();
+    
+    const lastPrice = data[data.length - 1].price;
+    const gradient = ctx.createLinearGradient(0, padding.top, 0, height - padding.bottom);
+    if (lastPrice >= quote.prevClose) {
+        gradient.addColorStop(0, 'rgba(248,81,73,0.3)');
+        gradient.addColorStop(1, 'rgba(248,81,73,0.05)');
+    } else {
+        gradient.addColorStop(0, 'rgba(46,160,67,0.05)');
+        gradient.addColorStop(1, 'rgba(46,160,67,0.3)');
+    }
+    ctx.fillStyle = gradient;
+    ctx.fill();
+    
+    // 绘制价格线
+    ctx.beginPath();
+    ctx.strokeStyle = lastPrice >= quote.prevClose ? '#f85149' : '#2ea043';
+    ctx.lineWidth = 2;
+    data.forEach((d, i) => {
+        const x = padding.left + (i * stepX);
+        const y = padding.top + ((maxPrice - d.price) / priceRange * chartHeight);
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+    
+    // 绘制价格标签
+    ctx.fillStyle = '#7a8494';
+    ctx.font = '11px Inter';
+    ctx.textAlign = 'right';
+    for (let i = 0; i <= 4; i++) {
+        const price = maxPrice - (priceRange * i / 4);
+        const y = padding.top + (chartHeight * i / 4);
+        ctx.fillText(price.toFixed(2), width - 8, y + 4);
+    }
+    
+    // 绘制时间标签
+    ctx.textAlign = 'center';
+    const timeLabels = ['09:30', '10:30', '11:30', '14:00', '15:00'];
+    timeLabels.forEach((time, i) => {
+        const x = padding.left + (chartWidth * i / (timeLabels.length - 1));
+        ctx.fillText(time, x, height - 8);
+    });
+    
+    // 绘制涨跌幅标签
+    ctx.textAlign = 'left';
+    const pctRange = (maxPrice - quote.prevClose) / quote.prevClose * 100;
+    const minPct = (minPrice - quote.prevClose) / quote.prevClose * 100;
+    for (let i = 0; i <= 4; i++) {
+        const pct = pctRange - ((pctRange - minPct) * i / 4);
+        const y = padding.top + (chartHeight * i / 4);
+        const cls = pct >= 0 ? '#f85149' : '#2ea043';
+        ctx.fillStyle = cls;
+        ctx.fillText((pct >= 0 ? '+' : '') + pct.toFixed(2) + '%', 4, y + 4);
+    }
+    
+    // 存储数据点用于交互
+    canvas._chartData = {
+        type: 'timeline',
+        data: data,
+        quote: quote,
+        padding: padding,
+        chartWidth: chartWidth,
+        chartHeight: chartHeight,
+        stepX: stepX,
+        priceRange: priceRange,
+        maxPrice: maxPrice,
+        prevCloseY: prevCloseY
+    };
 }
 
 // 绘制K线图
@@ -340,6 +539,15 @@ function drawKLineChart(canvas, data) {
         ctx.fillText(price.toFixed(2), width - 8, y + 4);
     }
     
+    // 绘制日期标签
+    ctx.textAlign = 'center';
+    const dateStep = Math.max(1, Math.floor(data.length / 5));
+    for (let i = 0; i < data.length; i += dateStep) {
+        const x = padding.left + (i * gap) + (gap / 2);
+        const date = data[i].date;
+        ctx.fillText(date.substring(5), x, height - 8); // 只显示月-日
+    }
+    
     // 绘制成交量柱状图
     const volumeHeight = height * 0.15;
     const volumeTop = height - volumeHeight - padding.bottom;
@@ -354,56 +562,18 @@ function drawKLineChart(canvas, data) {
         ctx.fillStyle = color;
         ctx.fillRect(x - candleWidth/2, volumeTop + volumeHeight - barHeight, candleWidth, barHeight);
     });
-}
-
-// 绘制分时图
-function drawTimeline(canvas, quote) {
-    if (!quote) return;
     
-    const ctx = canvas.getContext('2d');
-    const dpr = window.devicePixelRatio || 1;
-    const rect = canvas.getBoundingClientRect();
-    canvas.width = rect.width * dpr;
-    canvas.height = rect.height * dpr;
-    ctx.scale(dpr, dpr);
-    
-    const width = rect.width;
-    const height = rect.height;
-    const padding = { top: 20, right: 60, bottom: 30, left: 10 };
-    const chartWidth = width - padding.left - padding.right;
-    const chartHeight = height - padding.top - padding.bottom;
-    
-    ctx.clearRect(0, 0, width, height);
-    
-    // 绘制昨收线
-    const prevCloseY = padding.top + (chartHeight / 2);
-    ctx.strokeStyle = 'rgba(255,255,255,0.2)';
-    ctx.lineWidth = 1;
-    ctx.setLineDash([5, 5]);
-    ctx.beginPath();
-    ctx.moveTo(padding.left, prevCloseY);
-    ctx.lineTo(width - padding.right, prevCloseY);
-    ctx.stroke();
-    ctx.setLineDash([]);
-    
-    // 绘制当前价格点
-    const priceY = padding.top + ((quote.prevClose - quote.price) / (quote.prevClose * 0.1) * chartHeight / 2) + chartHeight / 2;
-    const clampedY = Math.max(padding.top, Math.min(height - padding.bottom, priceY));
-    
-    ctx.fillStyle = quote.changePct >= 0 ? '#f85149' : '#2ea043';
-    ctx.beginPath();
-    ctx.arc(width / 2, clampedY, 6, 0, Math.PI * 2);
-    ctx.fill();
-    
-    // 绘制价格标签
-    ctx.fillStyle = '#e0e5ec';
-    ctx.font = 'bold 14px Inter';
-    ctx.textAlign = 'right';
-    ctx.fillText(fmtPrice(quote.price), width - 8, clampedY + 5);
-    
-    ctx.fillStyle = '#7a8494';
-    ctx.font = '11px Inter';
-    ctx.fillText(fmtPrice(quote.prevClose), width - 8, prevCloseY + 4);
+    // 存储数据点用于交互
+    canvas._chartData = {
+        type: 'kline',
+        data: data,
+        padding: padding,
+        chartWidth: chartWidth,
+        chartHeight: chartHeight,
+        gap: gap,
+        priceRange: priceRange,
+        maxPrice: maxPrice
+    };
 }
 
 // 渲染股票信息
@@ -518,6 +688,198 @@ function renderIndicators(quote, klineData) {
     `;
 }
 
+// 渲染图表区域
+function renderChartArea() {
+    return `
+        <div class="chart-area">
+            <div class="chart-header">
+                <div class="chart-title" id="chartTitle">分时走势</div>
+                <div class="chart-tabs">
+                    <button class="chart-tab ${currentChart === 'timeline' ? 'active' : ''}" onclick="switchChart('timeline')">分时</button>
+                    <button class="chart-tab ${currentChart === 'kline' ? 'active' : ''}" onclick="switchChart('kline')">K线</button>
+                </div>
+            </div>
+            <div class="chart-container" id="chartContainer">
+                <canvas id="mainChart"></canvas>
+                <div class="tooltip" id="tooltip">
+                    <div class="tooltip-title" id="tooltipTitle"></div>
+                    <div id="tooltipContent"></div>
+                </div>
+                <div class="crosshair" id="crosshair">
+                    <div class="crosshair-line crosshair-h" id="crosshairH"></div>
+                    <div class="crosshair-line crosshair-v" id="crosshairV"></div>
+                    <div class="crosshair-label" id="crosshairPrice"></div>
+                    <div class="crosshair-label" id="crosshairTime"></div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// 切换图表类型
+function switchChart(type) {
+    currentChart = type;
+    
+    // 更新标签样式
+    document.querySelectorAll('.chart-tab').forEach(tab => {
+        tab.classList.toggle('active', tab.textContent === (type === 'timeline' ? '分时' : 'K线'));
+    });
+    
+    // 更新标题
+    document.getElementById('chartTitle').textContent = type === 'timeline' ? '分时走势' : 'K线走势';
+    
+    // 重绘图表
+    drawCurrentChart();
+}
+
+// 绘制当前图表
+function drawCurrentChart() {
+    const canvas = document.getElementById('mainChart');
+    if (!canvas) return;
+    
+    if (currentChart === 'timeline' && timelineData.length > 0 && currentQuote) {
+        drawTimelineChart(canvas, timelineData, currentQuote);
+    } else if (currentChart === 'kline' && klineData.length > 0) {
+        drawKLineChart(canvas, klineData);
+    }
+}
+
+// 处理鼠标移动
+function handleMouseMove(e) {
+    const canvas = document.getElementById('mainChart');
+    const tooltip = document.getElementById('tooltip');
+    const crosshair = document.getElementById('crosshair');
+    
+    if (!canvas || !canvas._chartData || !tooltip || !crosshair) return;
+    
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const chartData = canvas._chartData;
+    
+    // 检查是否在图表区域内
+    if (x < chartData.padding.left || x > rect.width - chartData.padding.right ||
+        y < chartData.padding.top || y > rect.height - chartData.padding.bottom) {
+        tooltip.classList.remove('visible');
+        crosshair.style.display = 'none';
+        return;
+    }
+    
+    crosshair.style.display = 'block';
+    
+    // 绘制十字线
+    const crosshairH = document.getElementById('crosshairH');
+    const crosshairV = document.getElementById('crosshairV');
+    crosshairH.style.top = y + 'px';
+    crosshairV.style.left = x + 'px';
+    
+    // 计算对应的数据点
+    let dataPoint = null;
+    let tooltipContent = '';
+    
+    if (chartData.type === 'timeline') {
+        const index = Math.round((x - chartData.padding.left) / chartData.stepX);
+        if (index >= 0 && index < chartData.data.length) {
+            dataPoint = chartData.data[index];
+            const price = dataPoint.price;
+            const changePct = dataPoint.changePct;
+            const cls = changePct >= 0 ? 'up' : 'down';
+            
+            tooltipContent = `
+                <div class="tooltip-row">
+                    <span class="tooltip-label">时间</span>
+                    <span class="tooltip-value">${dataPoint.time}</span>
+                </div>
+                <div class="tooltip-row">
+                    <span class="tooltip-label">价格</span>
+                    <span class="tooltip-value ${cls}">${fmtPrice(price)}</span>
+                </div>
+                <div class="tooltip-row">
+                    <span class="tooltip-label">涨跌幅</span>
+                    <span class="tooltip-value ${cls}">${fmtPct(changePct)}</span>
+                </div>
+                <div class="tooltip-row">
+                    <span class="tooltip-label">成交量</span>
+                    <span class="tooltip-value">${fmtVol(dataPoint.volume)}</span>
+                </div>
+            `;
+            
+            // 更新十字线标签
+            document.getElementById('crosshairPrice').textContent = fmtPrice(price);
+            document.getElementById('crosshairPrice').style.top = (y - 10) + 'px';
+            document.getElementById('crosshairPrice').style.left = (rect.width - chartData.padding.right + 5) + 'px';
+            document.getElementById('crosshairPrice').style.display = 'block';
+            
+            document.getElementById('crosshairTime').textContent = dataPoint.time;
+            document.getElementById('crosshairTime').style.top = (rect.height - chartData.padding.bottom + 5) + 'px';
+            document.getElementById('crosshairTime').style.left = (x - 20) + 'px';
+            document.getElementById('crosshairTime').style.display = 'block';
+        }
+    } else if (chartData.type === 'kline') {
+        const index = Math.floor((x - chartData.padding.left) / chartData.gap);
+        if (index >= 0 && index < chartData.data.length) {
+            dataPoint = chartData.data[index];
+            const isUp = dataPoint.close >= dataPoint.open;
+            const cls = isUp ? 'up' : 'down';
+            
+            tooltipContent = `
+                <div class="tooltip-row">
+                    <span class="tooltip-label">日期</span>
+                    <span class="tooltip-value">${dataPoint.date}</span>
+                </div>
+                <div class="tooltip-row">
+                    <span class="tooltip-label">开盘</span>
+                    <span class="tooltip-value">${fmtPrice(dataPoint.open)}</span>
+                </div>
+                <div class="tooltip-row">
+                    <span class="tooltip-label">收盘</span>
+                    <span class="tooltip-value ${cls}">${fmtPrice(dataPoint.close)}</span>
+                </div>
+                <div class="tooltip-row">
+                    <span class="tooltip-label">最高</span>
+                    <span class="tooltip-value up">${fmtPrice(dataPoint.high)}</span>
+                </div>
+                <div class="tooltip-row">
+                    <span class="tooltip-label">最低</span>
+                    <span class="tooltip-value down">${fmtPrice(dataPoint.low)}</span>
+                </div>
+                <div class="tooltip-row">
+                    <span class="tooltip-label">成交量</span>
+                    <span class="tooltip-value">${fmtVol(dataPoint.volume)}</span>
+                </div>
+            `;
+            
+            // 更新十字线标签
+            const priceAtMouse = chartData.maxPrice - ((y - chartData.padding.top) / chartData.chartHeight * chartData.priceRange);
+            document.getElementById('crosshairPrice').textContent = fmtPrice(priceAtMouse);
+            document.getElementById('crosshairPrice').style.top = (y - 10) + 'px';
+            document.getElementById('crosshairPrice').style.left = (rect.width - chartData.padding.right + 5) + 'px';
+            document.getElementById('crosshairPrice').style.display = 'block';
+            
+            document.getElementById('crosshairTime').textContent = dataPoint.date.substring(5);
+            document.getElementById('crosshairTime').style.top = (rect.height - chartData.padding.bottom + 5) + 'px';
+            document.getElementById('crosshairTime').style.left = (x - 20) + 'px';
+            document.getElementById('crosshairTime').style.display = 'block';
+        }
+    }
+    
+    if (dataPoint) {
+        document.getElementById('tooltipTitle').textContent = currentChart === 'timeline' ? '分时详情' : 'K线详情';
+        document.getElementById('tooltipContent').innerHTML = tooltipContent;
+        tooltip.classList.add('visible');
+        
+        // 定位tooltip
+        let tooltipX = x + 15;
+        let tooltipY = y - 10;
+        if (tooltipX + 180 > rect.width) tooltipX = x - 195;
+        if (tooltipY + 150 > rect.height) tooltipY = rect.height - 160;
+        tooltip.style.left = tooltipX + 'px';
+        tooltip.style.top = tooltipY + 'px';
+    } else {
+        tooltip.classList.remove('visible');
+    }
+}
+
 // 加载股票数据
 async function loadStock(code) {
     if (!code) return;
@@ -526,30 +888,33 @@ async function loadStock(code) {
     document.getElementById('statusText').textContent = '加载中...';
     
     try {
-        const [quote, klines] = await Promise.all([
+        const [quote, timeline, klines] = await Promise.all([
             fetchQuote(code),
+            fetchTimeline(code).catch(e => { console.warn('分时数据获取失败:', e); return []; }),
             fetchKLine(code, 120).catch(e => { console.warn('K线获取失败:', e); return []; })
         ]);
         
+        currentQuote = quote;
+        timelineData = timeline || [];
         klineData = klines || [];
         
         const mainContent = document.getElementById('mainContent');
         mainContent.innerHTML = `
             ${renderStockInfo(quote)}
-            <div class="chart-area">
-                <div class="chart-title">K线走势 (120日)</div>
-                <div class="chart-container">
-                    <canvas id="klineChart"></canvas>
-                </div>
-            </div>
+            ${renderChartArea()}
             ${renderIndicators(quote, klineData)}
         `;
         
         // 绘制图表
-        const canvas = document.getElementById('klineChart');
-        if (canvas && klineData.length > 0) {
-            drawKLineChart(canvas, klineData);
-        }
+        drawCurrentChart();
+        
+        // 添加鼠标事件
+        const chartContainer = document.getElementById('chartContainer');
+        chartContainer.addEventListener('mousemove', handleMouseMove);
+        chartContainer.addEventListener('mouseleave', () => {
+            document.getElementById('tooltip').classList.remove('visible');
+            document.getElementById('crosshair').style.display = 'none';
+        });
         
         // 更新状态
         document.getElementById('statusText').textContent = '实时更新中';
@@ -589,7 +954,16 @@ function startAutoRefresh() {
     refreshTimer = setInterval(async () => {
         if (currentStock) {
             try {
-                const quote = await fetchQuote(currentStock);
+                const [quote, timeline] = await Promise.all([
+                    fetchQuote(currentStock),
+                    fetchTimeline(currentStock).catch(e => { console.warn('分时数据刷新失败:', e); return null; })
+                ]);
+                
+                currentQuote = quote;
+                if (timeline && timeline.length > 0) {
+                    timelineData = timeline;
+                }
+                
                 // 更新价格显示
                 const priceEl = document.querySelector('.price-value');
                 const changeEl = document.querySelector('.price-change');
@@ -603,6 +977,13 @@ function startAutoRefresh() {
                     pctEl.textContent = fmtPct(quote.changePct);
                     pctEl.className = 'price-pct ' + cls;
                 }
+                
+                // 重绘分时图
+                if (currentChart === 'timeline' && timelineData.length > 0) {
+                    const canvas = document.getElementById('mainChart');
+                    if (canvas) drawTimelineChart(canvas, timelineData, currentQuote);
+                }
+                
                 updateLastTime();
             } catch (e) {
                 console.warn('自动刷新失败:', e);
@@ -632,10 +1013,7 @@ document.getElementById('stockInput').addEventListener('keypress', (e) => {
 
 // 窗口大小改变时重绘图表
 window.addEventListener('resize', () => {
-    if (currentStock && klineData.length > 0) {
-        const canvas = document.getElementById('klineChart');
-        if (canvas) drawKLineChart(canvas, klineData);
-    }
+    drawCurrentChart();
 });
 
 // 初始化
