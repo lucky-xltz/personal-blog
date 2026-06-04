@@ -753,6 +753,17 @@
         </div>
     </div>
 
+    <!-- 自选股收藏 -->
+    <div class="card" id="favoritesCard">
+        <div class="card-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            自选股
+        </div>
+        <div id="favoritesList" style="background: var(--bg); border-radius: var(--radius-sm); padding: 12px; box-shadow: var(--neu-inset-sm);">
+            <div style="text-align:center;color:var(--text-muted);padding:12px;font-size:12px;">点击星星收藏股票</div>
+        </div>
+    </div>
+
     <!-- 我的交易池 -->
     <div class="card" id="tradingPoolCard">
         <div class="card-title">
@@ -2375,6 +2386,78 @@ function tradingDecision() {
     });
 }
 
+
+// ============ 自选股收藏功能 ============
+const FAVORITES_KEY = 'quant_favorites';
+let favorites = [];
+
+function loadFavorites() {
+    try {
+        var saved = localStorage.getItem(FAVORITES_KEY);
+        if (saved) favorites = JSON.parse(saved);
+    } catch (e) {
+        favorites = [];
+    }
+}
+
+function saveFavorites() {
+    try {
+        localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
+    } catch (e) {}
+}
+
+function toggleFavorite(code) {
+    var idx = favorites.indexOf(code);
+    if (idx >= 0) {
+        favorites.splice(idx, 1);
+        showToast('已取消收藏', 'info');
+    } else {
+        favorites.push(code);
+        showToast('已添加到自选', 'success');
+    }
+    saveFavorites();
+    renderFavorites();
+    // 更新AI推荐列表的收藏状态
+    var scored = window._lastScored || [];
+    if (scored.length > 0) renderAIRecommendations(scored);
+}
+
+function isFavorite(code) {
+    return favorites.indexOf(code) >= 0;
+}
+
+function renderFavorites() {
+    var container = document.getElementById('favoritesList');
+    if (!container) return;
+    
+    if (favorites.length === 0) {
+        container.innerHTML = '<div style="text-align:center;color:var(--text-muted);padding:12px;font-size:12px;">点击星星收藏股票</div>';
+        return;
+    }
+    
+    var html = '<div style="display:flex;flex-wrap:wrap;gap:6px;">';
+    favorites.forEach(function(code) {
+        var poolItem = STOCK_POOL.find(function(s) { return s.code === code; });
+        var name = poolItem ? poolItem.name : code;
+        var q = getStockPrice(code);
+        var price = q ? q.price.toFixed(2) : '--';
+        var changePct = q ? q.changePct : 0;
+        var cls = changePct >= 0 ? 'up' : 'down';
+        var sign = changePct >= 0 ? '+' : '';
+        
+        html += '<div style="background:var(--bg);border-radius:8px;padding:6px 10px;cursor:pointer;display:flex;align-items:center;gap:6px;" onclick="document.getElementById('signalStockSelect').value=\'' + code + '\';updateSignalDashboard(\'' + code + '\');">' +
+            '<span style="font-size:11px;font-weight:600;">' + name + '</span>' +
+            '<span style="font-size:10px;color:var(--' + cls + ');">' + sign + changePct.toFixed(2) + '%</span>' +
+            '<span style="font-size:14px;color:var(--warn);cursor:pointer;" onclick="event.stopPropagation();toggleFavorite(\'' + code + '\');">&#9733;</span>' +
+            '</div>';
+    });
+    html += '</div>';
+    container.innerHTML = html;
+}
+
+// 加载自选
+loadFavorites();
+
 // ============ AI 分析引擎 ============
 
 // 获取股票基本面数据（模拟）
@@ -2626,7 +2709,7 @@ function renderAIRecommendations(scored) {
 
         html += '<div style="display: flex; align-items: center; gap: 12px; padding: 10px; background: var(--bg-raised); border-radius: 8px;">' +
             '<div style="width: 24px; height: 24px; border-radius: 50%; background: ' + rec.color + '; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff;">' + (i + 1) + '</div>' +
-            '<div style="flex: 1; cursor: pointer;" onclick="document.getElementById(\'signalStockSelect\').value=\'' + a.code + '\';updateSignalDashboard(\'' + a.code + '\');">' +
+            '<div style="flex: 1; cursor: pointer;" onclick="document.getElementById('signalStockSelect').value='' + a.code + '';updateSignalDashboard('' + a.code + '');">' +
             '<div style="font-weight: 600; font-size: 14px;">' + a.name + ' <span style="color: var(--text-muted); font-size: 12px;">' + a.code + '</span></div>' +
             '<div style="font-size: 11px; color: var(--text-dim);">' + a.sectorName + ' · ' + (a.sector.catalyst || '') + '</div>' +
             '</div>' +
@@ -2634,19 +2717,19 @@ function renderAIRecommendations(scored) {
             '<div style="font-weight: 600;">' + price + ' <span class="' + changeCls + '" style="font-size: 12px;">' + changePct + '</span></div>' +
             '<div style="font-size: 12px; color: ' + rec.color + ';">' + rec.text + ' (' + a.score + ')</div>' +
             '</div>' +
-            '<button class="btn btn-sm ' + (inPool ? 'btn-outline' : 'btn-primary') + '" style="padding: 4px 10px; font-size: 11px;" onclick="addToTradingPool(\'' + a.code + '\')">' + (inPool ? '已添加' : '加入交易池') + '</button>' +
+            '<div style="display:flex;gap:6px;align-items:center;">' +
+            '<span style="font-size:18px;cursor:pointer;color:var(--warn);" onclick="toggleFavorite('' + a.code + '');">&#9733;</span>' +
+            '<button class="btn btn-sm ' + (inPool ? 'btn-outline' : 'btn-primary') + '" style="padding: 4px 10px; font-size: 11px;" onclick="addToTradingPool('' + a.code + '')">' + (inPool ? '已添加' : '加入交易池') + '</button>' +
+            '</div>' +
             '</div>';
     });
 
     html += '</div>';
     container.innerHTML = html;
+    
+    // 保存到全局变量供收藏刷新用
+    window._lastScored = scored;
 }
-
-// ============ 状态 ============
-let state = {
-    mode: 'aggressive',
-    isRunning: false,
-    cash: INITIAL_CASH,
     positions: {},  // { code: { name, quantity, avgCost, peakPrice, trailingStopPct } }
     trades: [],
     equityHistory: [],
@@ -3386,6 +3469,7 @@ function renderAll() {
     renderStatus();
     renderPerformance();
     renderSectorAllocation();
+    renderFavorites();
     // Auto-select first position in signal dashboard
     var sigSel = document.getElementById('signalStockSelect');
     if (sigSel && sigSel.value === '') {
