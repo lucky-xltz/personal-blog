@@ -936,6 +936,14 @@ const MODES = {
 const API_BASE = 'https://analytics.blog.xltz.qzz.io';
 const CORS_PROXY = 'https://api.codetabs.com/v1/proxy/?quest=';
 
+// Helper for onclick signal stock selection (avoids quoting issues in HTML attributes)
+function selectSignalStock(code) {
+    var sel = document.getElementById('signalStockSelect');
+    if (sel) { sel.value = code; }
+    updateSignalDashboard(code);
+}
+
+
 // ============ 股票池（含实时行情） ============
 const STOCK_POOL = [
     { code: '601991', name: '大唐发电', sector: '电力' },
@@ -2528,7 +2536,7 @@ function renderFavorites() {
         var cls = changePct >= 0 ? 'up' : 'down';
         var sign = changePct >= 0 ? '+' : '';
         
-        html += '<div style="background:var(--bg);border-radius:8px;padding:6px 10px;cursor:pointer;display:flex;align-items:center;gap:6px;" onclick="document.getElementById('signalStockSelect').value=\'' + code + '\';updateSignalDashboard(\'' + code + '\');">' +
+        html += '<div style="background:var(--bg);border-radius:8px;padding:6px 10px;cursor:pointer;display:flex;align-items:center;gap:6px;" data-c='" + a.code + "' onclick="selectSignalStock(this.dataset.c)">' +
             '<span style="font-size:11px;font-weight:600;">' + name + '</span>' +
             '<span style="font-size:10px;color:var(--' + cls + ');">' + sign + changePct.toFixed(2) + '%</span>' +
             '<span style="font-size:14px;color:var(--warn);cursor:pointer;" onclick="event.stopPropagation();toggleFavorite(\'' + code + '\');">&#9733;</span>' +
@@ -2792,7 +2800,7 @@ function renderAIRecommendations(scored) {
 
         html += '<div style="display: flex; align-items: center; gap: 12px; padding: 10px; background: var(--bg-raised); border-radius: 8px;">' +
             '<div style="width: 24px; height: 24px; border-radius: 50%; background: ' + rec.color + '; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff;">' + (i + 1) + '</div>' +
-            '<div style="flex: 1; cursor: pointer;" onclick="document.getElementById('signalStockSelect').value='' + a.code + '';updateSignalDashboard('' + a.code + '');">' +
+            '<div style="flex: 1; cursor: pointer;" data-c='" + a.code + "' onclick="selectSignalStock(this.dataset.c)">' +
             '<div style="font-weight: 600; font-size: 14px;">' + a.name + ' <span style="color: var(--text-muted); font-size: 12px;">' + a.code + '</span></div>' +
             '<div style="font-size: 11px; color: var(--text-dim);">' + a.sectorName + ' · ' + (a.sector.catalyst || '') + '</div>' +
             '</div>' +
