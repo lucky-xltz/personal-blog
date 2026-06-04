@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>量化交易系统 v4.6 | 林小白的数字花园</title>
+    <title>量化交易系统 v4.7 | 林小白的数字花园</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -589,7 +589,7 @@
 <div class="container">
     <div class="page-title">
         <h1>量化交易系统</h1>
-        <p>v4.4 · 多指标AI引擎 · 37只股票池 · 14种技术指标 · TRIX涡旋增强</p>
+        <p>v4.7 · KC挤压检测 · Kelly仓位 · 恐贪指数 · 相关性分散 · 21种技术指标</p>
     </div>
 
     <!-- Mode Selector -->
@@ -756,6 +756,8 @@
                 <div class="signal-gauge"><div class="gauge-label">VWAP</div><div class="gauge-value" id="gVWAP">--</div><div class="gauge-bar"><div class="gauge-fill" id="gVWAPbar"></div></div></div>
                 <div class="signal-gauge"><div class="gauge-label">EMA带</div><div class="gauge-value" id="gRibbon">--</div><div class="gauge-bar"><div class="gauge-fill" id="gRibbonbar"></div></div></div>
                 <div class="signal-gauge"><div class="gauge-label">市场状态</div><div class="gauge-value" id="gRegime">--</div><div class="gauge-bar"><div class="gauge-fill" id="gRegimebar"></div></div></div>
+                <div class="signal-gauge"><div class="gauge-label">KC挤压</div><div class="gauge-value" id="gSqueeze">--</div><div class="gauge-bar"><div class="gauge-fill" id="gSqueezebar"></div></div></div>
+                <div class="signal-gauge"><div class="gauge-label">恐贪指数</div><div class="gauge-value" id="gFG">--</div><div class="gauge-bar"><div class="gauge-fill" id="gFGbar"></div></div></div>
             </div>
             <div id="signalDetails" style="margin-top: 12px; font-size: 12px; color: var(--text-dim); line-height: 1.8;"></div>
             <!-- MACD柱状图 -->
@@ -1230,6 +1232,50 @@ function calcATR(prices, period) {
     }
     return trSum / period;
 }
+
+/**
+ * Keltner Channel: EMA-based channel using ATR for bandwidth
+ * Synergy with Bollinger Bands: when BB squeezes inside KC, breakout is imminent
+ * Returns: { upper, middle, lower, bandwidth }
+ */
+function calcKeltnerChannel(prices, emaPeriod, atrPeriod, multiplier) {
+    emaPeriod = emaPeriod || 20;
+    atrPeriod = atrPeriod || 14;
+    multiplier = multiplier || 2;
+    if (prices.length < Math.max(emaPeriod, atrPeriod + 1)) return null;
+    var middle = calcEMA(prices, emaPeriod);
+    var atr = calcATR(prices, atrPeriod);
+    var upper = middle + multiplier * atr;
+    var lower = middle - multiplier * atr;
+    var bandwidth = middle > 0 ? (upper - lower) / middle * 100 : 0;
+    return { upper: upper, middle: middle, lower: lower, bandwidth: bandwidth, atr: atr };
+}
+
+/**
+ * Squeeze Detection: compare Bollinger Bands with Keltner Channel
+ * When BB is inside KC = squeeze (low volatility, breakout imminent)
+ * Returns: { squeeze: bool, squeezeIntensity: 0-1, direction: 'up'/'down'/'neutral' }
+ */
+function detectSqueeze(prices) {
+    if (prices.length < 20) return { squeeze: false, squeezeIntensity: 0, direction: 'neutral' };
+    var bb = calcBollingerBands(prices, 20, 2);
+    var kc = calcKeltnerChannel(prices, 20, 14, 2);
+    if (!bb || !kc) return { squeeze: false, squeezeIntensity: 0, direction: 'neutral' };
+    // Squeeze: BB upper < KC upper AND BB lower > KC lower
+    var squeeze = bb.upper < kc.upper && bb.lower > kc.lower;
+    var squeezeIntensity = 0;
+    if (squeeze) {
+        // How tight is the squeeze? 0 = barely, 1 = very tight
+        var bbWidth = bb.upper - bb.lower;
+        var kcWidth = kc.upper - kc.lower;
+        squeezeIntensity = kcWidth > 0 ? Math.max(0, Math.min(1, 1 - bbWidth / kcWidth)) : 0;
+    }
+    // Direction hint from recent momentum
+    var mom = prices.length >= 6 ? (prices[prices.length-1] - prices[prices.length-6]) / prices[prices.length-6] : 0;
+    var direction = mom > 0.02 ? 'up' : mom < -0.02 ? 'down' : 'neutral';
+    return { squeeze: squeeze, squeezeIntensity: squeezeIntensity, direction: direction };
+}
+
 function calcKDJ(prices, period) {
     period = period || 9;
     if (prices.length < period) return { k: 50, d: 50, j: 50 };
@@ -1284,6 +1330,56 @@ function calcOBVTrend(prices, volumes) {
     const recent = obvSeries.slice(-5);
     const slope = (recent[4] - recent[0]) / 5;
     return slope > 0 ? 'up' : slope < 0 ? 'down' : 'flat';
+}
+
+/**
+ * Calculate Pearson correlation between two price series
+ * Returns value between -1 (inverse) and 1 (perfect correlation)
+ * Used to avoid buying highly correlated stocks together
+ */
+function calcPriceCorrelation(prices1, prices2) {
+    if (!prices1 || !prices2 || prices1.length < 10 || prices2.length < 10) return 0;
+    var len = Math.min(prices1.length, prices2.length, 30); // Use last 30 data points
+    var p1 = prices1.slice(-len);
+    var p2 = prices2.slice(-len);
+    // Calculate returns instead of prices for better correlation
+    var ret1 = [], ret2 = [];
+    for (var i = 1; i < len; i++) {
+        ret1.push((p1[i] - p1[i-1]) / p1[i-1]);
+        ret2.push((p2[i] - p2[i-1]) / p2[i-1]);
+    }
+    var n = ret1.length;
+    if (n < 5) return 0;
+    var sum1 = 0, sum2 = 0, sum1sq = 0, sum2sq = 0, psum = 0;
+    for (var i = 0; i < n; i++) {
+        sum1 += ret1[i]; sum2 += ret2[i];
+        sum1sq += ret1[i] * ret1[i]; sum2sq += ret2[i] * ret2[i];
+        psum += ret1[i] * ret2[i];
+    }
+    var num = psum - (sum1 * sum2 / n);
+    var den = Math.sqrt((sum1sq - sum1*sum1/n) * (sum2sq - sum2*sum2/n));
+    return den === 0 ? 0 : Math.max(-1, Math.min(1, num / den));
+}
+
+/**
+ * Check if a stock is too correlated with existing positions
+ * Returns { allowed: bool, maxCorrelation: number, correlatedWith: string }
+ */
+function checkCorrelationDiversification(code) {
+    var CORR_THRESHOLD = 0.75; // Above this = too correlated
+    var posCodes = Object.keys(state.positions);
+    if (posCodes.length === 0) return { allowed: true, maxCorrelation: 0, correlatedWith: '' };
+    var newPrices = priceHistory[code];
+    if (!newPrices || newPrices.length < 10) return { allowed: true, maxCorrelation: 0, correlatedWith: '' };
+    var maxCorr = 0, corrWith = '';
+    for (var i = 0; i < posCodes.length; i++) {
+        var posPrices = priceHistory[posCodes[i]];
+        if (!posPrices || posPrices.length < 10) continue;
+        var corr = Math.abs(calcPriceCorrelation(newPrices, posPrices));
+        if (corr > maxCorr) { maxCorr = corr; corrWith = posCodes[i]; }
+    }
+    var poolItem = STOCK_POOL.find(function(s) { return s.code === corrWith; });
+    return { allowed: maxCorr < CORR_THRESHOLD, maxCorrelation: maxCorr, correlatedWith: poolItem ? poolItem.name : corrWith };
 }
 
 function calcTrendFilter(prices) {
@@ -1697,6 +1793,67 @@ function calcMultiTimeframeConfirm(prices) {
     return { score: 0, label: '' };
 }
 
+/**
+ * Fear & Greed Index: composite sentiment indicator (0-100)
+ * Combines: RSI, MACD, Bollinger position, momentum, volatility
+ * 0-25 = Extreme Fear, 25-45 = Fear, 45-55 = Neutral, 55-75 = Greed, 75-100 = Extreme Greed
+ */
+function calcFearGreedIndex(prices, quote) {
+    if (!prices || prices.length < 20) return { value: 50, label: '数据不足', components: {} };
+    var components = {};
+    var total = 0;
+    var count = 0;
+    
+    // 1. RSI component (weight: 25%)
+    var rsi = calcRSI(prices, 14);
+    var rsiScore = Math.max(0, Math.min(100, rsi)); // RSI already 0-100
+    components.rsi = rsiScore;
+    total += rsiScore * 0.25;
+    count += 0.25;
+    
+    // 2. MACD momentum (weight: 20%)
+    if (prices.length >= 27) {
+        var macd = calcMACD(prices);
+        var macdNorm = Math.max(0, Math.min(100, 50 + macd.dif * 10)); // Normalize around 50
+        components.macd = macdNorm;
+        total += macdNorm * 0.20;
+        count += 0.20;
+    }
+    
+    // 3. Bollinger Band position (weight: 20%)
+    var bb = calcBollingerBands(prices, 20, 2);
+    if (bb) {
+        var price = quote ? quote.price : prices[prices.length - 1];
+        var bbRange = bb.upper - bb.lower;
+        var bbPos = bbRange > 0 ? ((price - bb.lower) / bbRange) * 100 : 50;
+        components.bb = Math.max(0, Math.min(100, bbPos));
+        total += components.bb * 0.20;
+        count += 0.20;
+    }
+    
+    // 4. Momentum (5-bar ROC) (weight: 20%)
+    if (prices.length >= 6) {
+        var roc = ((prices[prices.length-1] - prices[prices.length-6]) / prices[prices.length-6]) * 100;
+        var rocScore = Math.max(0, Math.min(100, 50 + roc * 10)); // Center at 50
+        components.momentum = rocScore;
+        total += rocScore * 0.20;
+        count += 0.20;
+    }
+    
+    // 5. Volatility (ATR%) - inverse: high vol = fear (weight: 15%)
+    var atr = calcATR(prices, 14);
+    var price = quote ? quote.price : prices[prices.length - 1];
+    var atrPct = price > 0 ? (atr / price) * 100 : 2;
+    var volScore = Math.max(0, Math.min(100, 100 - atrPct * 20)); // Lower vol = higher score
+    components.volatility = volScore;
+    total += volScore * 0.15;
+    count += 0.15;
+    
+    var value = count > 0 ? Math.round(total / count) : 50;
+    var label = value < 20 ? '极度恐惧' : value < 40 ? '恐惧' : value < 60 ? '中性' : value < 80 ? '贪婪' : '极度贪婪';
+    return { value: value, label: label, components: components };
+}
+
 
 /**
  * Compute composite signal score for a stock.
@@ -1733,14 +1890,28 @@ function computeSignalScore(code, quote) {
         else if (dif < 0) { score -= 0.5; }
     }
 
-    // Bollinger Bands
+    // Bollinger Bands + Keltner Channel Squeeze Detection
     const bb = calcBollingerBands(prices, 20, 2);
     if (bb) {
         const price = quote.price;
         if (price < bb.lower) { score += 2; signals.push({ label: '突破下轨', type: 'buy' }); }
         else if (price > bb.upper) { score -= 2; signals.push({ label: '突破上轨', type: 'sell' }); }
         if (bb.bandwidth < 3) { signals.push({ label: '缩量收敛', type: 'neutral' }); }
-        // Bollinger Band Squeeze Breakout: narrow bandwidth + price break = amplified signal
+        // Enhanced Squeeze Detection: BB inside Keltner Channel
+        var squeeze = detectSqueeze(prices);
+        if (squeeze.squeeze) {
+            var sqScore = Math.round(squeeze.squeezeIntensity * 2 * 10) / 10; // 0-2 points
+            if (squeeze.direction === 'up') {
+                score += sqScore;
+                signals.push({ label: 'KC挤压蓄力↑', type: 'buy' });
+            } else if (squeeze.direction === 'down') {
+                score -= sqScore;
+                signals.push({ label: 'KC挤压蓄力↓', type: 'sell' });
+            } else {
+                signals.push({ label: 'KC挤压中', type: 'neutral' });
+            }
+        }
+        // Legacy Bollinger Band Squeeze Breakout
         if (bb.bandwidth < 4) {
             if (price < bb.lower) { score += 1; signals.push({ label: '挤压突破↓', type: 'buy' }); }
             else if (price > bb.upper) { score -= 1; signals.push({ label: '挤压突破↑', type: 'sell' }); }
@@ -2544,6 +2715,23 @@ function calculatePositionSize(code, price, signalStrength, mode) {
     // 基础仓位比例
     const baseRatio = mode === 'aggressive' ? 0.25 : mode === 'balanced' ? 0.15 : 0.08;
     
+    // Kelly Criterion: f* = (bp - q) / b
+    // b = avg_win / avg_loss, p = win_rate, q = 1 - p
+    let kellyMultiplier = 1.0;
+    if (state.trades && state.trades.length >= 10) {
+        var wins = state.trades.filter(function(t) { return t.type === 'sell' && t.pnl > 0; });
+        var losses = state.trades.filter(function(t) { return t.type === 'sell' && t.pnl <= 0; });
+        if (wins.length > 0 && losses.length > 0) {
+            var winRate = wins.length / (wins.length + losses.length);
+            var avgWin = wins.reduce(function(s, t) { return s + t.pnl; }, 0) / wins.length;
+            var avgLoss = Math.abs(losses.reduce(function(s, t) { return s + t.pnl; }, 0) / losses.length);
+            var b = avgLoss > 0 ? avgWin / avgLoss : 1;
+            var kelly = (b * winRate - (1 - winRate)) / b;
+            // Use half-Kelly for safety, clamp to [0.5, 1.5]
+            kellyMultiplier = Math.max(0.5, Math.min(1.5, 0.5 + kelly));
+        }
+    }
+    
     // ATR 波动率自适应仓位（高波动缩小仓位，低波动放大仓位）
     const atrPrices = priceHistory[code];
     let atrMultiplier = 1.0;
@@ -2561,8 +2749,8 @@ function calculatePositionSize(code, price, signalStrength, mode) {
     const existingValue = existingPosition ? existingPosition.quantity * 100 * price : 0;
     const maxPositionValue = totalAssets * TRADING_RULES.MAX_SINGLE_POSITION - existingValue;
     
-    // 计算可买金额
-    let buyAmount = availableCash * baseRatio * strengthMultiplier * atrMultiplier;
+    // 计算可买金额 (with Kelly Criterion, ATR, and signal strength adjustments)
+    let buyAmount = availableCash * baseRatio * strengthMultiplier * atrMultiplier * kellyMultiplier;
     buyAmount = Math.min(buyAmount, maxPositionValue);
     
     // 转换为手数
@@ -2603,6 +2791,13 @@ function executeBuyWithStrategy(code, quote, evaluation) {
     const exposurePct = totalAssets > 0 ? investedValue / totalAssets : 0;
     if (exposurePct >= TRADING_RULES.MAX_TOTAL_EXPOSURE) {
         addLog('⚠️ 总仓位已达' + (exposurePct * 100).toFixed(0) + '%，超过' + (TRADING_RULES.MAX_TOTAL_EXPOSURE * 100) + '%上限', 'warn');
+        return false;
+    }
+
+    // 相关性分散检查：避免买入与现有持仓高度相关的股票
+    var corrCheck = checkCorrelationDiversification(code);
+    if (!corrCheck.allowed) {
+        addLog('⚠️ ' + poolItem.name + ' 与 ' + corrCheck.correlatedWith + ' 相关性过高(' + (corrCheck.maxCorrelation * 100).toFixed(0) + '%)，跳过', 'warn');
         return false;
     }
 
@@ -3190,6 +3385,8 @@ function renderAIRecommendations(scored) {
 
 // ============ 账户状态 ============
 let state = {
+    cash: INITIAL_CASH,
+    mode: 'aggressive',
     positions: {},  // { code: { name, quantity, avgCost, peakPrice, trailingStopPct } }
     trades: [],
     equityHistory: [],
@@ -3308,7 +3505,8 @@ document.getElementById('modalCancel').addEventListener('click', () => {
 });
 
 function formatMoney(amount) {
-    return '¥' + amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    if (amount == null || isNaN(amount)) return '¥0.00';
+    return '¥' + Number(amount).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 
 function formatTime(date) {
@@ -3448,6 +3646,32 @@ async function aiDecide() {
     renderAll();
 }
 
+async function aiDecideWithLLM() {
+    try {
+        // 使用 LLM AI 决策
+        await aiTradingDecision();
+        
+        // Fetch realtime quotes
+        await fetchRealtimeQuotes();
+        
+        // 记录权益曲线
+        const totalAssets = calculateTotalAssets();
+        state.equityHistory.push({ time: new Date().toISOString(), value: totalAssets });
+        if (state.equityHistory.length > 500) state.equityHistory = state.equityHistory.slice(-500);
+        
+        saveState();
+        renderAll();
+    } catch (e) {
+        console.error('LLM AI 决策失败:', e);
+        addLog('⚠️ LLM 决策失败，回退到本地策略', 'warn');
+        // 回退到本地策略
+        tradingDecision();
+        await fetchRealtimeQuotes();
+        saveState();
+        renderAll();
+    }
+}
+
 function calculateTotalAssets() {
     let total = state.cash;
     Object.keys(state.positions).forEach(code => {
@@ -3467,10 +3691,10 @@ function startAI() {
     state.isRunning = true;
     saveState();
     const poolInfo = tradingPool.length > 0 ? '交易池' + tradingPool.length + '只' : '全股票池';
-    addLog('AI 交易引擎启动 [' + MODES[state.mode].name + '模式] ' + poolInfo + ' 每2分钟分析一次', 'success');
-    aiTimer = setInterval(aiDecide, 120000); // 每2分钟决策一次
+    addLog('🧠 LLM AI 交易引擎启动 [' + MODES[state.mode].name + '模式] ' + poolInfo + ' 每2分钟分析一次', 'success');
+    aiTimer = setInterval(aiDecideWithLLM, 120000); // 每2分钟决策一次
     // 立即执行一次分析
-    aiDecide();
+    aiDecideWithLLM();
     renderAll();
 }
 
@@ -3871,6 +4095,41 @@ function updateSignalDashboard(code) {
         regimeEl.className = 'gauge-value ' + (regime === 'trending_up' ? 'gauge-buy' : regime === 'trending_down' || regime === 'volatile' ? 'gauge-sell' : 'gauge-neutral');
         regimeBar.style.width = (regimeNorms[regime] || 50) + '%';
         regimeBar.style.background = regimeColors[regime] || 'var(--text-muted)';
+    }
+
+    // Squeeze Detection gauge (KC vs BB)
+    var squeeze = detectSqueeze(prices);
+    var squeezeEl = document.getElementById('gSqueeze');
+    var squeezeBar = document.getElementById('gSqueezebar');
+    if (squeezeEl && squeezeBar) {
+        if (squeeze.squeeze) {
+            var sqLabel = squeeze.direction === 'up' ? '蓄力↑' : squeeze.direction === 'down' ? '蓄力↓' : '挤压中';
+            squeezeEl.textContent = sqLabel;
+            squeezeEl.className = 'gauge-value ' + (squeeze.direction === 'up' ? 'gauge-buy' : squeeze.direction === 'down' ? 'gauge-sell' : 'gauge-neutral');
+            squeezeBar.style.width = (squeeze.squeezeIntensity * 100) + '%';
+            squeezeBar.style.background = squeeze.direction === 'up' ? 'var(--safe)' : squeeze.direction === 'down' ? 'var(--danger)' : 'var(--warn)';
+        } else {
+            squeezeEl.textContent = '无挤压';
+            squeezeEl.className = 'gauge-value gauge-neutral';
+            squeezeBar.style.width = '5%';
+            squeezeBar.style.background = 'var(--text-muted)';
+        }
+    }
+
+    // Fear & Greed Index gauge
+    var fg = calcFearGreedIndex(prices, q);
+    var fgEl = document.getElementById('gFG');
+    var fgBar = document.getElementById('gFGbar');
+    if (fgEl && fgBar) {
+        fgEl.textContent = fg.label + ' ' + fg.value;
+        fgEl.className = 'gauge-value ' + (fg.value < 30 ? 'gauge-buy' : fg.value > 70 ? 'gauge-sell' : 'gauge-neutral');
+        fgBar.style.width = fg.value + '%';
+        // Color gradient: red(fear) -> yellow(neutral) -> green(greed)
+        if (fg.value < 30) fgBar.style.background = 'var(--safe)';
+        else if (fg.value < 45) fgBar.style.background = '#7cc47c';
+        else if (fg.value < 55) fgBar.style.background = 'var(--warn)';
+        else if (fg.value < 70) fgBar.style.background = '#e6a23c';
+        else fgBar.style.background = 'var(--danger)';
     }
 
     
@@ -4562,10 +4821,17 @@ function calcBacktestSignalScore(prices, price, modeKey) {
         else if (rsi > 65 && rsi6 > 70) score -= 0.8;
     }
 
-    // Bollinger Bands (with squeeze detection)
+    // Bollinger Bands + Keltner Channel Squeeze Detection
     var bb = calcBollingerBands(prices, 20, 2);
     if (bb && price < bb.lower) { score += 2; if (bb.bandwidth < 4) score += 1; }
     else if (bb && price > bb.upper) { score -= 2; if (bb.bandwidth < 4) score -= 1; }
+    // Enhanced squeeze detection for backtest
+    var btSqueeze = detectSqueeze(prices);
+    if (btSqueeze.squeeze) {
+        var btSqScore = Math.round(btSqueeze.squeezeIntensity * 2 * 10) / 10;
+        if (btSqueeze.direction === 'up') score += btSqScore;
+        else if (btSqueeze.direction === 'down') score -= btSqScore;
+    }
 
     // Williams %R
     var wr = calcWilliamsR(prices, 14);
@@ -5625,13 +5891,24 @@ async function callLLM(prompt) {
             var resp = await fetch(url, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + LLM_CONFIG.apiKey },
-                body: JSON.stringify({ model: LLM_CONFIG.model, messages: [{ role: 'system', content: '你是量化交易分析师，只返回JSON。' }, { role: 'user', content: prompt }], temperature: LLM_CONFIG.temperature, max_tokens: 800 }),
-                signal: AbortSignal.timeout(LLM_CONFIG.timeoutMs)
+                body: JSON.stringify({ model: LLM_CONFIG.model, messages: [{ role: 'system', content: '你是量化交易分析师，只返回JSON。' }, { role: 'user', content: prompt }], temperature: LLM_CONFIG.temperature, max_tokens: 16384 }),
+                signal: AbortSignal.timeout(120000)
             });
             if (!resp.ok) throw new Error('HTTP ' + resp.status);
             var data = await resp.json();
-            return data.choices[0].message.content;
+            var content = data.choices[0].message.content;
+            var finishReason = data.choices[0].finish_reason;
+            console.log('LLM finish_reason:', finishReason, 'content length:', (content || '').length);
+            if (!content || content.trim() === '') {
+                var reasoning = data.choices[0].message.reasoning_content || '';
+                console.log('content 为空，reasoning 长度:', reasoning.length);
+                var jsonMatch = reasoning.match(/\{[\s\S]*\}/);
+                if (jsonMatch) return jsonMatch[0];
+                throw new Error('AI 返回空内容 (finish_reason: ' + finishReason + ')');
+            }
+            return content;
         } catch (e) {
+            console.warn('LLM 调用失败:', e.message);
             if (retry === LLM_CONFIG.maxRetries) throw e;
             await new Promise(function(r) { setTimeout(r, 1000 * (retry + 1)); });
         }
@@ -5663,21 +5940,28 @@ async function aiTradingDecision() {
         var decision = parseLLMDecision(raw);
         addLog('📋 市场观点: ' + (decision.marketView || '无'), 'action');
         if (decision.decisions && decision.decisions.length > 0) {
+            var executed = 0;
             decision.decisions.forEach(function(d) {
+                var q = typeof getStockPrice === 'function' ? getStockPrice(d.code) : null;
+                if (!q) {
+                    addLog('⚠️ ' + (d.name || d.code) + ': 无行情数据，跳过', 'warn');
+                    return;
+                }
                 if (d.action === 'buy') {
-                    var q = typeof getStockPrice === 'function' ? getStockPrice(d.code) : null;
-                    if (q && typeof executeBuyWithStrategy === 'function') {
-                        executeBuyWithStrategy(d.code, q, { action: 'buy', confidence: d.confidence || 0.7, reason: d.reason || 'LLM买入', stopLoss: d.stopLoss, takeProfit: d.takeProfit });
+                    if (typeof executeBuyWithStrategy === 'function') {
+                        var result = executeBuyWithStrategy(d.code, q, { action: 'buy', confidence: d.confidence || 0.7, reason: d.reason || 'LLM买入', stopLoss: d.stopLoss, takeProfit: d.takeProfit });
+                        if (result) executed++;
                     }
                 } else if (d.action === 'sell') {
-                    var q2 = typeof getStockPrice === 'function' ? getStockPrice(d.code) : null;
-                    if (q2 && typeof executeSellWithStrategy === 'function') {
-                        executeSellWithStrategy(d.code, q2, { action: 'sell', confidence: d.confidence || 0.7, reason: d.reason || 'LLM卖出' });
+                    if (typeof executeSellWithStrategy === 'function') {
+                        var result2 = executeSellWithStrategy(d.code, q, { action: 'sell', confidence: d.confidence || 0.7, reason: d.reason || 'LLM卖出' });
+                        if (result2) executed++;
                     }
                 } else {
-                    addLog('⏸ ' + (d.name || d.code) + ': 持有', 'info');
+                    addLog('⏸ ' + (d.name || d.code) + ': 持有观望', 'info');
                 }
             });
+            addLog('📊 执行了 ' + executed + ' 笔交易', 'info');
         }
         if (decision.riskNotes) addLog('⚠️ ' + decision.riskNotes, 'warn');
         addLog('✅ LLM决策完成', 'success');
