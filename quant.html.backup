@@ -148,14 +148,13 @@
         /* Stats Grid */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 12px;
             margin-bottom: 24px;
         }
         @media (max-width: 640px) {
             .stats-grid { grid-template-columns: repeat(2, 1fr); }
             .mode-selector { grid-template-columns: 1fr; }
-            #manualTradeCard > div:last-child { grid-template-columns: 1fr !important; }
         }
         .stat-card {
             background: var(--bg-raised);
@@ -562,7 +561,7 @@
 <div class="container">
     <div class="page-title">
         <h1>量化交易系统</h1>
-        <p>AI 驱动的智能交易 · 手动模拟交易 · 实时行情 · 三种策略模式</p>
+        <p>AI 驱动的智能交易 · 模拟运行 · 三种策略模式</p>
     </div>
 
     <!-- Mode Selector -->
@@ -636,11 +635,6 @@
             <div class="stat-label">总收益</div>
             <div class="stat-value" id="totalProfit">¥0.00</div>
             <div class="stat-sub" id="totalProfitPct">0.00%</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-label">今日盈亏</div>
-            <div class="stat-value" id="todayProfit">--</div>
-            <div class="stat-sub" id="todayProfitPct">--</div>
         </div>
     </div>
 
@@ -777,62 +771,6 @@
         </div>
     </div>
 
-        <!-- Manual Trade Panel -->
-    <div class="card" id="manualTradeCard">
-        <div class="card-title">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/></svg>
-            手动交易
-            <div style="margin-left: auto; display: flex; gap: 8px; align-items: center;">
-                <span style="font-size: 12px; color: var(--text-muted);" id="autoRefreshStatus">自动刷新: 关闭</span>
-                <button class="btn btn-outline btn-sm" id="toggleAutoRefresh">开启自动刷新</button>
-            </div>
-        </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-            <!-- 买入面板 -->
-            <div style="background: var(--bg); border-radius: var(--radius-sm); padding: 16px; box-shadow: var(--neu-inset-sm);">
-                <div style="font-size: 14px; font-weight: 600; color: var(--up); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
-                    买入
-                </div>
-                <div style="margin-bottom: 10px;">
-                    <label style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 4px;">股票代码</label>
-                    <input type="text" id="buyStockCode" placeholder="输入6位代码" maxlength="6" style="width: 100%; padding: 8px 12px; background: var(--bg-raised); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 14px;">
-                </div>
-                <div style="margin-bottom: 10px;">
-                    <label style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 4px;">数量（手）</label>
-                    <input type="number" id="buyQuantity" placeholder="1手=100股" min="1" value="1" style="width: 100%; padding: 8px 12px; background: var(--bg-raised); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 14px;">
-                </div>
-                <div style="margin-bottom: 10px;">
-                    <label style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 4px;">价格</label>
-                    <input type="number" id="buyPrice" placeholder="留空使用当前价" step="0.01" style="width: 100%; padding: 8px 12px; background: var(--bg-raised); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 14px;">
-                </div>
-                <div id="buyStockInfo" style="font-size: 12px; color: var(--text-dim); margin-bottom: 10px; min-height: 20px;"></div>
-                <button class="btn btn-primary" id="buyBtn" style="width: 100%;">确认买入</button>
-            </div>
-            <!-- 卖出面板 -->
-            <div style="background: var(--bg); border-radius: var(--radius-sm); padding: 16px; box-shadow: var(--neu-inset-sm);">
-                <div style="font-size: 14px; font-weight: 600; color: var(--down); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>
-                    卖出
-                </div>
-                <div style="margin-bottom: 10px;">
-                    <label style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 4px;">股票代码</label>
-                    <input type="text" id="sellStockCode" placeholder="输入6位代码" maxlength="6" style="width: 100%; padding: 8px 12px; background: var(--bg-raised); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 14px;">
-                </div>
-                <div style="margin-bottom: 10px;">
-                    <label style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 4px;">数量（手）</label>
-                    <input type="number" id="sellQuantity" placeholder="1手=100股" min="1" value="1" style="width: 100%; padding: 8px 12px; background: var(--bg-raised); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 14px;">
-                </div>
-                <div style="margin-bottom: 10px;">
-                    <label style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 4px;">价格</label>
-                    <input type="number" id="sellPrice" placeholder="留空使用当前价" step="0.01" style="width: 100%; padding: 8px 12px; background: var(--bg-raised); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 14px;">
-                </div>
-                <div id="sellStockInfo" style="font-size: 12px; color: var(--text-dim); margin-bottom: 10px; min-height: 20px;"></div>
-                <button class="btn btn-danger" id="sellBtn" style="width: 100%;">确认卖出</button>
-            </div>
-        </div>
-    </div>
-
     <!-- Trade History -->
     <div class="card">
         <div class="card-title">
@@ -902,7 +840,7 @@
 </div>
 <div class="toast" id="toast"></div>
 <div class="kbd-hint" id="kbdHint">
-    <kbd>R</kbd> 刷新行情 &nbsp; <kbd>A</kbd> 自动刷新 &nbsp; <kbd>Space</kbd> 启动/停止 &nbsp; <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd> 切换模式
+    <kbd>R</kbd> 刷新行情 &nbsp; <kbd>Space</kbd> 启动/停止 &nbsp; <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd> 切换模式 &nbsp; <kbd>K</kbd> K线图
 </div>
 
 <script>
@@ -1671,7 +1609,7 @@ function showConfirm(title, message) {
     return new Promise(resolve => {
         _modalResolve = resolve;
         document.getElementById('modalTitle').textContent = title;
-        document.getElementById('modalMessage').innerHTML = message;
+        document.getElementById('modalMessage').textContent = message;
         document.getElementById('modalOverlay').classList.add('show');
     });
 }
@@ -2451,34 +2389,6 @@ function renderStats() {
     profitEl.className = 'stat-value ' + (profit >= 0 ? 'up' : 'down');
     profitPctEl.textContent = (profitPct >= 0 ? '+' : '') + profitPct.toFixed(2) + '%';
     profitPctEl.className = 'stat-sub ' + (profitPct >= 0 ? 'up' : 'down');
-
-    // 今日盈亏
-    const todayProfitEl = document.getElementById('todayProfit');
-    const todayProfitPctEl = document.getElementById('todayProfitPct');
-    if (state.equityHistory.length > 1) {
-        // 找到今天的第一笔记录
-        const today = new Date().toDateString();
-        const todayRecords = state.equityHistory.filter(e => new Date(e.time).toDateString() === today);
-        if (todayRecords.length > 0) {
-            const todayStart = todayRecords[0].value;
-            const todayProfit = totalAssets - todayStart;
-            const todayProfitPct = (todayProfit / todayStart * 100);
-            todayProfitEl.textContent = (todayProfit >= 0 ? '+' : '') + formatMoney(todayProfit);
-            todayProfitEl.className = 'stat-value ' + (todayProfit >= 0 ? 'up' : 'down');
-            todayProfitPctEl.textContent = (todayProfitPct >= 0 ? '+' : '') + todayProfitPct.toFixed(2) + '%';
-            todayProfitPctEl.className = 'stat-sub ' + (todayProfitPct >= 0 ? 'up' : 'down');
-        } else {
-            todayProfitEl.textContent = '¥0.00';
-            todayProfitEl.className = 'stat-value';
-            todayProfitPctEl.textContent = '0.00%';
-            todayProfitPctEl.className = 'stat-sub';
-        }
-    } else {
-        todayProfitEl.textContent = '¥0.00';
-        todayProfitEl.className = 'stat-value';
-        todayProfitPctEl.textContent = '0.00%';
-        todayProfitPctEl.className = 'stat-sub';
-    }
 }
 
 function renderPositions() {
@@ -2699,17 +2609,10 @@ function renderStatus() {
 function manualSell(code) {
     const pos = state.positions[code];
     if (!pos) return;
-    // 填充卖出面板
-    document.getElementById('sellStockCode').value = code;
-    document.getElementById('sellQuantity').value = pos.quantity;
     const q = getStockPrice(code);
-    if (q && q.price > 0) {
-        document.getElementById('sellPrice').value = q.price.toFixed(2);
-    }
-    showStockInfo('sellStockCode', 'sellStockInfo');
-    // 滚动到手动交易面板
-    document.getElementById('manualTradeCard').scrollIntoView({ behavior: 'smooth', block: 'center' });
-    showToast('已填充卖出信息，请确认后点击卖出', 'info');
+    const price = q ? q.price : pos.avgCost;
+    executeSell(code, pos.quantity, price);
+    renderAll();
 }
 
 // ============ 市场状态检测 ============
@@ -2780,182 +2683,6 @@ seedPriceHistory();
 if (state.isRunning) {
     startAI();
 }
-
-
-// ============ 手动交易功能 ============
-let autoRefreshInterval = null;
-let autoRefreshEnabled = false;
-
-async function fetchStockInfo(code) {
-    try {
-        const sc = sinaCode(code);
-        const url = CORS_PROXY + encodeURIComponent('https://qt.gtimg.cn/q=' + sc);
-        const resp = await fetch(url, { cache: 'no-store' });
-        const buf = await resp.arrayBuffer();
-        const raw = new TextDecoder('gbk').decode(buf);
-        const m = raw.match(/v_(\w+)="([^"]+)"/);
-        if (m) {
-            const f = m[2].split('~');
-            return {
-                name: f[1] || '',
-                code: f[2] || '',
-                price: parseFloat(f[3]) || 0,
-                prevClose: parseFloat(f[4]) || 0,
-                changePct: parseFloat(f[32]) || 0
-            };
-        }
-    } catch (e) {
-        console.warn('获取股票信息失败:', e);
-    }
-    return null;
-}
-
-async function showStockInfo(inputId, infoId) {
-    const code = document.getElementById(inputId).value.trim();
-    const infoEl = document.getElementById(infoId);
-    if (!code || code.length !== 6) { infoEl.textContent = ''; return; }
-    infoEl.textContent = '查询中...';
-    const info = await fetchStockInfo(code);
-    if (info && info.price > 0) {
-        const cls = info.changePct >= 0 ? 'up' : 'down';
-        let html = '<span style="font-weight:500">' + info.name + '</span> ' +
-            '<span style="color:var(--' + cls + ')">' + info.price.toFixed(2) + '</span> ' +
-            '<span style="color:var(--' + cls + ')">' + (info.changePct >= 0 ? '+' : '') + info.changePct.toFixed(2) + '%</span>';
-        // 如果是卖出面板，显示持仓信息
-        if (inputId === 'sellStockCode') {
-            const pos = state.positions[code];
-            if (pos) {
-                html += '<br><span style="color:var(--text-muted)">持仓: ' + pos.quantity + '手 · 成本: ' + pos.avgCost.toFixed(2) + '</span>';
-            }
-        }
-        infoEl.innerHTML = html;
-    } else {
-        infoEl.textContent = '未找到该股票';
-    }
-}
-
-async function manualBuy() {
-    const code = document.getElementById('buyStockCode').value.trim();
-    const quantity = parseInt(document.getElementById('buyQuantity').value) || 0;
-    let price = parseFloat(document.getElementById('buyPrice').value);
-    if (!code || code.length !== 6) { showToast('请输入正确的6位股票代码', 'error'); return; }
-    if (quantity <= 0) { showToast('请输入有效的买入数量', 'error'); return; }
-    if (!price || price <= 0) {
-        const info = await fetchStockInfo(code);
-        if (!info || info.price <= 0) { showToast('无法获取股票价格', 'error'); return; }
-        price = info.price;
-    }
-    const stockInfo = await fetchStockInfo(code);
-    const poolInfo = STOCK_POOL.find(s => s.code === code);
-    const stockName = stockInfo?.name || poolInfo?.name || code;
-    const totalCost = quantity * 100 * price;
-    const commission = Math.max(5, totalCost * 0.0003);
-    const totalAmount = totalCost + commission;
-    // 确认对话框
-    const confirmed = await showConfirm('确认买入',
-        stockName + '(' + code + ')<br>' +
-        quantity + '手 x ' + price.toFixed(2) + '元 = ' + formatMoney(totalCost) + '<br>' +
-        '佣金: ' + commission.toFixed(2) + '元<br>' +
-        '总计: <b>' + formatMoney(totalAmount) + '</b><br>' +
-        '可用资金: ' + formatMoney(state.cash));
-    if (!confirmed) return;
-    const success = executeBuy(code, stockName, quantity, price);
-    if (success) {
-        showToast('买入成功: ' + stockName + ' ' + quantity + '手 @ ' + price.toFixed(2), 'success');
-        document.getElementById('buyStockCode').value = '';
-        document.getElementById('buyQuantity').value = '1';
-        document.getElementById('buyPrice').value = '';
-        document.getElementById('buyStockInfo').textContent = '';
-        renderAll();
-    }
-}
-
-async function manualSellAction() {
-    const code = document.getElementById('sellStockCode').value.trim();
-    const quantity = parseInt(document.getElementById('sellQuantity').value) || 0;
-    let price = parseFloat(document.getElementById('sellPrice').value);
-    if (!code || code.length !== 6) { showToast('请输入正确的6位股票代码', 'error'); return; }
-    if (quantity <= 0) { showToast('请输入有效的卖出数量', 'error'); return; }
-    const pos = state.positions[code];
-    if (!pos) { showToast('没有持有该股票', 'error'); return; }
-    if (pos.quantity < quantity) { showToast('持仓不足，当前持有 ' + pos.quantity + ' 手', 'error'); return; }
-    if (!price || price <= 0) {
-        const info = await fetchStockInfo(code);
-        if (!info || info.price <= 0) { showToast('无法获取股票价格', 'error'); return; }
-        price = info.price;
-    }
-    const totalAmount = quantity * 100 * price;
-    const commission = Math.max(5, totalAmount * 0.0003);
-    const stampTax = totalAmount * 0.001;
-    const netAmount = totalAmount - commission - stampTax;
-    const profit = (price - pos.avgCost) * quantity * 100;
-    const profitPct = ((price - pos.avgCost) / pos.avgCost * 100);
-    const profitCls = profit >= 0 ? 'up' : 'down';
-    // 确认对话框
-    const confirmed = await showConfirm('确认卖出',
-        (pos.name || code) + '(' + code + ')<br>' +
-        quantity + '手 x ' + price.toFixed(2) + '元 = ' + formatMoney(totalAmount) + '<br>' +
-        '佣金: ' + commission.toFixed(2) + '元 · 印花税: ' + stampTax.toFixed(2) + '元<br>' +
-        '实际到账: <b>' + formatMoney(netAmount) + '</b><br>' +
-        '预估盈亏: <span class="' + profitCls + '">' + (profit >= 0 ? '+' : '') + formatMoney(profit) + ' (' + (profitPct >= 0 ? '+' : '') + profitPct.toFixed(2) + '%)</span>');
-    if (!confirmed) return;
-    const success = executeSell(code, quantity, price);
-    if (success) {
-        showToast('卖出成功: ' + (pos.name || code) + ' ' + quantity + '手 @ ' + price.toFixed(2), 'success');
-        document.getElementById('sellStockCode').value = '';
-        document.getElementById('sellQuantity').value = '1';
-        document.getElementById('sellPrice').value = '';
-        document.getElementById('sellStockInfo').textContent = '';
-        renderAll();
-    }
-}
-
-function startAutoRefresh() {
-    if (autoRefreshInterval) clearInterval(autoRefreshInterval);
-    autoRefreshEnabled = true;
-    autoRefreshInterval = setInterval(async () => {
-        await fetchRealtimeQuotes();
-        // 更新持仓现价
-        Object.keys(state.positions).forEach(code => {
-            const q = getStockPrice(code);
-            if (q) state.positions[code].currentPrice = q.price;
-        });
-        renderAll();
-        const now = new Date();
-        document.getElementById('lastUpdate').textContent = ' ' + now.toLocaleTimeString('zh-CN', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
-    }, 5000);
-    document.getElementById('autoRefreshStatus').textContent = '自动刷新: 开启(5秒)';
-    document.getElementById('toggleAutoRefresh').textContent = '关闭自动刷新';
-    showToast('已开启自动刷新（每5秒）', 'success');
-}
-
-function stopAutoRefresh() {
-    if (autoRefreshInterval) { clearInterval(autoRefreshInterval); autoRefreshInterval = null; }
-    autoRefreshEnabled = false;
-    document.getElementById('autoRefreshStatus').textContent = '自动刷新: 关闭';
-    document.getElementById('toggleAutoRefresh').textContent = '开启自动刷新';
-    showToast('已关闭自动刷新', 'info');
-}
-
-function toggleAutoRefresh() {
-    autoRefreshEnabled ? stopAutoRefresh() : startAutoRefresh();
-}
-
-document.getElementById('buyBtn').addEventListener('click', manualBuy);
-document.getElementById('sellBtn').addEventListener('click', manualSellAction);
-document.getElementById('toggleAutoRefresh').addEventListener('click', toggleAutoRefresh);
-document.getElementById('buyStockCode').addEventListener('input', function() {
-    clearTimeout(this._timer);
-    this._timer = setTimeout(() => showStockInfo('buyStockCode', 'buyStockInfo'), 300);
-});
-document.getElementById('sellStockCode').addEventListener('input', function() {
-    clearTimeout(this._timer);
-    this._timer = setTimeout(() => showStockInfo('sellStockCode', 'sellStockInfo'), 300);
-});
-document.addEventListener('keydown', function(e) {
-    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-    if (e.key === 'a' || e.key === 'A') { e.preventDefault(); toggleAutoRefresh(); }
-});
 
 // Manual refresh button
 document.getElementById('refreshBtn').addEventListener('click', async function() {
