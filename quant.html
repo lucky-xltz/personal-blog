@@ -689,6 +689,8 @@
             <div class="signal-gauge"><div class="gauge-label">Ichimoku</div><div class="gauge-value" id="gIchi">--</div><div class="gauge-bar"><div class="gauge-fill" id="gIchibar"></div></div></div>
             <div class="signal-gauge"><div class="gauge-label">CCI</div><div class="gauge-value" id="gCCI">--</div><div class="gauge-bar"><div class="gauge-fill" id="gCCIbar"></div></div></div>
             <div class="signal-gauge"><div class="gauge-label">MFI</div><div class="gauge-value" id="gMFI">--</div><div class="gauge-bar"><div class="gauge-fill" id="gMFIbar"></div></div></div>
+            <div class="signal-gauge"><div class="gauge-label">CMF</div><div class="gauge-value" id="gCMF">--</div><div class="gauge-bar"><div class="gauge-fill" id="gCMFbar"></div></div></div>
+            <div class="signal-gauge"><div class="gauge-label">ROC</div><div class="gauge-value" id="gROC">--</div><div class="gauge-bar"><div class="gauge-fill" id="gROCbar"></div></div></div>
         </div>
         <div id="signalDetails" style="margin-top: 12px; font-size: 12px; color: var(--text-dim); line-height: 1.8;"></div>
     </div>
@@ -758,11 +760,12 @@
                         <th>盈亏</th>
                         <th>盈亏率</th>
                         <th>信号</th>
+                        <th>风险比</th>
                         <th>操作</th>
                     </tr>
                 </thead>
                 <tbody id="positionBody">
-                    <tr><td colspan="10" style="text-align: center; color: var(--text-muted); padding: 32px;">暂无持仓</td></tr>
+                    <tr><td colspan="11" style="text-align: center; color: var(--text-muted); padding: 32px;">暂无持仓</td></tr>
                 </tbody>
             </table>
         </div>
@@ -1284,6 +1287,31 @@ function calcMFI(prices, volumes, period) {
 }
 
 
+function calcCMF(prices, volumes, period) {
+    period = period || 20;
+    if (prices.length < period + 1 || !volumes || volumes.length < period + 1) return 0;
+    var mfvSum = 0, volSum = 0;
+    for (var i = prices.length - period; i < prices.length; i++) {
+        var high = prices[i]; // simplified: using close as proxy for high
+        var low = prices[i];  // simplified: using close as proxy for low
+        var close = prices[i];
+        var prevClose = prices[i - 1];
+        var hlRange = high - low;
+        var mfm = hlRange > 0 ? ((close - low) - (high - close)) / hlRange : 0;
+        var mfVolume = mfm * (volumes[i] || 1);
+        mfvSum += mfVolume;
+        volSum += (volumes[i] || 1);
+    }
+    return volSum > 0 ? mfvSum / volSum : 0;
+}
+
+function calcROC(prices, period) {
+    period = period || 12;
+    if (prices.length < period + 1) return 0;
+    var current = prices[prices.length - 1];
+    var previous = prices[prices.length - 1 - period];
+    return previous > 0 ? ((current - previous) / previous) * 100 : 0;
+}
 
 
 
@@ -1481,6 +1509,22 @@ function computeSignalScore(code, quote) {
         else if (mfi > 70) { score -= 0.5; }
     }
 
+    // CMF (Chaikin Money Flow)
+    const _cmfVols = volumeHistory[code];
+    if (prices.length >= 21 && _cmfVols && _cmfVols.length >= 21) {
+        const cmf = calcCMF(prices, _cmfVols, 20);
+        if (cmf > 0.1) { score += 0.8; signals.push({ label: 'CMF流入', type: 'buy' }); }
+        else if (cmf < -0.1) { score -= 0.8; signals.push({ label: 'CMF流出', type: 'sell' }); }
+    }
+
+    // ROC (Rate of Change)
+    if (prices.length >= 13) {
+        const roc = calcROC(prices, 12);
+        if (roc > 5) { score -= 0.5; signals.push({ label: 'ROC超涨', type: 'sell' }); }
+        else if (roc < -5) { score += 0.5; signals.push({ label: 'ROC超跌', type: 'buy' }); }
+        else if (roc > 2) { score += 0.3; }
+        else if (roc < -2) { score -= 0.3; }
+    }
 
     // Support/Resistance levels
     const sr = calcSupportResistance(prices);
@@ -1918,7 +1962,9 @@ async function aiDecide() {
         // Volume confirmation boost: increase size when volume confirms signal
         const hasVolConfirm = candidate.signals.some(s => s.label.includes('放量') || s.label.includes('OBV上升') || s.label.includes('放量确认'));
         const volumeBoost = hasVolConfirm ? 1.15 : 1.0;
-        const cashRatio = baseRatio * strengthMultiplier * volumeBoost;
+        // ATR-based volatility adjustment: reduce size in high-volatility, increase in low-volatility
+        const atrAdj = candidate.atrPct > 0 ? Math.max(0.6, Math.min(1.3, 2.0 / candidate.atrPct)) : 1.0;
+        const cashRatio = baseRatio * strengthMultiplier * volumeBoost * atrAdj;
         let maxShares = Math.floor(state.cash * cashRatio / (q2.price * 100));
         // Cap by concentration limit
         const concShares = Math.floor(maxPositionVal / (q2.price * 100));
@@ -2202,6 +2248,31 @@ function updateSignalDashboard(code) {
         mfiBar.style.background = mfi < 20 ? 'var(--safe)' : mfi > 80 ? 'var(--danger)' : 'var(--text-muted)';
     }
 
+    // CMF
+    var _cmfVols = volumeHistory[code];
+    if (prices.length >= 21 && _cmfVols && _cmfVols.length >= 21) {
+        var cmf = calcCMF(prices, _cmfVols, 20);
+        var cmfEl = document.getElementById('gCMF');
+        var cmfBar = document.getElementById('gCMFbar');
+        var cmfNorm = Math.max(0, Math.min(100, (cmf + 0.5) * 100));
+        cmfEl.textContent = (cmf >= 0 ? '+' : '') + cmf.toFixed(3);
+        cmfEl.className = 'gauge-value ' + (cmf > 0.1 ? 'gauge-buy' : cmf < -0.1 ? 'gauge-sell' : 'gauge-neutral');
+        cmfBar.style.width = cmfNorm + '%';
+        cmfBar.style.background = cmf > 0.1 ? 'var(--safe)' : cmf < -0.1 ? 'var(--danger)' : 'var(--text-muted)';
+    }
+
+    // ROC
+    if (prices.length >= 13) {
+        var roc = calcROC(prices, 12);
+        var rocEl = document.getElementById('gROC');
+        var rocBar = document.getElementById('gROCbar');
+        var rocNorm = Math.max(0, Math.min(100, (roc + 10) / 20 * 100));
+        rocEl.textContent = (roc >= 0 ? '+' : '') + roc.toFixed(1) + '%';
+        rocEl.className = 'gauge-value ' + (roc > 5 ? 'gauge-sell' : roc < -5 ? 'gauge-buy' : 'gauge-neutral');
+        rocBar.style.width = rocNorm + '%';
+        rocBar.style.background = roc > 5 ? 'var(--danger)' : roc < -5 ? 'var(--safe)' : 'var(--text-muted)';
+    }
+
 
     
     // Signal details text
@@ -2325,7 +2396,7 @@ function renderPositions() {
     const codes = Object.keys(state.positions);
 
     if (codes.length === 0) {
-        body.innerHTML = '<tr><td colspan="10" style="text-align: center; color: var(--text-muted); padding: 32px;">暂无持仓</td></tr>';
+        body.innerHTML = '<tr><td colspan="11" style="text-align: center; color: var(--text-muted); padding: 32px;">暂无持仓</td></tr>';
         return;
     }
 
@@ -2357,9 +2428,28 @@ function renderPositions() {
             '<td class="' + cls + '">' + (profit >= 0 ? '+' : '') + profit.toFixed(2) + '</td>' +
             '<td class="' + cls + '">' + (profitPct >= 0 ? '+' : '') + profitPct.toFixed(2) + '%</td>' +
             '<td><div class="indicators">' + badges + '</div></td>' +
+            '<td>' + buildRiskReward(code, pos, currentPrice, q) + '</td>' +
             '<td><button class="btn btn-outline" style="padding: 4px 12px; font-size: 12px;" onclick="manualSell(\'' + code + '\')">卖出</button></td>' +
         '</tr>';
     }).join('');
+}
+
+
+function buildRiskReward(code, pos, currentPrice, quote) {
+    var mode = MODES[state.mode];
+    var atr = calcATR(priceHistory[code] || [currentPrice], 14);
+    var atrPct = currentPrice > 0 ? (atr / currentPrice) : 0;
+    var atrMult = state.mode === 'aggressive' ? 2.5 : state.mode === 'balanced' ? 2 : 1.5;
+    var dynamicStop = Math.max(mode.stopLoss, atrPct * atrMult);
+    var stopPrice = pos.avgCost * (1 - dynamicStop);
+    var targetPrice = pos.avgCost * (1 + mode.takeProfit);
+    var risk = pos.avgCost - stopPrice;
+    var reward = targetPrice - pos.avgCost;
+    var rr = risk > 0 ? (reward / risk) : 0;
+    var color = rr >= 2 ? 'var(--safe)' : rr >= 1 ? 'var(--warn)' : 'var(--danger)';
+    var html = '<span style="color:' + color + ';font-weight:600;font-size:12px;">' + rr.toFixed(1) + ':1</span>';
+    html += '<br><span style="font-size:10px;color:var(--text-muted);">止损' + stopPrice.toFixed(2) + '</span>';
+    return html;
 }
 
 function buildSparkline(code) {
@@ -2794,6 +2884,22 @@ function calcBacktestSignalScore(prices, price, modeKey) {
         else if (mfi > 80) score -= 1.5;
     }
 
+    // CMF (Chaikin Money Flow) - using price as proxy
+    if (prices.length >= 21) {
+        var cmf = calcCMF(prices, prices.map(function(){return 1;}), 20);
+        if (cmf > 0.1) score += 0.8;
+        else if (cmf < -0.1) score -= 0.8;
+    }
+
+    // ROC (Rate of Change)
+    if (prices.length >= 13) {
+        var roc = calcROC(prices, 12);
+        if (roc > 5) score -= 0.5;
+        else if (roc < -5) score += 0.5;
+        else if (roc > 2) score += 0.3;
+        else if (roc < -2) score -= 0.3;
+    }
+
     // Trend filter
     var trend = calcTrendFilter(prices);
     if (trend === 'down') score *= 0.7;
@@ -3098,6 +3204,57 @@ function drawKlineChart(klines, stockName) {
         ctx.fillText(pVal.toFixed(2), totalW - 2, gy - 3);
     }
 
+    // Draw profit target and stop-loss lines for position stocks
+    if (klines._position) {
+        var pos = klines._position;
+        var mode = MODES[state.mode];
+        var posATR = calcATR(closes, 14);
+        var posATRPct = pos.avgCost > 0 ? (posATR / pos.avgCost) : 0;
+        var posATRMult = state.mode === 'aggressive' ? 2.5 : state.mode === 'balanced' ? 2 : 1.5;
+        var dynStop = Math.max(mode.stopLoss, posATRPct * posATRMult);
+        var stopPrice = pos.avgCost * (1 - dynStop);
+        var targetPrice = pos.avgCost * (1 + mode.takeProfit);
+        // Draw stop-loss line (red dashed)
+        if (stopPrice >= priceMin && stopPrice <= priceMax) {
+            var slY = priceH - ((stopPrice - priceMin) / priceRange) * priceH;
+            ctx.strokeStyle = 'rgba(248,81,73,0.5)';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([4, 3]);
+            ctx.beginPath(); ctx.moveTo(0, slY); ctx.lineTo(totalW, slY); ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.fillStyle = '#f85149';
+            ctx.font = '10px Inter';
+            ctx.textAlign = 'left';
+            ctx.fillText('止损 ' + stopPrice.toFixed(2), 4, slY - 4);
+        }
+        // Draw profit target line (green dashed)
+        if (targetPrice >= priceMin && targetPrice <= priceMax) {
+            var tpY = priceH - ((targetPrice - priceMin) / priceRange) * priceH;
+            ctx.strokeStyle = 'rgba(46,160,67,0.5)';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([4, 3]);
+            ctx.beginPath(); ctx.moveTo(0, tpY); ctx.lineTo(totalW, tpY); ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.fillStyle = '#2ea043';
+            ctx.font = '10px Inter';
+            ctx.textAlign = 'left';
+            ctx.fillText('止盈 ' + targetPrice.toFixed(2), 4, tpY - 4);
+        }
+        // Draw cost basis line (white dashed)
+        if (pos.avgCost >= priceMin && pos.avgCost <= priceMax) {
+            var costY = priceH - ((pos.avgCost - priceMin) / priceRange) * priceH;
+            ctx.strokeStyle = 'rgba(224,229,236,0.3)';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([3, 3]);
+            ctx.beginPath(); ctx.moveTo(0, costY); ctx.lineTo(totalW, costY); ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.fillStyle = '#e0e5ec';
+            ctx.font = '10px Inter';
+            ctx.textAlign = 'right';
+            ctx.fillText('成本 ' + pos.avgCost.toFixed(2), totalW - 4, costY - 4);
+        }
+    }
+
     // Draw candlesticks
     for (var i = 0; i < candleCount; i++) {
         var k = klines[i];
@@ -3151,6 +3308,42 @@ function drawKlineChart(klines, stockName) {
     drawEMALine(ema20, '#5cc4b0', 1.2);
     if (ema60) drawEMALine(ema60, '#d4789b', 1.2);
 
+    // Draw buy/sell trade markers if available
+    if (klines._trades && klines._trades.length > 0) {
+        klines._trades.forEach(function(trade) {
+            // Find the candle index matching the trade date
+            var tradeDate = trade.time ? new Date(trade.time).toISOString().slice(0, 10) : null;
+            var candleIdx = -1;
+            for (var ti = 0; ti < klines.length; ti++) {
+                if (klines[ti].date === tradeDate) { candleIdx = ti; break; }
+            }
+            if (candleIdx < 0) return;
+            var x = candleIdx * step + gap / 2 + candleW / 2;
+            var y = priceH - ((trade.price - priceMin) / priceRange) * priceH;
+            ctx.save();
+            if (trade.action === 'buy') {
+                // Green triangle pointing up
+                ctx.fillStyle = '#2ea043';
+                ctx.beginPath();
+                ctx.moveTo(x, y + 10);
+                ctx.lineTo(x - 6, y + 20);
+                ctx.lineTo(x + 6, y + 20);
+                ctx.closePath();
+                ctx.fill();
+            } else {
+                // Red triangle pointing down
+                ctx.fillStyle = '#f85149';
+                ctx.beginPath();
+                ctx.moveTo(x, y - 10);
+                ctx.lineTo(x - 6, y - 20);
+                ctx.lineTo(x + 6, y - 20);
+                ctx.closePath();
+                ctx.fill();
+            }
+            ctx.restore();
+        });
+    }
+
     // Volume axis label
     ctx.fillStyle = '#7a8494';
     ctx.font = '9px Inter';
@@ -3184,7 +3377,14 @@ document.getElementById('klineDrawBtn').addEventListener('click', async function
         btn.textContent = '绘制K线'; btn.disabled = false;
         return;
     }
-    drawKlineChart(klines.slice(-period), stockName);
+    var slicedKlines = klines.slice(-period);
+    // Attach position data if this stock is held
+    if (state.positions[stockCode]) {
+        slicedKlines._position = state.positions[stockCode];
+    }
+    // Attach trade history for this stock
+    slicedKlines._trades = state.trades.filter(function(t) { return t.code === stockCode; });
+    drawKlineChart(slicedKlines, stockName);
     btn.textContent = '绘制K线'; btn.disabled = false;
 });
 populateKlineStocks();
@@ -3246,7 +3446,14 @@ document.getElementById('btBatchBtn').addEventListener('click', async function()
         var ret = (finalVal - 100000) / 100000 * 100;
         var closedT = Math.floor(trades / 2);
         var wr2 = closedT > 0 ? (wins / closedT * 100) : 0;
-        results.push({ name: s.name, code: s.code, sector: s.sector, return: ret, winRate: wr2, maxDD: maxDD, trades: closedT });
+        // Calculate Sortino ratio for batch
+        var btRet2 = [];
+        for (var ri2 = 1; ri2 < equity.length; ri2++) btRet2.push((equity[ri2] - equity[ri2-1]) / equity[ri2-1]);
+        var avgR2 = btRet2.reduce(function(s,v){return s+v;},0) / (btRet2.length || 1);
+        var negR2 = btRet2.filter(function(r){return r<0;});
+        var dd2 = negR2.length > 0 ? Math.sqrt(negR2.reduce(function(s,v){return s+v*v;},0) / negR2.length) : 0;
+        var sortino2 = dd2 > 0 ? (avgR2 / dd2) * Math.sqrt(252) : 0;
+        results.push({ name: s.name, code: s.code, sector: s.sector, return: ret, winRate: wr2, maxDD: maxDD, trades: closedT, sortino: sortino2 });
     }
 
     results.sort(function(a, b) { return b.return - a.return; });
@@ -3268,7 +3475,7 @@ document.getElementById('btBatchBtn').addEventListener('click', async function()
     '</div>';
 
     container.innerHTML = summaryHtml + '<div class="table-wrap"><table class="batch-table"><thead><tr>' +
-        '<th>排名</th><th>股票</th><th>板块</th><th>收益率</th><th>胜率</th><th>最大回撤</th><th>交易次数</th>' +
+        '<th>排名</th><th>股票</th><th>板块</th><th>收益率</th><th>胜率</th><th>最大回撤</th><th>交易次数</th><th>索提诺</th>' +
         '</tr></thead><tbody>' +
         results.map(function(r, idx) {
             return '<tr>' +
@@ -3279,6 +3486,7 @@ document.getElementById('btBatchBtn').addEventListener('click', async function()
                 '<td>' + r.winRate.toFixed(0) + '%</td>' +
                 '<td class="up">-' + (r.maxDD * 100).toFixed(1) + '%</td>' +
                 '<td>' + r.trades + '</td>' +
+                '<td class="' + (r.sortino > 1 ? 'up' : r.sortino < 0 ? 'down' : '') + '">' + (r.sortino || 0).toFixed(2) + '</td>' +
             '</tr>';
         }).join('') + '</tbody></table></div>';
 
