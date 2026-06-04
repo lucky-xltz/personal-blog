@@ -473,6 +473,12 @@
             background: var(--bg-raised);
             overflow: hidden;
         }
+        
+        /* MACD图表样式 */
+        #macdChart {
+            width: 100%;
+            display: block;
+        }
         .signal-gauge .gauge-fill {
             height: 100%;
             border-radius: 2px;
@@ -710,6 +716,7 @@
             <div class="signal-gauge"><div class="gauge-label">RSI</div><div class="gauge-value" id="gRSI">--</div><div class="gauge-bar"><div class="gauge-fill" id="gRSIbar"></div></div></div>
             <div class="signal-gauge"><div class="gauge-label">MACD</div><div class="gauge-value" id="gMACD">--</div><div class="gauge-bar"><div class="gauge-fill" id="gMACDbar"></div></div></div>
             <div class="signal-gauge"><div class="gauge-label">KDJ-J</div><div class="gauge-value" id="gKDJ">--</div><div class="gauge-bar"><div class="gauge-fill" id="gKDJbar"></div></div></div>
+            <div class="signal-gauge"><div class="gauge-label">KDJ-J</div><div class="gauge-value" id="gKDJ">--</div><div class="gauge-bar"><div class="gauge-fill" id="gKDJbar"></div></div></div>
             <div class="signal-gauge"><div class="gauge-label">Williams</div><div class="gauge-value" id="gWR">--</div><div class="gauge-bar"><div class="gauge-fill" id="gWRbar"></div></div></div>
             <div class="signal-gauge"><div class="gauge-label">StochRSI</div><div class="gauge-value" id="gSRSI">--</div><div class="gauge-bar"><div class="gauge-fill" id="gSRSIbar"></div></div></div>
             <div class="signal-gauge"><div class="gauge-label">ADX</div><div class="gauge-value" id="gADX">--</div><div class="gauge-bar"><div class="gauge-fill" id="gADXbar"></div></div></div>
@@ -721,6 +728,11 @@
             <div class="signal-gauge"><div class="gauge-label">ROC</div><div class="gauge-value" id="gROC">--</div><div class="gauge-bar"><div class="gauge-fill" id="gROCbar"></div></div></div>
         </div>
         <div id="signalDetails" style="margin-top: 12px; font-size: 12px; color: var(--text-dim); line-height: 1.8;"></div>
+        <!-- MACD柱状图 -->
+        <div style="margin-top: 16px; background: var(--bg); border-radius: var(--radius-sm); padding: 12px; box-shadow: var(--neu-inset-sm);">
+            <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">MACD 柱状图</div>
+            <canvas id="macdChart" height="120"></canvas>
+        </div>
     </div>
     <!-- Market Status Bar -->
     <div class="card" id="marketStatusCard" style="display:flex; align-items:center; justify-content:space-between; padding: 14px 20px;">
@@ -3238,6 +3250,130 @@ function renderSectorAllocation() {
         '<div style="font-size:11px;color:var(--text-dim);">\u00a5' + (state.cash/10000).toFixed(1) + '\u4e07</div>' +
     '</div>';
     container.innerHTML = html;
+    
+    // 渲染MACD柱状图
+    renderMACDChart(code);
+}
+
+
+// ============ MACD柱状图渲染 ============
+function renderMACDChart(code) {
+    var canvas = document.getElementById('macdChart');
+    if (!canvas) return;
+    
+    var ctx = canvas.getContext('2d');
+    var dpr = window.devicePixelRatio || 1;
+    var rect = canvas.parentElement.getBoundingClientRect();
+    var w = rect.width - 24;
+    var h = 120;
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+    ctx.scale(dpr, dpr);
+    ctx.clearRect(0, 0, w, h);
+    
+    var prices = priceHistory[code];
+    if (!prices || prices.length < 30) {
+        ctx.fillStyle = '#7a8494';
+        ctx.font = '12px Inter';
+        ctx.textAlign = 'center';
+        ctx.fillText('数据积累中...', w / 2, h / 2);
+        return;
+    }
+    
+    // 计算MACD
+    var macdData = [];
+    var startIdx = Math.max(0, prices.length - 60);
+    for (var i = startIdx; i < prices.length; i++) {
+        var slice = prices.slice(0, i + 1);
+        if (slice.length >= 26) {
+            var macd = calcMACD(slice);
+            macdData.push({
+                dif: macd.dif,
+                dea: macd.dea,
+                macd: macd.macd
+            });
+        }
+    }
+    
+    if (macdData.length === 0) return;
+    
+    // 找到最大最小值
+    var maxVal = -Infinity, minVal = Infinity;
+    macdData.forEach(function(d) {
+        if (d.dif > maxVal) maxVal = d.dif;
+        if (d.dea > maxVal) maxVal = d.dea;
+        if (d.macd > maxVal) maxVal = d.macd;
+        if (d.dif < minVal) minVal = d.dif;
+        if (d.dea < minVal) minVal = d.dea;
+        if (d.macd < minVal) minVal = d.macd;
+    });
+    
+    var range = maxVal - minVal || 1;
+    var padding = 10;
+    var chartH = h - padding * 2;
+    var chartW = w - padding * 2;
+    var barW = chartW / macdData.length;
+    
+    // 绘制零线
+    var zeroY = padding + chartH * (maxVal / range);
+    ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(padding, zeroY);
+    ctx.lineTo(w - padding, zeroY);
+    ctx.stroke();
+    
+    // 绘制MACD柱状图
+    macdData.forEach(function(d, i) {
+        var x = padding + i * barW;
+        var barH = (d.macd / range) * chartH;
+        var y = zeroY;
+        
+        if (d.macd >= 0) {
+            y = zeroY - barH;
+            ctx.fillStyle = 'rgba(46, 160, 67, 0.8)';
+        } else {
+            y = zeroY;
+            ctx.fillStyle = 'rgba(248, 81, 73, 0.8)';
+        }
+        
+        ctx.fillRect(x + 1, y, barW - 2, Math.abs(barH));
+    });
+    
+    // 绘制DIF线
+    ctx.strokeStyle = '#e67e22';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    macdData.forEach(function(d, i) {
+        var x = padding + i * barW + barW / 2;
+        var y = padding + chartH * ((maxVal - d.dif) / range);
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+    
+    // 绘制DEA线
+    ctx.strokeStyle = '#7c83db';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    macdData.forEach(function(d, i) {
+        var x = padding + i * barW + barW / 2;
+        var y = padding + chartH * ((maxVal - d.dea) / range);
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+    
+    // 图例
+    ctx.font = '10px Inter';
+    ctx.fillStyle = '#e67e22';
+    ctx.fillText('DIF', w - 80, 12);
+    ctx.fillStyle = '#7c83db';
+    ctx.fillText('DEA', w - 50, 12);
+    ctx.fillStyle = '#7a8494';
+    ctx.fillText('MACD', w - 20, 12);
 }
 
 // ============ 渲染 ============
