@@ -57,7 +57,19 @@
         .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 0.9rem; transition: color var(--transition); }
         .nav-links a:hover, .nav-links a.active { color: var(--accent); }
 
-        .container { max-width: 960px; margin: 0 auto; padding: 24px 16px; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 24px 24px; }
+        
+        /* 两列布局 - 大屏幕 */
+        @media (min-width: 1200px) {
+            .two-col-layout {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 16px;
+            }
+            .two-col-layout > .card {
+                margin-bottom: 0;
+            }
+        }
         .page-title { text-align: center; margin-bottom: 32px; }
         .page-title h1 {
             font-family: 'Outfit', sans-serif;
@@ -148,9 +160,12 @@
         /* Stats Grid */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(5, 1fr);
             gap: 12px;
-            margin-bottom: 24px;
+            margin-bottom: 16px;
+        }
+        @media (max-width: 768px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
         }
         @media (max-width: 640px) {
             .stats-grid { grid-template-columns: repeat(2, 1fr); }
@@ -356,7 +371,7 @@
 
         /* Performance Metrics */
         .perf-grid {
-            display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px;
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px;
         }
         @media (max-width: 640px) { .perf-grid { grid-template-columns: repeat(2, 1fr); } }
         .perf-card {
@@ -637,13 +652,18 @@
             <div class="stat-sub" id="totalProfitPct">0.00%</div>
         </div>
         <div class="stat-card">
+            <div class="stat-label">总收益</div>
+            <div class="stat-value" id="totalProfit">¥0.00</div>
+            <div class="stat-sub" id="totalProfitPct">0.00%</div>
+        </div>
+        <div class="stat-card">
             <div class="stat-label">今日盈亏</div>
             <div class="stat-value" id="todayPnl">¥0.00</div>
             <div class="stat-sub" id="todayPnlPct">0.00%</div>
         </div>
     </div>
 
-
+    <div class="two-col-layout">
     <!-- Performance Metrics -->
     <div class="perf-grid">
         <div class="perf-card">
@@ -709,8 +729,6 @@
             <span id="marketStatusText" style="font-size:13px;color:var(--text-dim);">市场状态检测中...</span>
         </div>
         <div style="font-size:12px;color:var(--text-muted);" id="stockCountInfo">股票池: 0 只</div>
-    </div>
-
     <!-- AI Top Recommendations -->
     <div class="card" id="aiRecommendationsCard">
         <div class="card-title">
@@ -736,6 +754,7 @@
         <div id="tradingPool" style="background: var(--bg); border-radius: var(--radius-sm); padding: 16px; box-shadow: var(--neu-inset-sm);">
             <div style="text-align: center; color: var(--text-muted); padding: 16px;">从AI推荐中选择或手动添加股票</div>
         </div>
+    </div>
     </div>
 
     <!-- Equity Chart -->
