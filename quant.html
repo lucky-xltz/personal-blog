@@ -2158,19 +2158,45 @@ function tradingDecision() {
     const isAfternoon = isWeekday && (h >= 13 && h < 15);
     const marketOpen = isMorning || isAfternoon;
     
-    if (!marketOpen) {
-        addLog('⏸ 非交易时间，等待中...', 'action');
-        return;
-    }
-    
-    addLog('🔄 开始分析交易池...', 'action');
+    addLog('🔄 AI开始分析...', 'action');
     
     // 获取实时行情
     fetchRealtimeQuotes().then(() => {
-        // 分析交易池中的股票
-        const poolToAnalyze = tradingPool.length > 0 ? tradingPool : STOCK_POOL;
+        // 分析所有股票并生成推荐
+        const poolToAnalyze = STOCK_POOL;
+        const scored = poolToAnalyze.map(item => {
+            const quote = getStockPrice(item.code);
+            if (!quote || quote.price <= 0) return null;
+            const evaluation = evaluateAllStrategies(item.code, quote);
+            const analysis = analyzeStock(item.code, quote);
+            return {
+                stock: item,
+                quote: quote,
+                evaluation: evaluation,
+                analysis: analysis,
+                score: analysis ? analysis.score : -999
+            };
+        }).filter(s => s !== null).sort((a, b) => b.score - a.score);
         
-        poolToAnalyze.forEach(item => {
+        // 渲染AI推荐股票
+        renderAIRecommendations(scored);
+        
+        // 记录分析日志
+        addLog('🤖 AI分析完成，候选股票 ' + scored.length + ' 只', 'action');
+        scored.slice(0, 5).forEach(s => {
+            addAIAnalysisLog(s.analysis);
+        });
+        
+        if (!marketOpen) {
+            addLog('⏸ 非交易时间，仅展示分析结果', 'action');
+            renderAll();
+            return;
+        }
+        
+        // 分析交易池中的股票并执行交易
+        const poolToTrade = tradingPool.length > 0 ? tradingPool : STOCK_POOL;
+        
+        poolToTrade.forEach(item => {
             const quote = getStockPrice(item.code);
             if (!quote || quote.price <= 0) return;
             
@@ -2678,8 +2704,17 @@ async function aiDecide() {
     // Fetch realtime quotes
     await fetchRealtimeQuotes();
 
-    // ========== PORTFOLIO EXPOSURE CHECK ==========
-    let totalAssetsCheck = calculateTotalAssets();
+    // 记录权益曲线
+    const totalAssets = calculateTotalAssets();
+    state.equityHistory.push({ time: new Date().toISOString(), value: totalAssets });
+    if (state.equityHistory.length > 500) state.equityHistory = state.equityHistory.slice(-500);
+    
+    saveState();
+    renderAll();
+}
+
+function calculateTotalAssets() {
+    let total = state.cash;
     const investedValue = totalAssetsCheck - state.cash;
     const exposurePct = totalAssetsCheck > 0 ? investedValue / totalAssetsCheck : 0;
     const maxExposure = 0.80; // Max 80% invested
@@ -2697,135 +2732,6 @@ async function aiDecide() {
         renderAll();
         return;
     }
-
-    // ========== BUY LOGIC: score all candidates and pick the best =========
-    // 优先使用交易池，如果为空则使用完整股票池
-    const poolToUse = tradingPool.length > 0 ? tradingPool : STOCK_POOL;
-    const candidates = poolToUse.filter(s => {
-        const q = getStockPrice(s.code);
-        return q && q.price > 0 && !state.positions[s.code];
-    });
-
-    if (candidates.length === 0) return;
-
-    // 使用综合AI分析引擎评估每个候选股票
-    const scored = candidates.map(s => {
-        const q = getStockPrice(s.code);
-        const analysis = analyzeStock(s.code, q);
-        return { stock: s, quote: q, analysis: analysis, score: analysis ? analysis.score : -999 };
-    }).filter(s => s.analysis !== null).sort((a, b) => b.score - a.score);
-
-    // 记录AI分析日志
-    addLog('🤖 AI分析完成，候选股票 ' + scored.length + ' 只', 'action');
-    scored.slice(0, 5).forEach(s => {
-        addAIAnalysisLog(s.analysis);
-    });
-
-    // 渲染AI推荐股票
-    renderAIRecommendations(scored);
-
-    // Only buy if best score exceeds mode threshold (adaptive: lower in strong trends)
-    let buyThreshold = state.mode === 'aggressive' ? 1.5 : state.mode === 'balanced' ? 2.5 : 3.5;
-    const best = scored[0];
-
-    // Adaptive threshold: check if market is trending (use best candidate's ADX)
-    if (best && best.signals) {
-        const hasStrongTrend = best.signals.some(s => s.label.includes('强趋势'));
-        const hasChoppy = best.signals.some(s => s.label.includes('震荡'));
-        if (hasStrongTrend) buyThreshold *= 0.85; // easier to buy in strong trends
-        if (hasChoppy) buyThreshold *= 1.2; // harder to buy in choppy markets
-    }
-
-    if (best.score < buyThreshold) {
-        addLog('⏸ 无强信号（最高评分 ' + best.score + ' < 阈值 ' + buyThreshold.toFixed(1) + '），观望中', 'action');
-        return;
-    }
-
-    // === Risk Management: Sector Diversification ===
-    let totalAssets = calculateTotalAssets();
-    const sectorAlloc = {};
-    Object.entries(state.positions).forEach(([code, pos]) => {
-        const stockInfo = STOCK_POOL.find(s => s.code === code);
-        const sector = stockInfo ? stockInfo.sector : '未知';
-        const pq = getStockPrice(code);
-        const val = pos.quantity * 100 * (pq ? pq.price : pos.avgCost);
-        sectorAlloc[sector] = (sectorAlloc[sector] || 0) + val;
-    });
-    const bestSector = best.stock.sector;
-    const currentSectorVal = sectorAlloc[bestSector] || 0;
-    const sectorLimit = totalAssets * 0.35; // Max 35% in one sector
-    if (currentSectorVal >= sectorLimit) {
-        addLog('⚠️ ' + bestSector + '板块已达35%上限，跳过 ' + best.stock.name, 'action');
-        // Try next best candidate from different sector
-        const altBest = scored.find(s => s.stock.sector !== bestSector && s.score >= buyThreshold);
-        if (altBest) {
-            addLog('🔀 切换候选: ' + altBest.stock.name + ' (' + altBest.stock.sector + ') 评分' + altBest.score, 'action');
-            processBuy(altBest);
-        }
-        return;
-    }
-
-    // === Position Concentration Limit ===
-    function processBuy(candidate) {
-        const q2 = candidate.quote;
-        const analysis = candidate.analysis;
-        // Check if already holding this stock
-        if (state.positions[candidate.stock.code]) {
-            addLog('⚠️ 已持有 ' + candidate.stock.name + '，跳过', 'action');
-            return;
-        }
-        // Check concentration: single position shouldn't exceed 30% of total assets
-        const existingPosVal = state.positions[candidate.stock.code]
-            ? state.positions[candidate.stock.code].quantity * 100 * q2.price : 0;
-        const maxPositionVal = totalAssets * 0.30 - existingPosVal;
-        const baseRatio = state.mode === 'aggressive' ? 0.25 : state.mode === 'balanced' ? 0.15 : 0.08;
-        const strengthMultiplier = Math.min(1.5, 1 + (candidate.score - buyThreshold) * 0.15);
-        // Volume confirmation boost: increase size when volume confirms signal
-        const hasVolConfirm = analysis && analysis.reasons && analysis.reasons.some(r => r.includes('放量') || r.includes('OBV'));
-        const volumeBoost = hasVolConfirm ? 1.15 : 1.0;
-        // ATR-based volatility adjustment: reduce size in high-volatility, increase in low-volatility
-        const atrPct = analysis && analysis.technical ? analysis.technical.atrPct : 0;
-        const atrAdj = atrPct > 0 ? Math.max(0.6, Math.min(1.3, 2.0 / atrPct)) : 1.0;
-        const cashRatio = baseRatio * strengthMultiplier * volumeBoost * atrAdj;
-        let maxShares = Math.floor(state.cash * cashRatio / (q2.price * 100));
-        // Cap by concentration limit
-        const concShares = Math.floor(maxPositionVal / (q2.price * 100));
-        if (concShares > 0 && concShares < maxShares) maxShares = concShares;
-        if (maxShares > 0 && state.cash > q2.price * 100) {
-            const reasons = analysis && analysis.reasons ? analysis.reasons.slice(0, 3).join(', ') : '';
-            addLog('🤖 AI 买入信号: ' + candidate.stock.name + ' 评分 ' + candidate.score + (reasons ? ' [' + reasons + ']' : ''), 'action');
-            addLog('买入价: ' + q2.price.toFixed(2) + ' 涨跌: ' + q2.changePct.toFixed(2) + '%', 'action');
-            executeBuy(candidate.stock.code, candidate.stock.name, maxShares, q2.price);
-        }
-    }
-
-    processBuy(best);
-
-    // Update position current prices
-    Object.keys(state.positions).forEach(code => {
-        const pq = getStockPrice(code);
-        if (pq) state.positions[code].currentPrice = pq.price;
-    });
-
-    // Record equity curve
-    totalAssets = calculateTotalAssets();
-    state.equityHistory.push({ time: new Date().toISOString(), value: totalAssets });
-    if (state.equityHistory.length > 200) {
-        state.equityHistory = state.equityHistory.slice(-200);
-    }
-
-    saveState();
-    renderAll();
-}
-
-function calculateTotalAssets() {
-    let total = state.cash;
-    Object.entries(state.positions).forEach(([code, pos]) => {
-        const q = getStockPrice(code);
-        const price = q ? q.price : (pos.currentPrice || pos.avgCost);
-        total += pos.quantity * 100 * price;
-    });
-    return total;
 }
 
 function startAI() {
