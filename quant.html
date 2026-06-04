@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>量化交易系统 v4.5 | 林小白的数字花园</title>
+    <title>量化交易系统 v4.6 | 林小白的数字花园</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -574,6 +574,7 @@
             .stat-card .stat-value { font-size: 18px; }
         }
     </style>
+</head>
 <body>
 
 <nav class="nav">
@@ -753,6 +754,8 @@
                 <div class="signal-gauge"><div class="gauge-label">唐奇安</div><div class="gauge-value" id="gDC">--</div><div class="gauge-bar"><div class="gauge-fill" id="gDCbar"></div></div></div>
                 <div class="signal-gauge"><div class="gauge-label">Aroon</div><div class="gauge-value" id="gAroon">--</div><div class="gauge-bar"><div class="gauge-fill" id="gAroonbar"></div></div></div>
                 <div class="signal-gauge"><div class="gauge-label">VWAP</div><div class="gauge-value" id="gVWAP">--</div><div class="gauge-bar"><div class="gauge-fill" id="gVWAPbar"></div></div></div>
+                <div class="signal-gauge"><div class="gauge-label">EMA带</div><div class="gauge-value" id="gRibbon">--</div><div class="gauge-bar"><div class="gauge-fill" id="gRibbonbar"></div></div></div>
+                <div class="signal-gauge"><div class="gauge-label">市场状态</div><div class="gauge-value" id="gRegime">--</div><div class="gauge-bar"><div class="gauge-fill" id="gRegimebar"></div></div></div>
             </div>
             <div id="signalDetails" style="margin-top: 12px; font-size: 12px; color: var(--text-dim); line-height: 1.8;"></div>
             <!-- MACD柱状图 -->
@@ -887,6 +890,21 @@
             <div class="log-entry"><span class="log-time">[系统]</span> <span class="log-action">AI 交易引擎就绪，等待启动...</span></div>
         </div>
     </div>
+    </div>
+
+    <!-- LLM AI 测试区域 -->
+    <div class="card" style="margin-bottom: 20px;">
+        <div class="card-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+            LLM AI 测试
+            <span style="margin-left: auto; font-size: 12px; color: var(--text-muted);">测试 AI 模型连接</span>
+        </div>
+        <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 12px;">
+            <button class="btn btn-primary btn-sm" onclick="testLLMConnection()">测试连接</button>
+            <button class="btn btn-outline btn-sm" onclick="runAITest()">运行 AI 决策</button>
+            <span id="llmTestStatus" style="font-size: 12px; color: var(--text-muted);">未测试</span>
+        </div>
+        <div id="llmTestResult" style="background: var(--bg); border-radius: var(--radius-sm); padding: 12px; box-shadow: var(--neu-inset); font-family: 'Courier New', monospace; font-size: 12px; line-height: 1.6; max-height: 300px; overflow-y: auto; white-space: pre-wrap; word-break: break-all;"></div>
     </div>
 
     <!-- Backtest Section -->
@@ -1593,9 +1611,97 @@ function calcAroon(prices, period) {
 
 
 /**
+ * Market Regime Detection: classify market conditions
+ * Returns: 'trending_up', 'trending_down', 'ranging', 'volatile', 'unknown'
+ * Uses ADX for trend strength + ATR for volatility assessment
+ */
+function detectMarketRegime(prices) {
+    if (!prices || prices.length < 28) return 'unknown';
+    var adxData = calcADX(prices, 14);
+    var atr = calcATR(prices, 14);
+    var price = prices[prices.length - 1];
+    var atrPct = price > 0 ? (atr / price) * 100 : 0;
+
+    // High volatility regime
+    if (atrPct > 4) return 'volatile';
+
+    // Strong trend
+    if (adxData.adx > 30) {
+        return adxData.pdi > adxData.mdi ? 'trending_up' : 'trending_down';
+    }
+    // Moderate trend
+    if (adxData.adx > 20) {
+        return adxData.pdi > adxData.mdi ? 'trending_up' : 'trending_down';
+    }
+    // Ranging / choppy market
+    return 'ranging';
+}
+
+/**
+ * EMA Ribbon Trend Strength: analyze alignment of multiple EMAs
+ * Returns strength value: positive = bullish, negative = bearish, 0 = neutral
+ * EMAs aligned in order (8 > 13 > 21 > 34) = strong trend
+ */
+function calcEMARibbonStrength(prices) {
+    if (!prices || prices.length < 34) return { strength: 0, label: 'neutral' };
+    var ema8 = calcEMA(prices, 8);
+    var ema13 = calcEMA(prices, 13);
+    var ema21 = calcEMA(prices, 21);
+    var ema34 = calcEMA(prices, 34);
+
+    var e8 = ema8[ema8.length - 1];
+    var e13 = ema13[ema13.length - 1];
+    var e21 = ema21[ema21.length - 1];
+    var e34 = ema34[ema34.length - 1];
+
+    // Perfect bullish alignment: short > medium > long
+    if (e8 > e13 && e13 > e21 && e21 > e34) {
+        var spread = (e8 - e34) / e34 * 100;
+        return { strength: Math.min(spread * 0.5, 2), label: 'ribbon_bull' };
+    }
+    // Perfect bearish alignment
+    if (e8 < e13 && e13 < e21 && e21 < e34) {
+        var spread2 = (e34 - e8) / e34 * 100;
+        return { strength: -Math.min(spread2 * 0.5, 2), label: 'ribbon_bear' };
+    }
+    // Partial alignment (mixed)
+    var bullCount = 0;
+    if (e8 > e13) bullCount++;
+    if (e13 > e21) bullCount++;
+    if (e21 > e34) bullCount++;
+    if (bullCount >= 2) return { strength: 0.3, label: 'ribbon_weak_bull' };
+    if (bullCount <= 1) return { strength: -0.3, label: 'ribbon_weak_bear' };
+    return { strength: 0, label: 'neutral' };
+}
+
+/**
+ * Multi-Timeframe Confirmation: check if RSI and trend agree across timeframes
+ * Uses short (5-bar) and medium (10-bar) momentum alongside standard 14-bar RSI
+ */
+function calcMultiTimeframeConfirm(prices) {
+    if (!prices || prices.length < 15) return { score: 0, label: '' };
+    var rsi14 = calcRSI(prices, 14);
+    var rsi7 = prices.length >= 8 ? calcRSI(prices, 7) : 50;
+    var mom5 = prices.length >= 6 ? (prices[prices.length - 1] - prices[prices.length - 5]) / prices[prices.length - 5] * 100 : 0;
+
+    // Triple confirmation: RSI14 + RSI7 + momentum all agree
+    if (rsi14 < 35 && rsi7 < 40 && mom5 < -2) {
+        return { score: 1.0, label: '三重超卖确认' };
+    }
+    if (rsi14 > 65 && rsi7 > 60 && mom5 > 2) {
+        return { score: -1.0, label: '三重超买确认' };
+    }
+    // Double confirmation
+    if (rsi14 < 35 && rsi7 < 40) return { score: 0.5, label: '双周期超卖' };
+    if (rsi14 > 65 && rsi7 > 60) return { score: -0.5, label: '双周期超买' };
+    return { score: 0, label: '' };
+}
+
+
+/**
  * Compute composite signal score for a stock.
  * Positive = bullish, Negative = bearish.
- * Range roughly -14 to +14 (20+ indicators).
+ * Range roughly -20 to +20 (25+ indicators).
  */
 function computeSignalScore(code, quote) {
     const prices = priceHistory[code];
@@ -1705,13 +1811,23 @@ function computeSignalScore(code, quote) {
         else if (obvTrend === 'down') { score -= 0.5; signals.push({ label: 'OBV下降', type: 'sell' }); }
     }
 
-    // VWAP signal - price relative to VWAP
+    // VWAP signal - price relative to VWAP + crossover detection
     const _vols2 = volumeHistory[code];
     const vwap = calcVWAP(prices, _vols2);
     if (vwap && quote.price > 0) {
         const vwapDeviation = (quote.price - vwap) / vwap * 100;
         if (vwapDeviation < -2) { score += 1; signals.push({ label: '低于VWAP', type: 'buy' }); }
         else if (vwapDeviation > 2) { score -= 1; signals.push({ label: '高于VWAP', type: 'sell' }); }
+        // VWAP crossover: price crossing above/below VWAP
+        if (prices.length >= 3) {
+            const prevVwap = calcVWAP(prices.slice(0, -1), _vols2 ? _vols2.slice(0, -1) : null);
+            if (prevVwap) {
+                const wasBelow = prices[prices.length - 2] < prevVwap;
+                const isAbove = quote.price > vwap;
+                if (wasBelow && isAbove) { score += 0.8; signals.push({ label: 'VWAP金叉', type: 'buy' }); }
+                else if (!wasBelow && !isAbove) { score -= 0.8; signals.push({ label: 'VWAP死叉', type: 'sell' }); }
+            }
+        }
     }
 
     // RSI Divergence (strong reversal signal)
@@ -1793,7 +1909,7 @@ function computeSignalScore(code, quote) {
         else if (cmf < -0.1) { score -= 0.8; signals.push({ label: 'CMF流出', type: 'sell' }); }
     }
 
-    // ROC (Rate of Change)
+    // ROC (Rate of Change) - momentum: moderate gain = bullish, extreme = reversal
     if (prices.length >= 13) {
         const roc = calcROC(prices, 12);
         if (roc > 5) { score -= 0.5; signals.push({ label: 'ROC超涨', type: 'sell' }); }
@@ -1888,7 +2004,38 @@ function computeSignalScore(code, quote) {
         else if (aroon.oscillator < -50) { score -= 0.5; }
     }
 
-    return { score: Math.round(score * 10) / 10, signals, rsi: Math.round(rsi), bb, atrPct: Math.round(atrPct * 10) / 10, trend };
+    // EMA Ribbon Trend Strength (8/13/21/34 alignment)
+    if (prices.length >= 34) {
+        const ribbon = calcEMARibbonStrength(prices);
+        if (ribbon.strength > 0.5) {
+            score += ribbon.strength;
+            signals.push({ label: 'EMA带状看多', type: 'buy' });
+        } else if (ribbon.strength < -0.5) {
+            score += ribbon.strength;
+            signals.push({ label: 'EMA带状看空', type: 'sell' });
+        }
+    }
+
+    // Multi-Timeframe Confirmation (RSI14 + RSI7 + momentum)
+    const mtf = calcMultiTimeframeConfirm(prices);
+    if (mtf.score !== 0) {
+        score += mtf.score;
+        signals.push({ label: mtf.label, type: mtf.score > 0 ? 'buy' : 'sell' });
+    }
+
+    // Market Regime Adjustment: adapt signal strength to market conditions
+    const regime = detectMarketRegime(prices);
+    if (regime === 'ranging') {
+        // In ranging markets, reduce trend-following signals, boost mean-reversion
+        score *= 0.9;
+        signals.push({ label: '震荡市', type: 'neutral' });
+    } else if (regime === 'volatile') {
+        // In volatile markets, be more cautious
+        score *= 0.85;
+        signals.push({ label: '高波动市', type: 'neutral' });
+    }
+
+    return { score: Math.round(score * 10) / 10, signals, rsi: Math.round(rsi), bb, atrPct: Math.round(atrPct * 10) / 10, trend, regime };
 }
 
 
@@ -3698,6 +3845,34 @@ function updateSignalDashboard(code) {
         vwapBar.style.background = vwapDev < -2 ? 'var(--safe)' : vwapDev > 2 ? 'var(--danger)' : 'var(--text-muted)';
     }
 
+    // EMA Ribbon gauge
+    if (prices.length >= 34) {
+        var ribbon = calcEMARibbonStrength(prices);
+        var ribbonEl = document.getElementById('gRibbon');
+        var ribbonBar = document.getElementById('gRibbonbar');
+        if (ribbonEl && ribbonBar) {
+            var ribbonNorm = Math.max(0, Math.min(100, (ribbon.strength + 2) / 4 * 100));
+            ribbonEl.textContent = ribbon.strength > 0.5 ? '看多' : ribbon.strength < -0.5 ? '看空' : '中性';
+            ribbonEl.className = 'gauge-value ' + (ribbon.strength > 0.5 ? 'gauge-buy' : ribbon.strength < -0.5 ? 'gauge-sell' : 'gauge-neutral');
+            ribbonBar.style.width = ribbonNorm + '%';
+            ribbonBar.style.background = ribbon.strength > 0.5 ? 'var(--safe)' : ribbon.strength < -0.5 ? 'var(--danger)' : 'var(--text-muted)';
+        }
+    }
+
+    // Market Regime gauge
+    var regime = detectMarketRegime(prices);
+    var regimeEl = document.getElementById('gRegime');
+    var regimeBar = document.getElementById('gRegimebar');
+    if (regimeEl && regimeBar) {
+        var regimeLabels = { 'trending_up': '上升趋势', 'trending_down': '下降趋势', 'ranging': '震荡', 'volatile': '高波动', 'unknown': '数据不足' };
+        var regimeColors = { 'trending_up': 'var(--safe)', 'trending_down': 'var(--danger)', 'ranging': 'var(--warn)', 'volatile': 'var(--danger)', 'unknown': 'var(--text-muted)' };
+        var regimeNorms = { 'trending_up': 80, 'trending_down': 20, 'ranging': 50, 'volatile': 30, 'unknown': 50 };
+        regimeEl.textContent = regimeLabels[regime] || regime;
+        regimeEl.className = 'gauge-value ' + (regime === 'trending_up' ? 'gauge-buy' : regime === 'trending_down' || regime === 'volatile' ? 'gauge-sell' : 'gauge-neutral');
+        regimeBar.style.width = (regimeNorms[regime] || 50) + '%';
+        regimeBar.style.background = regimeColors[regime] || 'var(--text-muted)';
+    }
+
     
     // Signal details text
     var details = sig.signals.map(function(s) {
@@ -3705,11 +3880,12 @@ function updateSignalDashboard(code) {
         return icon + ' ' + s.label;
     }).join('  ');
     var trendLabel = sig.trend === 'up' ? '📈 上升趋势' : sig.trend === 'down' ? '📉 下降趋势' : '➡️ 震荡';
+    var regimeLabel = sig.regime ? { 'trending_up': '🔥 上升趋势市', 'trending_down': '❄️ 下降趋势市', 'ranging': '↔️ 震荡市', 'volatile': '⚡ 高波动市', 'unknown': '' }[sig.regime] || '' : '';
     var bbInfo = sig.bb ? ' | 布林带宽: ' + sig.bb.bandwidth.toFixed(1) + '%' : '';
     document.getElementById('signalDetails').innerHTML = 
         '<strong>' + q.name + '</strong> ¥' + q.price.toFixed(2) + ' (' + (q.changePct >= 0 ? '+' : '') + q.changePct.toFixed(2) + '%)<br>' +
         '综合评分: <strong style="color:' + (sig.score > 0 ? 'var(--safe)' : sig.score < 0 ? 'var(--danger)' : 'var(--text)') + '">' + sig.score + '</strong> | ' +
-        trendLabel + ' | ATR波动: ' + sig.atrPct + '%' + bbInfo + '<br>' +
+        trendLabel + (regimeLabel ? ' | ' + regimeLabel : '') + ' | ATR波动: ' + sig.atrPct + '%' + bbInfo + '<br>' +
         '信号: ' + (details || '无明显信号');
 }
 
@@ -4488,13 +4664,13 @@ function calcBacktestSignalScore(prices, price, modeKey) {
         else if (cmf < -0.1) score -= 0.8;
     }
 
-    // ROC (Rate of Change)
+    // ROC (Rate of Change) - momentum: moderate gain = bullish, extreme = reversal
     if (prices.length >= 13) {
         var roc = calcROC(prices, 12);
         if (roc > 5) score -= 0.5;
         else if (roc < -5) score += 0.5;
-        else if (roc > 2) score -= 0.3;
-        else if (roc < -2) score += 0.3;
+        else if (roc > 2) score += 0.3;
+        else if (roc < -2) score -= 0.3;
     }
 
     // Vortex Indicator (trend detection)
@@ -4583,7 +4759,21 @@ function calcBacktestSignalScore(prices, price, modeKey) {
         else if (obvProxy <= -3) score -= 0.5;
     }
 
+    // EMA Ribbon Trend Strength (8/13/21/34 alignment)
+    if (prices.length >= 34) {
+        var ribbon = calcEMARibbonStrength(prices);
+        if (ribbon.strength > 0.5) score += ribbon.strength;
+        else if (ribbon.strength < -0.5) score += ribbon.strength;
+    }
 
+    // Multi-Timeframe Confirmation (RSI14 + RSI7 + momentum)
+    var mtfBt = calcMultiTimeframeConfirm(prices);
+    if (mtfBt.score !== 0) score += mtfBt.score;
+
+    // Market Regime Adjustment
+    var regimeBt = detectMarketRegime(prices);
+    if (regimeBt === 'ranging') score *= 0.9;
+    else if (regimeBt === 'volatile') score *= 0.85;
 
     return score;
 }
@@ -5374,6 +5564,173 @@ document.getElementById('btCompareBtn').addEventListener('click', async function
     addLog('策略对比完成: ' + stockName + ' 最佳' + bestMode.modeName + '模式 +' + bestMode.return.toFixed(2) + '%', 'success');
     showToast('策略对比完成', 'success');
 });
+
+// ============ LLM AI 交易决策模块 ============
+const LLM_CONFIG = {
+    baseURL: 'https://token-plan-cn.xiaomimimo.com/v1',
+    apiKey: 'tp-coj5n1xglqfeza26e5dxm3ll3w1jfki3ewz511r7samqr5vh',
+    model: 'mimo-v2.5-pro',
+    timeoutMs: 30000,
+    temperature: 0.2,
+    maxRetries: 2
+};
+
+// 构建市场上下文
+function buildMarketContext(candidates) {
+    var ctx = {};
+    ctx.account = {
+        cash: state.cash || INITIAL_CASH,
+        totalAssets: typeof calculateTotalAssets === 'function' ? calculateTotalAssets() : INITIAL_CASH,
+        positionsCount: Object.keys(state.positions || {}).length,
+        dailyTrades: state.dailyTrades || 0,
+        mode: state.mode || 'aggressive'
+    };
+    ctx.positions = Object.keys(state.positions || {}).map(function(code) {
+        var pos = state.positions[code];
+        var q = typeof getStockPrice === 'function' ? getStockPrice(code) : null;
+        return { code: code, name: pos.name, quantity: pos.quantity, avgCost: pos.avgCost, currentPrice: q ? q.price : 0, profitPct: q ? ((q.price - pos.avgCost) / pos.avgCost * 100) : 0 };
+    });
+    ctx.candidates = candidates.map(function(item) {
+        var q = typeof getStockPrice === 'function' ? getStockPrice(item.code) : null;
+        var ev = (q && typeof evaluateAllStrategies === 'function') ? evaluateAllStrategies(item.code, q) : { action: 'wait', reason: '无行情' };
+        return { code: item.code, name: item.name, sector: item.sector, price: q ? q.price : 0, changePct: q ? q.changePct : 0, strategy: ev };
+    });
+    return ctx;
+}
+
+// 构建 LLM 提示词
+function buildLLMPrompt(ctx) {
+    var p = '你是专业量化交易分析师。根据以下数据做交易决策，只返回JSON。\n\n';
+    p += '## 账户\n- 可用资金:' + ctx.account.cash.toFixed(0) + '元\n- 总资产:' + ctx.account.totalAssets.toFixed(0) + '元\n- 持仓:' + ctx.account.positionsCount + '只\n- 模式:' + ctx.account.mode + '\n\n';
+    if (ctx.positions.length > 0) {
+        p += '## 持仓\n';
+        ctx.positions.forEach(function(pos) { p += '- ' + pos.name + '(' + pos.code + '):' + pos.quantity + '手 成本' + pos.avgCost.toFixed(2) + ' 现价' + pos.currentPrice.toFixed(2) + ' 盈亏' + pos.profitPct.toFixed(1) + '%\n'; });
+        p += '\n';
+    }
+    p += '## 候选股票\n';
+    ctx.candidates.forEach(function(item) {
+        p += '- ' + item.name + '(' + item.code + '):' + item.price.toFixed(2) + ' ' + item.changePct.toFixed(2) + '% ' + item.sector;
+        if (item.strategy && item.strategy.action !== 'wait') p += ' 信号:' + item.strategy.action + ' ' + item.strategy.reason;
+        p += '\n';
+    });
+    p += '\n## 返回JSON格式\n{"marketView":"总体看法(60字内)","decisions":[{"code":"代码","name":"名称","action":"buy/sell/hold","lots":1,"confidence":0.8,"reason":"原因(80字内)","stopLoss":价格,"takeProfit":价格}],"riskNotes":"风控说明(120字内)"}\n只返回JSON。';
+    return p;
+}
+
+// 调用 LLM API
+async function callLLM(prompt) {
+    var url = LLM_CONFIG.baseURL + '/chat/completions';
+    for (var retry = 0; retry <= LLM_CONFIG.maxRetries; retry++) {
+        try {
+            var resp = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + LLM_CONFIG.apiKey },
+                body: JSON.stringify({ model: LLM_CONFIG.model, messages: [{ role: 'system', content: '你是量化交易分析师，只返回JSON。' }, { role: 'user', content: prompt }], temperature: LLM_CONFIG.temperature, max_tokens: 800 }),
+                signal: AbortSignal.timeout(LLM_CONFIG.timeoutMs)
+            });
+            if (!resp.ok) throw new Error('HTTP ' + resp.status);
+            var data = await resp.json();
+            return data.choices[0].message.content;
+        } catch (e) {
+            if (retry === LLM_CONFIG.maxRetries) throw e;
+            await new Promise(function(r) { setTimeout(r, 1000 * (retry + 1)); });
+        }
+    }
+}
+
+// 解析 LLM 决策
+function parseLLMDecision(raw) {
+    try { return JSON.parse(raw); } catch (e) {}
+    var m = raw.match(/\{[\s\S]*\}/);
+    if (m) { try { return JSON.parse(m[0]); } catch (e) {} }
+    var f = raw.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
+    if (f) { try { return JSON.parse(f[1]); } catch (e) {} }
+    throw new Error('无法解析JSON');
+}
+
+// AI 交易决策主函数
+async function aiTradingDecision() {
+    addLog('🧠 LLM AI 开始分析...', 'action');
+    try {
+        var candidates = (typeof STOCK_POOL !== 'undefined') ? STOCK_POOL.map(function(s) { return { code: s.code, name: s.name, sector: s.sector }; }) : [];
+        if (candidates.length === 0) { addLog('❌ 股票池为空', 'error'); return null; }
+        var ctx = buildMarketContext(candidates);
+        addLog('📊 上下文构建完成，候选' + candidates.length + '只', 'info');
+        var prompt = buildLLMPrompt(ctx);
+        addLog('🤖 调用' + LLM_CONFIG.model + '...', 'action');
+        var raw = await callLLM(prompt);
+        addLog('📥 LLM返回' + raw.length + '字符', 'info');
+        var decision = parseLLMDecision(raw);
+        addLog('📋 市场观点: ' + (decision.marketView || '无'), 'action');
+        if (decision.decisions && decision.decisions.length > 0) {
+            decision.decisions.forEach(function(d) {
+                if (d.action === 'buy') {
+                    var q = typeof getStockPrice === 'function' ? getStockPrice(d.code) : null;
+                    if (q && typeof executeBuyWithStrategy === 'function') {
+                        executeBuyWithStrategy(d.code, q, { action: 'buy', confidence: d.confidence || 0.7, reason: d.reason || 'LLM买入', stopLoss: d.stopLoss, takeProfit: d.takeProfit });
+                    }
+                } else if (d.action === 'sell') {
+                    var q2 = typeof getStockPrice === 'function' ? getStockPrice(d.code) : null;
+                    if (q2 && typeof executeSellWithStrategy === 'function') {
+                        executeSellWithStrategy(d.code, q2, { action: 'sell', confidence: d.confidence || 0.7, reason: d.reason || 'LLM卖出' });
+                    }
+                } else {
+                    addLog('⏸ ' + (d.name || d.code) + ': 持有', 'info');
+                }
+            });
+        }
+        if (decision.riskNotes) addLog('⚠️ ' + decision.riskNotes, 'warn');
+        addLog('✅ LLM决策完成', 'success');
+        return decision;
+    } catch (e) {
+        addLog('❌ LLM失败: ' + e.message, 'error');
+        throw e;
+    }
+}
+
+// 测试 LLM 连接
+async function testLLMConnection() {
+    var statusEl = document.getElementById('llmTestStatus');
+    var resultEl = document.getElementById('llmTestResult');
+    if (!statusEl || !resultEl) { alert('测试区域未找到'); return; }
+    statusEl.textContent = '测试中...';
+    statusEl.style.color = 'var(--accent)';
+    resultEl.textContent = '';
+    try {
+        var raw = await callLLM('请回复JSON: {"status":"ok","model":"mimo-v2.5-pro"}');
+        statusEl.textContent = '连接成功!';
+        statusEl.style.color = 'var(--safe)';
+        resultEl.textContent = raw;
+    } catch (e) {
+        statusEl.textContent = '失败: ' + e.message;
+        statusEl.style.color = 'var(--danger)';
+        resultEl.textContent = e.stack || e.message;
+    }
+}
+
+// 运行 AI 决策并显示结果
+async function runAITest() {
+    var statusEl = document.getElementById('llmTestStatus');
+    var resultEl = document.getElementById('llmTestResult');
+    if (!statusEl || !resultEl) return;
+    statusEl.textContent = 'AI 决策中...';
+    statusEl.style.color = 'var(--accent)';
+    resultEl.textContent = '';
+    try {
+        var decision = await aiTradingDecision();
+        statusEl.textContent = '决策完成!';
+        statusEl.style.color = 'var(--safe)';
+        resultEl.textContent = JSON.stringify(decision, null, 2);
+    } catch (e) {
+        statusEl.textContent = '失败: ' + e.message;
+        statusEl.style.color = 'var(--danger)';
+        resultEl.textContent = e.stack || e.message;
+    }
+}
+
+window.testLLMConnection = testLLMConnection;
+window.runAITest = runAITest;
+window.aiLLMTradingDecision = aiTradingDecision;
 
 </script>
 </body>
