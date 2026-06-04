@@ -2827,6 +2827,9 @@ function renderAIRecommendations(scored) {
     // 保存到全局变量供收藏刷新用
     window._lastScored = scored;
 }
+
+// ============ 账户状态 ============
+let state = {
     positions: {},  // { code: { name, quantity, avgCost, peakPrice, trailingStopPct } }
     trades: [],
     equityHistory: [],
@@ -4990,4 +4993,4 @@ document.getElementById('btCompareBtn').addEventListener('click', async function
 
 </script>
 </body>
-</html><!-- deploy trigger Thu Jun  4 11:36:20 CST 2026 -->
+</html>
