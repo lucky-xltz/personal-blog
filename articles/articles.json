@@ -1,5 +1,25 @@
 [
   {
+    "slug": "webassembly-first-class-component-model-2026",
+    "title": "WebAssembly 终于要变“一等公民”了：Component Model 如何终结 9 年的 JS 胶水代码尴尬",
+    "date": "2026-06-05",
+    "category": "技术",
+    "tags": [
+      "WebAssembly",
+      "Component Model",
+      "浏览器",
+      "编译原理",
+      "WIT",
+      "字节码联盟",
+      "编程语言",
+      "性能优化"
+    ],
+    "excerpt": "Mozilla 工程师 Lin Clark 在 2026 年 Wasm CG 慕尼黑会议上问了一个刺痛全场的问题：WebAssembly 为什么 9 年了还是“二等公民”？本文从一行 console.log 说起，深入剖析 Component Model + WIT + ESM-integration 三件套如何终结 JS 胶水代码的尴尬。",
+    "cover": "https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&h=400&fit=crop",
+    "readtime": 12,
+    "views": 0
+  },
+  {
     "slug": "typescript-7-go-port-10x-compiler-2026",
     "title": "TypeScript 7 即将到来：微软把编译器从 TypeScript 移植到 Go 的 10 倍性能革命",
     "date": "2026-06-05",
