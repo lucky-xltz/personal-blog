@@ -1,5 +1,25 @@
 [
   {
+    "slug": "typescript-7-go-port-10x-compiler-2026",
+    "title": "TypeScript 7 即将到来：微软把编译器从 TypeScript 移植到 Go 的 10 倍性能革命",
+    "date": "2026-06-05",
+    "category": "技术",
+    "tags": [
+      "TypeScript",
+      "Go",
+      "Rust",
+      "编译器",
+      "性能优化",
+      "Node.js",
+      "前端开发",
+      "编程语言"
+    ],
+    "excerpt": "微软将 TypeScript 编译器从 TypeScript 移植到 Go，实现 10 倍性能提升。本文深度解析移植背后的工程考量、Go vs Rust 之争、Node.js 原生 TypeScript 支持，以及 TypeScript 7 即将带来的开发体验革命。",
+    "cover": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&h=400&fit=crop",
+    "readtime": 14,
+    "views": 0
+  },
+  {
     "slug": "post-quantum-tls-merkle-tree-certificates-2026",
     "title": "量子计算机还没来，TLS 证书已经要换了：后量子密码学与 Merkle Tree Certificates 深度解析",
     "date": "2026-06-04",
