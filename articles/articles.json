@@ -1,5 +1,25 @@
 [
   {
+    "slug": "duckdb-quack-client-server-protocol-2026",
+    "title": "DuckDB 出 Quack 了：把进程内数据库塞进客户端-服务器模型的工程革命",
+    "date": "2026-06-06",
+    "category": "技术",
+    "tags": [
+      "DuckDB",
+      "Quack",
+      "数据库",
+      "OLAP",
+      "协议设计",
+      "HTTP",
+      "数据架构",
+      "性能优化"
+    ],
+    "excerpt": "DuckDB 团队在 2026 年 5 月 12 日悄悄扔出了 Quack 协议——一个让多个 DuckDB 实例互相 quack 的客户端-服务器通信协议。60M 行 4.94 秒传完，8 线程 5,400 TPS 反超 PostgreSQL，单次往返完成查询。本文从架构史、协议设计哲学、5 分钟上手、nginx 部署清单、与 DuckLake 的组合，一文讲透 Quack 的设计取舍与未来方向。",
+    "cover": "https://images.unsplash.com/photo-1544383835-bda2bc66a55d?w=600&h=400&fit=crop",
+    "readtime": 13,
+    "views": 0
+  },
+  {
     "slug": "azure-linux-4-federated-cloud-distribution-2026",
     "title": "Azure Linux 4.0：微软首个通用 Linux 发行版的 4 年演化与 declarative overlay 工程革命",
     "date": "2026-06-06",
