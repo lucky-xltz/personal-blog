@@ -1,5 +1,29 @@
 [
   {
+    "slug": "ai-news-2026-06-07",
+    "title": "AI 日报：2026年06月07日 | OpenAI 推出 Lockdown Mode 防提示注入，Meta AI 致数千 Instagram 账号被黑",
+    "date": "2026-06-07",
+    "category": "技术",
+    "tags": [
+      "AI日报",
+      "OpenAI",
+      "Lockdown Mode",
+      "Meta AI",
+      "Instagram",
+      "WWDC 2026",
+      "Apple Siri",
+      "Gemini",
+      "AI安全",
+      "AI监管",
+      "AirTrunk",
+      "S&P 500"
+    ],
+    "excerpt": "今日 AI 领域关键词是“信任与监管”：OpenAI 上线 Lockdown Mode 锁定模式将提示注入防护产品化；Meta AI 聊天机器人被滥用导致数千 Instagram 账号被劫持；特朗普政府讨论入股 OpenAI 与 Sanders 50% 股票税提案形成对决；WWDC 2026 即将揭晓深度集成 Google Gemini 的 Siri 重构；AirTrunk 宣布 300 亿美元印度 5GW AI 数据中心投资；S&P 500 拒绝为 SpaceX 破例连带封堵 OpenAI、Anthropic 快速纳入路径。",
+    "cover": "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=600&h=400&fit=crop",
+    "readtime": 11,
+    "views": 0
+  },
+  {
     "slug": "duckdb-quack-client-server-protocol-2026",
     "title": "DuckDB 出 Quack 了：把进程内数据库塞进客户端-服务器模型的工程革命",
     "date": "2026-06-06",
