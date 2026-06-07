@@ -1,5 +1,29 @@
 [
   {
+    "slug": "wayland-2026-i3-creator-sway-migration-2026",
+    "title": "Wayland 在 2026 年到底能不能用？i3 之父 Stapelberg 用 18 年等来的答案",
+    "date": "2026-06-07",
+    "category": "技术",
+    "tags": [
+      "Wayland",
+      "X11",
+      "Sway",
+      "wlroots",
+      "Linux",
+      "显示服务器",
+      "图形栈",
+      "协议设计",
+      "nVidia",
+      "显式同步",
+      "字体渲染",
+      "桌面环境"
+    ],
+    "excerpt": "i3 之父 Michael Stapelberg 在 2026 年 1 月用两周时间实测 Wayland/Sway，撞到 7 个具体 bug 后给出一个暧昧的及格分。这篇文章汇集 18 年 Wayland 演化史、显式同步关键技术、GBM vs EGLStreams NVIDIA 路径恩怨、6.5ms 输入延迟硬数据、5 分钟健康检查脚本和 2026 年该不该切的决策矩阵。",
+    "cover": "https://images.unsplash.com/photo-1551434678-e076c223a692?w=600&h=400&fit=crop",
+    "readtime": 16,
+    "views": 0
+  },
+  {
     "slug": "zeroserve-ebpf-io-uring-tarball-architecture-2026",
     "title": "Zeroserve 架构深度解析：当 io_uring、eBPF 与 Tarball 打包相遇，一个 1.2MB/实例的零配置 Web 服务器是怎么炼成的",
     "date": "2026-06-07",
