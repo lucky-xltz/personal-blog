@@ -1,5 +1,26 @@
 [
   {
+    "slug": "zeroserve-ebpf-io-uring-tarball-architecture-2026",
+    "title": "Zeroserve 架构深度解析：当 io_uring、eBPF 与 Tarball 打包相遇，一个 1.2MB/实例的零配置 Web 服务器是怎么炼成的",
+    "date": "2026-06-07",
+    "category": "技术",
+    "tags": [
+      "Zeroserve",
+      "io_uring",
+      "eBPF",
+      "Rust",
+      "Web服务器",
+      "Tarball",
+      "Landlock",
+      "ECH",
+      "系统编程"
+    ],
+    "excerpt": "2026 年 6 月 6 日 HN 上 204 分的 Show HN：Zeroserve——一个 io_uring + eBPF + Tarball 打包的零配置 web server，1000 实例/1.16GB PSS（每实例 1.2MB）。本文逐层解构它的 11 个核心架构选择：tar-as-filesystem、arc-swap 热重载、async-ebpf userspace VM、Landlock + namespace 双层沙箱、BoringSSL ECH/JA4、AWS SigV4/OIDC helpers，以及为什么 nginx 的 150 个 directive 在它这里变成 8 个 flag。",
+    "cover": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=600&h=400&fit=crop",
+    "readtime": 14,
+    "views": 0
+  },
+  {
     "slug": "ai-news-2026-06-07",
     "title": "AI 日报：2026年06月07日 | OpenAI 推出 Lockdown Mode 防提示注入，Meta AI 致数千 Instagram 账号被黑",
     "date": "2026-06-07",
