@@ -1,5 +1,31 @@
 [
   {
+    "slug": "bun-anthropic-acquisition-zig-to-rust-ai-rewrite-2026",
+    "title": "Bun 在 Anthropic 入主半年后做了一件大事：6 天、6755 个 commit、零人工审阅的 Zig→Rust 移植到底发生了什么",
+    "date": "2026-06-08",
+    "category": "技术",
+    "tags": [
+      "Bun",
+      "Anthropic",
+      "Rust",
+      "Zig",
+      "JavaScript运行时",
+      "JavaScriptCore",
+      "AI编程",
+      "代码生成",
+      "Claude Code",
+      "性能优化",
+      "内存安全",
+      "编译原理",
+      "Miri",
+      "undefined behavior"
+    ],
+    "excerpt": "2025 年 12 月 Anthropic 收购 Bun，6 个月后 Bun 用 6 天、6755 个 commit 完成 Zig→Rust 移植，零人工 review。本文复盘 4 年 Zig 故事、Claude Code $1B 背景、6 天过程的真实性、issue #30719 暴露的 13,255 行 unsafe 警告、HN 1000+ 评论的三大阵营，以及“AI 时代工程审计”的范式问题。",
+    "cover": "https://images.unsplash.com/photo-1629654297299-c8506221ca97?w=600&h=400&fit=crop",
+    "readtime": 18,
+    "views": 0
+  },
+  {
     "slug": "tailscale-zero-trust-mesh-deep-dive-2026",
     "title": "Tailscale 深度实战：当 WireGuard、零信任和身份优先网络同时降临，一个 1.2MB/节点的零配置 Mesh 是怎么炼成的",
     "date": "2026-06-08",
