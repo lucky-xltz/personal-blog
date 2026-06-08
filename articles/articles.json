@@ -1,5 +1,53 @@
 [
   {
+    "slug": "tailscale-zero-trust-mesh-deep-dive-2026",
+    "title": "Tailscale 深度实战：当 WireGuard、零信任和身份优先网络同时降临，一个 1.2MB/节点的零配置 Mesh 是怎么炼成的",
+    "date": "2026-06-08",
+    "category": "技术",
+    "tags": [
+      "Tailscale",
+      "WireGuard",
+      "零信任",
+      "零配置网络",
+      "Mesh",
+      "DERP",
+      "Peer Relays",
+      "ACL",
+      "Tailscale SSH",
+      "身份优先网络",
+      "网络安全",
+      "VPN替代",
+      "BeyondCorp",
+      "Headscale"
+    ],
+    "excerpt": "2026 年 4 月 Tailscale 完成 1.6 亿美元 C 轮、2 月 Peer Relays GA、CVE-2022-41924 唤起对 SSH 客户端攻击面的警觉——这是身份优先网络（identity-first networking）替代 VPN/SSH 密钥/堡垒机的工程革命。本文解构 Tailscale 的 4 层运行时栈（用户态 wgengine / 控制平面 HTTPS / WireGuard 数据面 / DERP+Peer Relay 中继）、对比 6 个同类工具（Headscale/Netbird/ZeroTier/Nebula/OpenZiti/Cloudflare Tunnel）、给出 4 个真实场景代码（CGNAT 穿透 / Tailscale SSH 替堡垒机 / Funnel 临时公网 demo / Subnet Router + Exit Node），并直面 HN 上关于电池/性能/IP 锁定的批评。",
+    "cover": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=600&h=400&fit=crop",
+    "readtime": 16,
+    "views": 0
+  },
+  {
+    "slug": "ai-news-2026-06-08",
+    "title": "AI 日报：2026年06月08日 |资深工程师十年后被LLM掏空，Anthropic每月为Claude Code倒贴900美元",
+    "date": "2026-06-08",
+    "category": "技术",
+    "tags": [
+      "AI日报",
+      "LLM经济学",
+      "软件工程师",
+      "Anthropic",
+      "OpenAI",
+      "Claude Desktop",
+      "Linux",
+      "AI泡沫",
+      "算力支出",
+      "Jane Street"
+    ],
+    "excerpt": "今日AI关键词是“成本与人的双向压力”：荷兰独立分析指出Anthropic/OpenAI可能每收100美元倒贴1000美元（暗token与递归推理的真实账单）；HN头条801分帖见证一位10年支付领域专家的职业护城河被LLM逐层拉平；GitHub Issue #65697三周263条评论呼吁Anthropic为Linux发布官方Claude Desktop（社区非官方打包已在处理OAuth凭证）；《卫报》六张图呈现41只AI股票占S&P一半市值的集中度风险；Jane Street工程师记录“用Claude设计比Figma多”的AI-first设计工作流。",
+    "cover": "https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&h=400&fit=crop",
+    "readtime": 11,
+    "views": 0
+  },
+  {
     "slug": "wayland-2026-i3-creator-sway-migration-2026",
     "title": "Wayland 在 2026 年到底能不能用？i3 之父 Stapelberg 用 18 年等来的答案",
     "date": "2026-06-07",
