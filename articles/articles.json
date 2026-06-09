@@ -1,5 +1,32 @@
 [
   {
+    "slug": "linear-local-first-performance-2026",
+    "title": "Linear 为什么那么快：481 颗星拆解一份价值 300ms 的本地优先架构蓝图",
+    "date": "2026-06-09",
+    "category": "技术",
+    "tags": [
+      "Linear",
+      "本地优先",
+      "性能优化",
+      "IndexedDB",
+      "MobX",
+      "同步引擎",
+      "乐观更新",
+      "Service Worker",
+      "Rolldown",
+      "React",
+      "前端架构",
+      "离线优先",
+      "CRDT",
+      "Yjs",
+      "构建工具"
+    ],
+    "excerpt": "481 颗星拆解 Linear 性能架构：IndexedDB 本地优先、MobX 细粒度响应、Rolldown 21MB 拆 chunk、Service Worker 1200 资源预热、键盘优先。HN 三大阵营争论的真正边界——本地优先不是技术问题，是领域适配问题。",
+    "cover": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&h=400&fit=crop",
+    "readtime": 18,
+    "views": 0
+  },
+  {
     "slug": "ai-news-2026-06-09",
     "title": "AI 日报：2026年06月09日 | DeepSeek V4 Pro 击败 GPT-5.5 Pro，OpenAI 提交 S-1，Apple 全面倒向 Google Gemini",
     "date": "2026-06-09",
