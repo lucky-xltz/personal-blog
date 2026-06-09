@@ -1,5 +1,31 @@
 [
   {
+    "slug": "ai-news-2026-06-09",
+    "title": "AI 日报：2026年06月09日 | DeepSeek V4 Pro 击败 GPT-5.5 Pro，OpenAI 提交 S-1，Apple 全面倒向 Google Gemini",
+    "date": "2026-06-09",
+    "category": "技术",
+    "tags": [
+      "AI日报",
+      "DeepSeek",
+      "OpenAI",
+      "GPT-5.5",
+      "Apple Intelligence",
+      "Google Gemini",
+      "Anthropic",
+      "Project Glasswing",
+      "Nvidia",
+      "LG",
+      "机器人",
+      "IPO",
+      "AI安全",
+      "物理AI"
+    ],
+    "excerpt": "今天的 AI 新闻版图被三件大事重新定义：DeepSeek V4 Pro 以 38:33 击败 GPT-5.5 Pro；OpenAI 估值 $852B 提交保密 S-1；Apple Intelligence 全面倒向 Google Gemini。同日 Nvidia × LG 共建 AI 工厂、Schneier 拆穿 Anthropic Project Glasswing “23,019 漏洞只换 75 补丁”。",
+    "cover": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&h=400&fit=crop",
+    "readtime": 11,
+    "views": 0
+  },
+  {
     "slug": "bun-anthropic-acquisition-zig-to-rust-ai-rewrite-2026",
     "title": "Bun 在 Anthropic 入主半年后做了一件大事：6 天、6755 个 commit、零人工审阅的 Zig→Rust 移植到底发生了什么",
     "date": "2026-06-08",
