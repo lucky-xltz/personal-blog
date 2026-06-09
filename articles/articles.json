@@ -1,5 +1,37 @@
 [
   {
+    "slug": "gitdot-rust-git-forge-honest-tech-2026",
+    "title": "259 颗星拆解 gitdot：当 6 星小作坊用 Rust 重写 GitHub 的 6 步后端演化、六大反共识设计、247 条 HN 评论的真正争议在哪里",
+    "date": "2026-06-09",
+    "category": "技术",
+    "tags": [
+      "gitdot",
+      "GitHub",
+      "Git",
+      "Rust",
+      "Axum",
+      "六边形架构",
+      "领域驱动设计",
+      "libgit2",
+      "gitoxide",
+      "CLI设计",
+      "反AI",
+      "商标争议",
+      "Forgejo",
+      "Gitea",
+      "软件锻造厂",
+      "性能优化",
+      "100ms FCP",
+      "键盘优先",
+      "DevOps",
+      "基础设施"
+    ],
+    "excerpt": "259 pts / 233 条评论的 Show HN 头条：2 个独立开发者 + 6 个月 + Rust + Next.js 重写 GitHub 的全过程。原文逐行拆解 Mikkel 的 6 步后端演化（git http-backend CGI / 六边形架构 / 3 服务 + 4 共享 crate）、Paul 的 6 大反共识设计原则（No navbar / No logo / No AI / No mobile）、247 条 HN 评论自然分化出的 3 大阵营（Rust 营销反感派 / CLI 美学共鸣派 / 为什么不直接用 Forgejo 派）、商标隐患（git 前缀）、AI 反讽（仓库里有 12 个 CLAUDE.md），以及 5 级时间梯度实操清单。",
+    "cover": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&h=400&fit=crop",
+    "readtime": 17,
+    "views": 0
+  },
+  {
     "slug": "linear-local-first-performance-2026",
     "title": "Linear 为什么那么快：481 颗星拆解一份价值 300ms 的本地优先架构蓝图",
     "date": "2026-06-09",
