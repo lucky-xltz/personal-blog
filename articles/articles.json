@@ -1,5 +1,31 @@
 [
   {
+    "slug": "test-case-reducer-underappreciated-debugging-2026",
+    "title": "121 颗星拆解 test-case reducer：当 30 年最强的调试工具被编译器圈独占，7 条 HN 评论和 5 大工具谱系揭示它为什么被普通程序员集体忽视",
+    "date": "2026-06-10",
+    "category": "技术",
+    "tags": [
+      "test-case reducer",
+      "debugging",
+      "Laurie Tratt",
+      "Perses",
+      "C-Reduce",
+      "Shrink Ray",
+      "Bonsai",
+      "Dustmite",
+      "Hypothesis shrinking",
+      "Delta Debugging",
+      "编译器测试",
+      "最小复现",
+      "软件工程",
+      "PL"
+    ],
+    "excerpt": "6 月 9 日，PL 圈老牌研究者 Laurie Tratt 在自己的博客发表了一篇 1800 字的短文《Test-case reducers are underappreciated debugging tools》，HN 上拿下 121 个赞、13 条讨论。不算爆款，但所有 7 条被点出来的评论都指向同一个困惑：「这东西确实牛，但我从来没用过，也不知道什么时候该用。」",
+    "cover": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&h=400&fit=crop",
+    "readtime": 9,
+    "views": 0
+  },
+  {
     "slug": "apple-container-machine-vm-per-container-2026",
     "title": "351 颗星拆解 Apple container v1.0.0：每容器一个 VM、27K stars、1.0.0 周年庆与 135 条 HN 评论里的三大阵营",
     "date": "2026-06-10",
