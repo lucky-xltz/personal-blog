@@ -1,5 +1,34 @@
 [
   {
+    "slug": "apple-container-machine-vm-per-container-2026",
+    "title": "351 颗星拆解 Apple container v1.0.0：每容器一个 VM、27K stars、1.0.0 周年庆与 135 条 HN 评论里的三大阵营",
+    "date": "2026-06-10",
+    "category": "技术",
+    "tags": [
+      "Apple",
+      "macOS",
+      "container",
+      "Containerization",
+      "Virtualization framework",
+      "vmnet",
+      "Swift",
+      "OCI",
+      "Linux VM",
+      "操作系统",
+      "DevOps",
+      "OrbStack",
+      "Docker Desktop",
+      "Podman",
+      "容器生态",
+      "XPC",
+      "虚拟化"
+    ],
+    "excerpt": "351 颗星 / 135 条 HN 评论的 Show HN 头条：6 月 9 日 Apple 推送 container v1.0.0（一年周年庆）+ 新功能 Container Machines。PR #1662 拆解：5125 行新代码、51 个文件、2 天合并、9 个新 CLI 子命令。架构真相：每容器一个 VM（不是 namespace+cgroup），调用 Virtualization.framework + vmnet + XPC + launchd + Keychain。HN 三大阵营——OrbStack 开发者 kdrag0n 自曝内幕（动态内存释放 Apple 没有）、Docker 维护者 cpuguy83 曝光兼容方案（crucible 项目用 Containerization 跑 dockerd）、普通开发者质疑『为什么不直接用 OrbStack』。5 级时间梯度实操清单 + 6 个可被验证的硬指标。",
+    "cover": "https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&h=400&fit=crop",
+    "readtime": 16,
+    "views": 0
+  },
+  {
     "slug": "gitdot-rust-git-forge-honest-tech-2026",
     "title": "259 颗星拆解 gitdot：当 6 星小作坊用 Rust 重写 GitHub 的 6 步后端演化、六大反共识设计、247 条 HN 评论的真正争议在哪里",
     "date": "2026-06-09",
