@@ -1,5 +1,36 @@
 [
   {
+    "slug": "pifs-data-free-filesystem-14-year-comeback-2026",
+    "title": "751 颗星拆解 πFS：一个 14 年前的 FUSE 文件系统如何用 BBP 公式把数据存进 π，2026 年又因同作者新作 inferencefs 重回 HN 榜首",
+    "date": "2026-06-11",
+    "category": "技术",
+    "tags": [
+      "πFS",
+      "FUSE",
+      "BBP公式",
+      "π",
+      "数据压缩",
+      "愚人节项目",
+      "FUSE文件系统",
+      "归约",
+      "数字常数",
+      "14年传奇",
+      "inferencefs",
+      "LLM",
+      "文件系统",
+      "philipl",
+      "HN",
+      "7267stars",
+      "FUSE2.6",
+      "libfuse",
+      "GPLv3"
+    ],
+    "excerpt": "6 月 11 日 HN 首页榜首 751 pts / 178c 的传奇回归：Philip Langdale 2012 年愚人节写的 FUSE 文件系统 πFS 借 14 年后同作者新作 inferencefs 重新登顶。22KB 源码（10057 字节 πfs.c + 119 行 BBP piqpr8.c）实现 Normal Conjecture 数据归属、5 分钟存 400 行的暴力 O(32768) 写路径、GDPR #56 issue 哲学梗——以及 2026-04-01 inferencefs 用 LLM 替代 π 的 5 级降级二进制解码流水线（claude/claude-code/gemini 三后端）。三大派系侧写：数学吐槽派（normal 没证明）、信息理论派（地址 ≈ 数据）、元数据递归派（π all the way down）。5 级时间梯度实操清单。",
+    "cover": "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&h=400&fit=crop",
+    "readtime": 14,
+    "views": 0
+  },
+  {
     "slug": "pgdog-rust-postgresql-sharder-funded-2026",
     "title": "416 颗星拆解 PgDog：$5.5M 融资、12 个 Rust crate、1451 个文件，一个 3 人团队要把 PostgreSQL 池/分片代理重做一遍凭什么",
     "date": "2026-06-11",
