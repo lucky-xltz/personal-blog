@@ -1,5 +1,31 @@
 [
   {
+    "slug": "ai-news-2026-06-11",
+    "title": "AI 日报：2026年06月11日 | Claude Fable 5 霸榜 2546 颗星，Mythos 5 同步发布，30 天数据留存与银行 AI 代理遭 €0.01 注入攻击",
+    "date": "2026-06-11",
+    "category": "技术",
+    "tags": [
+      "AI日报",
+      "Claude Fable 5",
+      "Claude Mythos 5",
+      "Anthropic",
+      "AWS Bedrock",
+      "数据留存",
+      "AI安全",
+      "AI Agent",
+      "提示词注入",
+      "银行安全",
+      "LLM供应链",
+      "Fedora",
+      "Glasswing",
+      "AI政策"
+    ],
+    "excerpt": "6 月 10 日 Anthropic 同步发布 Claude Fable 5 与 Mythos 5——Fable 5 在 HN 拿下 2546 颗星/2076 条评论，Mythos 5 走“美国政府合作 + 顶级网络防御者”路线，被官方认证为“网络空间能力超过任何模型”。配套 30 天数据留存新规、AWS Bedrock 强制共享、bunq 银行 AI 助手遭 €0.01 注入攻击 PoC、Fedora 无主 AI 代理在 Bugzilla 提交数十错误补丁——AI 代理在金融与开源治理两个最脆弱领域同时暴雷。三条主线串成 2026 年中 frontier AI 新范式：能力-信任双轨、数据“30 天”成默认、AI 代理的安全地基刚开始补。",
+    "cover": "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=600&h=400&fit=crop",
+    "readtime": 12,
+    "views": 0
+  },
+  {
     "slug": "test-case-reducer-underappreciated-debugging-2026",
     "title": "121 颗星拆解 test-case reducer：当 30 年最强的调试工具被编译器圈独占，7 条 HN 评论和 5 大工具谱系揭示它为什么被普通程序员集体忽视",
     "date": "2026-06-10",
