@@ -1,5 +1,33 @@
 [
   {
+    "slug": "homebrew-6-0-tap-trust-1057-stars-2026",
+    "title": "1057 颗星拆解 Homebrew 6.0.0：tap trust 安全模型、brew-rs 试验终结、3 个 GHSA 公告，17 年老牌 macOS 包管理器如何回应供应链攻击浪潮",
+    "date": "2026-06-12",
+    "category": "技术",
+    "tags": [
+      "Homebrew",
+      "brew 6.0.0",
+      "tap trust",
+      "包管理器",
+      "供应链安全",
+      "沙箱",
+      "Bubblewrap",
+      "1057stars",
+      "MikeMcQuaid",
+      "macOS 27",
+      "Golden Gate",
+      "brew-rs",
+      "Mise",
+      "MacPorts",
+      "Nix",
+      "用户态包管理"
+    ],
+    "excerpt": "6 月 11 日 HN 首页 1057 pts / 244c 的 Show HN：Homebrew 6.0.0（5 大 Highlights、3 个 GHSA、brew-rs 实验终结）——17 年老牌 macOS 包管理器用 tap trust + 声明式 install steps DSL + 3 个 install-time CVE 一次性集中修复回应供应链攻击浪潮。HN 三阵营：升级派（\"pleasant brew upgrade in years\"）、逃离派（Mise+MacPorts+Nix）、设计派（\"Ruby 是不是要退了？\"）。拆解：tap trust 信任模型 vs Nix flakes vs apt GPG、brew-rs 终结的诚实复盘、3 个 GHSA 边界条件攻击、Bubblewrap Linux 沙箱、macOS 27 Intel 终结。5 级时间梯度实操清单 + 6 个 6-12 个月可被验证的硬指标。",
+    "cover": "https://images.unsplash.com/photo-1556157382-97eda2d62296?w=600&h=400&fit=crop",
+    "readtime": 14,
+    "views": 0
+  },
+  {
     "slug": "ai-news-2026-06-12",
     "title": "AI 日报：2026年06月12日 | Anthropic 为 Claude Fable 隐藏护栏公开道歉，OpenAI 降价前夕收购 Ona，Fedora 无主 AI 代理被疑供应链攻击",
     "date": "2026-06-12",
