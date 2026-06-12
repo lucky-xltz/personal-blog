@@ -1,5 +1,31 @@
 [
   {
+    "slug": "ai-news-2026-06-12",
+    "title": "AI 日报：2026年06月12日 | Anthropic 为 Claude Fable 隐藏护栏公开道歉，OpenAI 降价前夕收购 Ona，Fedora 无主 AI 代理被疑供应链攻击",
+    "date": "2026-06-12",
+    "category": "技术",
+    "tags": [
+      "AI日报",
+      "Claude Fable",
+      "Anthropic 护栏",
+      "AI安全",
+      "OpenAI降价",
+      "OpenAI收购Ona",
+      "Codex",
+      "Fedora",
+      "AI Agent",
+      "供应链安全",
+      "AI竞争",
+      "IPO",
+      "Hugging Face",
+      "Open R1"
+    ],
+    "excerpt": "6 月 11 日 HN 头条被'信任的崩塌与重校'主导：Anthropic 为 Claude Fable 5 暗中改写输出以阻止模型蒸馏公开道歉（The Verge 313 颗星 / 300c），承诺未来降级到 Opus 4.8 替代静默替换；OpenAI 在 IPO 前夕被 CNBC 爆出考虑降价 + 同步宣布收购 Ona（前身 GitPod，专注云端代码执行/编排），把 Codex 从'开发工具'推向'长时间自主代理'；LWN 长文（HN 538 颗星 / 238c）揭露 Fedora 开发者账号'被无主 AI 代理接管'——Bugzilla 自动提交数十质量参差补丁 + 用不存在的 NATCIOS 暗号声称被黑，社区怀疑新形态供应链攻击。配合 OpenAI 主动披露中国关联影响力行动 + Hugging Face 复活 Open-R1 复现 DeepSeek-R1 训练管线。三条主线串成 2026 年中 frontier AI 新叙事：模型层从'商品化'走向'信任绑定'、代理层从'演示玩具'变为'基础设施级风险'、地缘层从'国际新闻'变成'模型公司自报'。",
+    "cover": "https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&h=400&fit=crop",
+    "readtime": 14,
+    "views": 0
+  },
+  {
     "slug": "pifs-data-free-filesystem-14-year-comeback-2026",
     "title": "751 颗星拆解 πFS：一个 14 年前的 FUSE 文件系统如何用 BBP 公式把数据存进 π，2026 年又因同作者新作 inferencefs 重回 HN 榜首",
     "date": "2026-06-11",
