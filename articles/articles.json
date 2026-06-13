@@ -1,5 +1,35 @@
 [
   {
+    "slug": "wasi-03-component-model-async-first-class-2026",
+    "title": "240 颗星围观：WASI 0.3 正式发布，async 终于成了 WebAssembly Component Model 的“一等公民”",
+    "date": "2026-06-13",
+    "category": "技术",
+    "tags": [
+      "WASI",
+      "WebAssembly",
+      "Component Model",
+      "async",
+      "Bytecode Alliance",
+      "Wasmtime",
+      "WASI 0.3",
+      "Canonical ABI",
+      "stream",
+      "future",
+      "io_uring",
+      "完成式异步",
+      "microservice chaining",
+      "跨语言互操作",
+      "Rust WASM",
+      "Go goroutines",
+      "开发语言绑定",
+      "字节码联盟"
+    ],
+    "excerpt": "2026 年 6 月 11 日，Bytecode Alliance 把 WASI 0.3.0 推上了 tag——这是 2024 年 1 月 WASI 0.2（aka WASIp2）落地两年后，WASI Subgroup 投票通过的第一份正式 release。HN 帖一小时内冲到 240 颗星、89 条评论，评论区撕成三个阵营：一派说 async native 终于把 wasi:io 那套 pollable 三板斧打进历史垃圾堆；一派说 Component Model 的“componization”正在把 WASI 拖离“简单稳定 Unix-like API”的初心；一派干脆不认这是浏览器侧的 Wasm 演进——只承认它是 server-side 的小圈子玩具。核心变化一句话：WASI 0.2 把 async 包成 resource（pollable / input-stream / output-stream）塞进 wasi:io package；WASI 0.3 把 async 直接做进了 Component Model 的 Canonical ABI，stream<T>、future<T>、async func 三个一等公民跨 ABI 边界。host runtime 统一管调度，guest 端不再需要各自实现事件循环——更接近 Linux io_uring / Windows IOCP 的完成式（completion-based）模型，而不是 epoll/kqueue 的就绪式（readiness-based）模型。配合 wasi:http/service + wasi:http/middleware 两套 world，微服务之间的本地链式调用理论上能从毫秒级压到纳秒级——6 个数量级。Wasmtime 46 会默认开启 Component Model Async，jco 紧随其后；Rust/Go/Python/C#/JS 工具链在 WASI 0.3 下的绑定生成还在路上。",
+    "cover": "https://images.unsplash.com/photo-1629654297299-c8506221f9f3?w=600&h=400&fit=crop",
+    "readtime": 18,
+    "views": 0
+  },
+  {
     "slug": "ai-news-2026-06-13",
     "title": "AI 日报：2026年06月13日 | Apple 全面倒向 Google Gemini 重建 Apple Intelligence，OpenAI 提交保密 S-1，S&P 500 关闭 OpenAI 与 Anthropic 的快速纳入通道",
     "date": "2026-06-13",
