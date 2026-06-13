@@ -1,5 +1,35 @@
 [
   {
+    "slug": "ffmpeg-21-zero-days-depthfirst-2026",
+    "title": "207 颗星围观：depthfirst 在 FFmpeg 里挖出 21 个零日，从 23 年前的 SDT 栈溢出到 AV1 RTP 一字节 hijack free 指针",
+    "date": "2026-06-13",
+    "category": "技术",
+    "tags": [
+      "FFmpeg",
+      "零日漏洞",
+      "漏洞研究",
+      "安全研究",
+      "AV1",
+      "RTP",
+      "RTSP",
+      "堆溢出",
+      "内存安全",
+      "C 语言",
+      "fuzzing",
+      "AI 安全代理",
+      "depthfirst",
+      "Big Sleep",
+      "Mythos",
+      "整数溢出",
+      "协议解析",
+      "软件供应链"
+    ],
+    "excerpt": "2026 年 6 月 12 日，depthfirst 的 autonomous security agent 在 FFmpeg 这座 1.5 million 行 C 代码的堡垒里挖出 21 个 zero-day——其中 8 个已分到 CVE，4 个潜伏时间超过 15 年，最老的 SDT 解析栈溢出从 2003 年睡到 2026 年。207 颗星、124 条评论的 HN 帖把社区撕成三派：FFmpeg 黑（早该 sandbox）、AI 黑（还是 LLM 在猜）、AI 务实派（94% 的修复 PR 接受率才是真答案）。最戏剧的是 AV1 RTP depacketizer 的一个字符错位——pktpos += obu_size; 应该写 buf_ptr += obu_size;——一行代码的 typo 让 64 字节以外的 heap metadata 全裸奔，配合 AVBuffer 内嵌的 free 函数指针，让攻击者用一个 183 字节的 RTP 包就能拿到 RIP。我们今天拆这件事：21 个 bug 按年代 / 类型怎么分布？为什么 FFmpeg 反复是 supply chain 攻击的核心目标？AI 安全代理和 Big Sleep / Mythos 的真实差距在哪里？以及那个 CVE-2026-39214 的 23 年潜伏到底告诉我们什么。",
+    "cover": "https://images.unsplash.com/photo-1551708851-d43ec05d9c12?w=600&h=400&fit=crop",
+    "readtime": 22,
+    "views": 0
+  },
+  {
     "slug": "wasi-03-component-model-async-first-class-2026",
     "title": "240 颗星围观：WASI 0.3 正式发布，async 终于成了 WebAssembly Component Model 的“一等公民”",
     "date": "2026-06-13",
