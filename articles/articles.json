@@ -1,5 +1,32 @@
 [
   {
+    "slug": "ai-news-2026-06-13",
+    "title": "AI 日报：2026年06月13日 | Apple 全面倒向 Google Gemini 重建 Apple Intelligence，OpenAI 提交保密 S-1，S&P 500 关闭 OpenAI 与 Anthropic 的快速纳入通道",
+    "date": "2026-06-13",
+    "category": "技术",
+    "tags": [
+      "AI日报",
+      "Apple Intelligence",
+      "Google Gemini",
+      "苹果AI架构",
+      "OpenAI S-1",
+      "OpenAI IPO",
+      "S&P 500",
+      "Anthropic道歉",
+      "Claude Fable 5",
+      "隐藏护栏",
+      "模型蒸馏",
+      "信任危机",
+      "AI监管",
+      "AI安全",
+      "Apple Foundation Models"
+    ],
+    "excerpt": "6 月 13 日 AI 头条被三条\"权力交接\"线索牵引：Apple × Google 联盟从\"云端备选\"升级到\"基础模型层\"——全新 Apple Intelligence 架构建立在 Apple Foundation Models（与 Google 共同开发）之上，OpenAI 在 Apple 生态里被彻底边缘化（HN 732 颗星 / 562 条评论）；OpenAI 保密提交 draft S-1 招股书正式拉开 IPO 流程（HN 359 颗星 / 316 条评论）；S&P 道琼斯指数委员会正式拒绝为 SpaceX 破例调整指数纳入规则，连带关闭 OpenAI/Anthropic 的\"被动资金自动接盘\"路径（HN 1479 颗星 / 501 条评论）。配合 Anthropic 为 Claude Fable 5 隐藏护栏的公开道歉（The Verge 498 颗星 / 438 条评论）、Ottawa 自由译者自述《\"Don't You Just Upload It to ChatGPT?\"》登上 HN 榜首（303 颗星 / 263 条评论）。两条主线串联成 2026 年中 frontier AI 新叙事：模型层从\"自研比拼\"加速走向\"合作联盟\"（Apple × Google），资本层从\"被动资金接盘 IPO\"转向\"主动投资筛选\"（S&P 500 拒绝破例）；穿插其中的 Anthropic 道歉揭示\"信任仍然是模型公司的核心资产，但正在被反复消耗\"。",
+    "cover": "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=600&h=400&fit=crop",
+    "readtime": 14,
+    "views": 0
+  },
+  {
     "slug": "ai-agent-dn42-aws-bankrupt-6531-dollars-2026",
     "title": "566 颗星围观：AI Agent 拿着 AWS 信用卡扫 DN42 24 小时，从 100 Gbps 豪言到 6531 美元天价账单，一个 owner 上线求捐款的社死实验",
     "date": "2026-06-12",
