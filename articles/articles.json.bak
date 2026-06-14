@@ -1,35 +1,5 @@
 [
   {
-    "slug": "census-noise-infusion-ban-differential-privacy-2026",
-    "title": "768 颗星围观：美国商务部一纸禁令把差分隐私赶出 Census Bureau，Damien Desfontaines 说这等于让 2020 年那场重构攻击的潘多拉盒子重新打开",
-    "date": "2026-06-14",
-    "category": "技术",
-    "tags": [
-      "差分隐私",
-      "Census Bureau",
-      "披露规避",
-      "differential privacy",
-      "noise infusion",
-      "2020 美国人口普查",
-      "reconstruction attack",
-      "John Abowd",
-      "隐私与效用权衡",
-      "统计现代化",
-      "Damien Desfontaines",
-      "数据发布",
-      "联邦统计机构",
-      "Title 13",
-      "重新识别",
-      "AI 训练数据",
-      "政策与科学",
-      "商务部 OPOG"
-    ],
-    "excerpt": "2026 年 6 月第一周,美国商务部 OPOG 办公室通过一份名为《disclosure-avoidance-statistical-products》的命令,要求 Census Bureau 与经济分析局的所有统计产品中不得使用『noise infusion』,只能用 coarsening + 必要时 suppression——这两个工具对任何像美国人口普查这样『复杂多变量 / 小群体 / 高基数』的数据集都等于废了。Damien Desfontaines(差分隐私领域核心研究者、PrivacyLoG 创始人)随即在 6 月 12 日写了一篇 2000 字的深度文,逐条拆解这条命令的破坏性:每一个备选披露规避技术(swapping、cell key、sampling、imputation)都依赖噪声注入;一旦噪声被禁,所有这些工具会同时失灵。HN 上一周冲到 768 颗星、482 条评论,撕裂成三派——『DP 误用派』(ThePhysicist 等研究者认为 2020 census 用的复杂机制本身就难用)、『隐私死灰复燃派』(vkou、dathinab 等认为 2020 那场 reconstruction attack 告诉过我们 coarsening 之后 17 亿条合成记录能在 52 秒内被还原)、『DP 误解派』(pessimizer 等认为 DP 既挡不住 gerrymandering 也挡不了定向广告,工具的『差』不是政治错位而是技术错配)。我们今天拆这件事:为什么这不是『行政命令 vs 学术方法』的简单故事?为什么 2020 那场『距离 2010 差 0.001%』统计师集体愤怒的余震今天才到?以及最关键的——一旦 AI 训练数据也开始从人口普查、ACS、CPS 这种联邦统计产品里取样,这条禁令会顺着供应链传到每一个 LLM 的 RLHF 阶段,后果远超人口普查本身。",
-    "cover": "https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=600&h=400&fit=crop",
-    "readtime": 22,
-    "views": 0
-  },
-  {
     "slug": "ai-news-2026-06-14",
     "title": "AI 日报：2026年06月14日 | 智谱 GLM-5.2 抢档开源，AWS 借力施压 Anthropic Fable，英国警员用 AI 伪造证据遭查",
     "date": "2026-06-14",

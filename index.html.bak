@@ -1149,23 +1149,7 @@
         </div>
 
         <div class="articles-grid" id="articlesGrid">
-                                        <article class="article-card" data-slug="census-noise-infusion-ban-differential-privacy-2026">
-          <a href="article.html?slug=census-noise-infusion-ban-differential-privacy-2026" class="card-link">
-            <div class="card-cover">
-              <img src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=600&h=400&fit=crop" alt="768 颗星围观：美国商务部一纸禁令把差分隐私赶出 Cens..." loading="lazy" />
-              <span class="card-category">技术</span>
-            </div>
-            <div class="card-body">
-              <h3 class="card-title">768 颗星围观：美国商务部一纸禁令把差分隐私赶出 Census Bureau，Damien Desfontaines 说这等于让 2020 年那场重构攻击的潘多拉盒子重新打开</h3>
-              <p class="card-excerpt">2026 年 6 月第一周,美国商务部 OPOG 办公室通过一份名为《disclosure-avoidance-statistical-products》的命令,要求 Census Bureau 与经济分析局的所有统计产品中不得使用『noise infusion』,只能用 coarsening + 必要时 suppression——这两个工具对任何像美国人口普查这样『复杂多变量 / 小群体 / 高...</p>
-              <div class="card-meta">
-                <time>2026-06-14</time>
-                <span class="card-readtime">22 分钟</span>
-              </div>
-            </div>
-          </a>
-        </article>
-<article class="article-card" data-slug="ai-news-2026-06-14">
+                                <article class="article-card" data-slug="ai-news-2026-06-14">
             <a href="article.html?slug=ai-news-2026-06-14" class="card-link">
                 <div class="card-image">
                     <img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&h=400&fit=crop" alt="AI 日报：2026年06月14日 | 智谱 GLM-5.2 抢档开源，AWS 借力施压 Anthropic Fable，英国警员用 AI 伪造证据遭查" loading="lazy">
