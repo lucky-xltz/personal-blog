@@ -1,5 +1,37 @@
 [
   {
+    "slug": "every-frame-perfect-tonsky-2026",
+    "title": "716 颗星围观 Nikita Prokopov 用一段话偷换 Wayland 的「Every Frame Perfect」：当 macOS Tahoe 越来越像 Windows Mobile，UI 设计师到底丢了什么",
+    "date": "2026-06-14",
+    "category": "技术",
+    "tags": [
+      "Every Frame Perfect",
+      "tonsky",
+      "Nikita Prokopov",
+      "UI animation",
+      "macOS Tahoe",
+      "Wayland",
+      "atomic commit",
+      "transition",
+      "trust heuristic",
+      "smear frame",
+      "716stars",
+      "Heer Robertson",
+      "info viz",
+      "SwiftUI AppKit",
+      "Apple UI 衰退",
+      "animation composition",
+      "reframe",
+      "折叠设备",
+      "folding device",
+      "WWDC 2026"
+    ],
+    "excerpt": "2026 年 6 月 13 日，独立设计师 Nikita Prokopov 在博客发表 758 字的极短文《Every Frame Perfect》，HN 716 pts / 230 comments，30 小时站首页不退。他把 Wayland 协议文档里那句「every frame is perfect」（指原子提交协议保证不掉帧/不撕裂/不闪烁）偷换成 UI 设计的「每一帧截图都得是有意义的成品」原则，用 5 段 Apple 自家 macOS Tahoe / iOS 26 真机录屏做反例。HN 上 230 条评论撕成 5 派：动画哲学派（动画传达意义不追像素完美）、技术归因派（Apple 跨 SwiftUI+UIKit 抽象税）、Wayland 误读派（bigtones 直接翻出 Wayland 原句反驳）、Smear frame 派（动画界本来就这样）、Latency 派（每帧完美增 latency）。我们拆这件事：Prokopov 758 字为什么能站住首页？mbostock（D3.js 创始人）为什么用 Heer & Robertson 2007 论文来锚定这场讨论？折叠设备时代 Apple 的动画问题会被放大多少倍？以及最重要——为什么 Prokopov 文章的真正价值不在动画哲学，而在它把一个被 UI 圈集体放弃的『注意力精度』重新变成一个可被讨论的工程问题。",
+    "cover": "https://images.unsplash.com/photo-1551434678-e076c223a692?w=600&h=400&fit=crop",
+    "readtime": 18,
+    "views": 0
+  },
+  {
     "slug": "census-noise-infusion-ban-differential-privacy-2026",
     "title": "768 颗星围观：美国商务部一纸禁令把差分隐私赶出 Census Bureau，Damien Desfontaines 说这等于让 2020 年那场重构攻击的潘多拉盒子重新打开",
     "date": "2026-06-14",
