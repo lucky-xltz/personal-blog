@@ -1,5 +1,33 @@
 [
   {
+    "slug": "ai-news-2026-06-16",
+    "title": "AI 日报：2026年06月16日 | Anthropic 砸 1.5 亿美元送 1000 个 AI 推广员进非营利组织，HN 670 颗星讨论「本地模型能不能彻底替换 Claude/GPT」",
+    "date": "2026-06-16",
+    "category": "技术",
+    "tags": [
+      "AI日报",
+      "Anthropic",
+      "Claude Corps",
+      "1.5亿美元",
+      "非营利组织",
+      "本地模型",
+      "Qwen3.5",
+      "Mythos 出口管制",
+      "peopleless economy",
+      "AI 替代劳动力",
+      "Homelab AI",
+      "HN670pts",
+      "HN85pts",
+      "4090",
+      "LiteLLM",
+      "Fable 5"
+    ],
+    "excerpt": "6 月 16 日的 AI 头条被三条主轴同时拉扯：前沿公司把 AI 的「社会化部署」当新战略卡位——Anthropic 把 1.5 亿美元「Claude Corps」国家研究员项目推上前台（HN 75 pts / 58 评论），1 年内招募 1000 名年薪 8.5 万美元的 AI 推广员，下沉到 400+ 美国非营利组织做 12 个月全职嵌入；开发者社区用脚投票「去 Anthropic 化」——HN 670 pts / 332 评论爆款帖「Has anyone replaced Claude/GPT with a local model for daily coding?」24 小时冲上首页第一，评论区出现「Qwen3.5 122B DGX 9 天 190 tok/s 跑完 long horizon coding project」「企业 SDLC 因 Mythos 出口管制必须本地化」等硬核故事；「AI 替代人」从「预测」变成「可行性学术推演」——HN 85 pts / 150 评论的《Peopleless economy? Not technically impossible》用 ...",
+    "cover": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&h=400&fit=crop",
+    "readtime": 9,
+    "views": 0
+  },
+  {
     "slug": "curl-summer-of-bliss-maintainer-burnout-ai-flood-2026",
     "title": "401 颗星围观：Daniel Stenberg 在 6 月 15 日把 curl 的「HackerOne 漏洞提交」关了整整一个月——这不是罢工，这是 30 亿次安装的网络基础软件第一次承认「AI 武装的安全研究员」把单兵维护体系打穿了",
     "date": "2026-06-16",
