@@ -1149,7 +1149,28 @@
         </div>
 
         <div class="articles-grid" id="articlesGrid">
-        <article class="article-card" data-slug="rust-cve-vs-ccpp-curl-getenv-2026">
+        <article class="article-card" data-slug="x86-emulator-binary-translation-loop-unroll-fix-2026">
+            <a href="article.html?slug=x86-emulator-binary-translation-loop-unroll-fix-2026" class="card-link">
+                <div class="card-image">
+                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&h=400&fit=crop" alt="244 颗星围观 Raymond Chen 6 月 15 日的 x86 模拟器在仿真过程中修复坏代码" loading="lazy">
+                    <div class="card-category">技术</div>
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">244 颗星围观 Raymond Chen 6 月 15 日的「x86 模拟器在仿真过程中修复坏代码」:Windows NT 早期移植史上的 binary translation 实战、为什么 loop unroll 在 I-cache 时代会变成 256KB 反向炸弹,以及 2026 年 GPU 驱动 / Proton / Wine 为什么还在用同样的招数给游戏擦屁股</h3>
+                    <p class="card-excerpt">6 月 15 日 Raymond Chen 在 Old New Thing 发了一篇全文不到 200 字的极短文:Windows NT 早期非 x86 移植团队的 binary translator 撞上一个「65536 条独立 mov 指令初始化 64KB 栈」的反向优化——256KB 代码初始化 64KB 数据,直接把 code cache 打爆。模拟器团队被冒犯到直接在 translator 里加 fingerprint 匹配,把这个 horrible 函数替换成紧凑循环。244 颗星 / 76 评论,HN 撕成 5 派(translator 派、driver 派、compiler 派、SimCity 历史派、Solaris apocryphal 派)。我们顺这个故事把 1990s NT 移植史 + binary translation 工程范式 + 现代 Wine/Proton/vkd3d-proton/NVIDIA per-game profile 怎么继续干同样的事完整捋一遍——这件事的核心不是某一行代码,而是「当中间层(translator / driver / runtime)拥有对上层应用的观测权+修改权,它天然要承担多少工程责任」。我们用 4 列性能对比表(65536 条 unrolled vs rep stosd vs 翻译层 patch)量化「慢 140 倍」的真实代价,用 4 个层级责任分配模型(kernel 拒绝修 / translator 静默 patch / Wine-staging 显式 quirk / NVIDIA per-game profile)画出 30 年演化曲线,最后用 6 个 6-12 个月硬指标(Rosetta 3 per-app AOT / Wine-staging 破 1000 quirks / kernel -O3 vs -fno-X 拉扯 / Valve 公开 Proton database / WASI 0.3 host runtime patch layer / 新 -fno-X 系列 flag)标记这场「中间层责任边界」之争的下一个临界点。</p>
+                    <div class="card-meta">
+                        <span class="card-date">2026-06-16</span>
+                        <span class="card-readtime">20 分钟</span>
+                        <span class="card-views">👁 0</span>
+                    </div>
+                    <div class="card-tags">
+                        <span class="tag">Raymond Chen</span><span class="tag">binary translation</span><span class="tag">JIT</span><span class="tag">loop unrolling</span><span class="tag">I-cache</span><span class="tag">Windows NT</span><span class="tag">Alpha AXP</span><span class="tag">Transmeta</span><span class="tag">Wine</span><span class="tag">Proton</span><span class="tag">GPU driver quirks</span><span class="tag">vkd3d-proton</span><span class="tag">MSVC</span><span class="tag">Rosetta 2</span><span class="tag">中间层责任</span><span class="tag">code cache</span><span class="tag">HN244pts</span>
+                    </div>
+                </div>
+            </a>
+        </article>
+
+<article class="article-card" data-slug="rust-cve-vs-ccpp-curl-getenv-2026">
             <a href="https://blog.xltz.qzz.io/article.html?slug=rust-cve-vs-ccpp-curl-getenv-2026">
                 <div class="card-cover">
                     <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=600&h=400&fit=crop" alt="120 颗星围观:6 月 15 日 Kobzol 用 5 行">
