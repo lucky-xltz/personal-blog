@@ -1149,6 +1149,25 @@
         </div>
 
         <div class="articles-grid" id="articlesGrid">
+        <article class="article-card" data-slug="rust-cve-vs-ccpp-curl-getenv-2026">
+            <a href="https://blog.xltz.qzz.io/article.html?slug=rust-cve-vs-ccpp-curl-getenv-2026">
+                <div class="card-cover">
+                    <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=600&h=400&fit=crop" alt="120 颗星围观:6 月 15 日 Kobzol 用 5 行">
+                </div>
+                <div class="card-body">
+                    <div class="card-meta">
+                        <span class="card-date">2026-06-16</span>
+                        <span class="card-category">技术</span>
+                        <span class="card-readtime">⏱ 14 min</span>
+                    </div>
+                    <h3 class="card-title">120 颗星围观:6 月 15 日 Kobzol 用 5 行 C 代码触发 curl_getenv(NULL) 内存崩溃——为什么 Rust 和 C/C++ 的 CVE 数量根本不能直接对比</h3>
+                    <p class="card-excerpt">6 月 15 日,Rust 编译器核心开发者 Kobzol 发了篇 120 颗星 / 119 评论的博客《How memory safety CVEs differ between Rust and C/C++》——用 curl 这个 30 亿次安装的「安全标杆」项目做了一个 5 行 C 代码实验:curl_getenv(NULL) 编译 0 警告 → 运行 segfault → 但「这不是 CVE」。同样的语义,放到 Rust 的 hyper 库上,会自动成为 CVE。文章真正的颠覆性不在「Rust 是否更安全」(那已没争议),而在「当我们说 Rust 比 C/C++ 安全 10 倍时,这个 10 倍是怎么测出来的」——CVE 数量这个 metric 在两个语言里有完全不同的语义:C 那边 misuse 路径不计 CVE(否则会爆几千万),Rust 那边 spec violation 全部计 CVE(因为 safe API 的 spec 是「不可能有 memory bug」)。我们从 5 行 C 代码出发,重建 CVE 分类学的完整坐标,拆 std::span + [[gnu::nonnull]] + UBSan 的现代 C++ 真实防线,看 Rust 那边的 NonZeroI32 类型级防护为什么不可逆,以及为什么 Linux kernel 5.18 加了 -fno-delete-null-pointer-checks 这条 -O2 优化降级。</p>
+                    <div class="card-tags">
+                        <span class="tag">#Rust</span><span class="tag">#C++</span><span class="tag">#C</span><span class="tag">#curl</span><span class="tag">#Daniel Stenberg</span><span class="tag">#CVE</span><span class="tag">#内存安全</span><span class="tag">#borrow checker</span>
+                    </div>
+                </div>
+            </a>
+        </article>
 <article class="article-card" data-slug="ai-news-2026-06-16">
             <a href="article.html?slug=ai-news-2026-06-16" class="card-link">
                 <div class="card-image">
