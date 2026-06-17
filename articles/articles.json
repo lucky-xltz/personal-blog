@@ -1,5 +1,38 @@
 [
   {
+    "slug": "stop-using-jwts-2026",
+    "title": "290 颗星围观:2026 年 6 月 17 日 HN 重新挖坟 samsch 的《Stop Using JWTs》——为什么这个 5 年前的 gist 在 ChatGPT/Auth0/Datadog 时代反而更值得重读",
+    "date": "2026-06-17",
+    "category": "技术",
+    "excerpt": "2026 年 6 月 17 日,HN 首页出现一个让老 Reddit 开发者「五味杂陈」的故事:开发者 samsch 把 2019 年 4 月发的一个 324 stars / 17 forks 的 gist《Stop Using JWTs》重新推上 HN,当日 290 颗星 / 163 条评论——评论区罕见地没有被 AI 关键词污染,而是把 2017 年 joepie91《Stop using JWT for sessions》那场 248 颗星的旧仗、rdegges《Please stop using local storage》那条 12,000 字硬核檄文、以及 2024 年 OWASP 终于把「localStorage 存凭证」列入 top 10 风险的全部脉络重新摆到桌面上。今天我们从 samsch 的 gist + rdegges 的 localStorage 檄文 + joepie91 的 7 段技术拆解 + HN 评论区 pro/anti/pragmatic 三派分裂完整重建这场 9 年的战争,外加 4 个代码示例(正确的 express-session / 错误的 localStorage JWT / RS256 服务间信任 / PASETO 替代) + 6 条 6-12 个月可验证的硬指标。",
+    "tags": [
+      "JWT",
+      "session cookie",
+      "PASETO",
+      "samsch",
+      "rdegges",
+      "joepie91",
+      "浏览器鉴权",
+      "express-session",
+      "RS256",
+      "HMAC",
+      "revocation list",
+      "stateless auth",
+      "localStorage",
+      "httpOnly",
+      "CSRF",
+      "XSS",
+      "ChatGPT",
+      "Auth0",
+      "DPoP",
+      "rfc9449",
+      "HN290pts"
+    ],
+    "author": "林小白",
+    "readtime": "16",
+    "cover": "https://images.unsplash.com/photo-1633265486064-086b219458ec?w=600&h=400&fit=crop"
+  },
+  {
     "slug": "ai-news-2026-06-17",
     "title": "AI 日报：2026年06月17日 | HN 1003 颗星围观 Vicki Boykis「本地模型时代真的来了」、Tim Ferriss 自爆 4 本 NYT 畅销书销量两年跌 80%、荷兰国家主权 LLM GPT-NL 上线、Qwen-Robot Suite 把基础模型搬进物理世界",
     "date": "2026-06-17",
