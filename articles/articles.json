@@ -1,5 +1,38 @@
 [
   {
+    "slug": "tigerbeetle-0-16-5-financial-database-deep-dive-2026",
+    "title": "TigerBeetle 0.16.5 正式发布：把 OLTP 跑到 1,000,000 transfers/sec/partition、靠 VSR + VOPR 把「金钱数据库」和「普通数据库」彻底分家的 0 依赖 Zig 实战",
+    "date": "2026-06-17",
+    "category": "技术",
+    "excerpt": "2026 年 6 月 14 日,TigerBeetle 0.16.5 在 0.16.76 之后的小版本线落地——这是 2025 年底 0.16.0 把 VSR 升级到双脉冲 (prep+commit pulse) 协议、把 storage engine 切成 LSM + B-tree 混合之后的「5 月小步快跑」系列里最新的一颗。从 2024 年底到 2026 年 6 月,TigerBeetle 的 OLTP 性能从单分区 50K transfers/sec 推到 1M+ transfers/sec/partition,延迟从毫秒级压到 200 微秒 p99,内存 footprint 8MB/分区,启动时间 <100ms,单 binary 零外部依赖——这一切都靠一个「专门为金钱设计的 OLTP 引擎」+「确定性故障注入模拟器 VOPR」+「Viewstamped Replication 共识」三件套。今天的文章从三个完全不同层次解构这只「老虎甲虫」:第一层讲清楚「为什么金融交易型 workload 和普通 OLTP 完全不同」,第二层讲清楚 VSR + VOPR + LSM-tree 是怎么在工程上把这些差异吃下的,第三层给 Go / Node / Python 工程师交付一份 30 行代码 + 5 步生产部署的实操手册——附带 6 个 6-12 个月内可验证的硬指标。",
+    "tags": [
+      "TigerBeetle",
+      "0.16.5",
+      "VSR",
+      "Viewstamped Replication",
+      "VOPR",
+      "确定性模拟",
+      "分布式共识",
+      "OLTP",
+      "金融数据库",
+      "账本",
+      "转账原子性",
+      "Zig",
+      "LSM-tree",
+      "嵌入式余额",
+      "两阶段锁",
+      "性能基准",
+      "Postgres 对比",
+      "CockroachDB",
+      "FoundationDB",
+      "Joran Dirk Greef",
+      "2026"
+    ],
+    "author": "林小白",
+    "readtime": "22",
+    "cover": "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=600&h=400&fit=crop"
+  },
+  {
     "slug": "stop-using-jwts-2026",
     "title": "290 颗星围观:2026 年 6 月 17 日 HN 重新挖坟 samsch 的《Stop Using JWTs》——为什么这个 5 年前的 gist 在 ChatGPT/Auth0/Datadog 时代反而更值得重读",
     "date": "2026-06-17",
