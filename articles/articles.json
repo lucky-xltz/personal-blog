@@ -1,5 +1,34 @@
 [
   {
+    "slug": "ai-news-2026-06-18",
+    "title": "AI 日报：2026年06月18日 | Boykis 本地模型 1003 pts 余热未退,Anthropic 公开 S-1 招股书估值 1.65 万亿,OpenAI Code Red 内部动员 GPT-6,Tesla Optimus V3 工厂实装 5 万台,OpenAI 与微软算力合同重组",
+    "date": "2026-06-18",
+    "category": "技术",
+    "tags": [
+      "AI日报",
+      "本地模型",
+      "Vicki Boykis",
+      "Gemma 4",
+      "Anthropic",
+      "S-1",
+      "估值",
+      "OpenAI",
+      "Code Red",
+      "GPT-6",
+      "Microsoft",
+      "算力合同",
+      "Tesla",
+      "Optimus",
+      "物理AI",
+      "工厂部署"
+    ],
+    "author": "林小白",
+    "readtime": "10",
+    "cover": "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=600&h=400&fit=crop",
+    "excerpt": "6 月 18 日早间速览,AI 头条被一条主线贯穿——「本地化叙事」从 Boykis 一篇 1003 pts 长文正式升级为「OpenAI 内部 Code Red」+「Anthropic S-1 招股书披露 1.65 万亿估值」的双重压力测试:OpenAI 召开全体动员启动 GPT-6 研发以应对本地模型 + Anthropic 的双向挤压;Anthropic 借 S-1 把 ARR(年化营收)300 亿美元、Claude Code 周活 1.2M、毛利率 78% 全部写进公开文件;Tesla Optimus V3 在德州工厂实装 5 万台,成为物理 AI 第一个「真上生产线」的量级;OpenAI 与微软的算力合同重组把 GPT-5 推理成本压到 $0.07/1M tokens。四条新闻放一起看,2026 年中的 AI 战场已经从「比谁有最强模型」切换到「比谁能把模型铺到最大部署面 + 最低边际成本」——本地化 + 上市 + 量产 + 算力议价,四件事同一天同框,标志 AI 行业进入「规模经济决胜期」。",
+    "views": 0
+  },
+  {
     "slug": "tigerbeetle-0-16-5-financial-database-deep-dive-2026",
     "title": "TigerBeetle 0.16.5 正式发布：把 OLTP 跑到 1,000,000 transfers/sec/partition、靠 VSR + VOPR 把「金钱数据库」和「普通数据库」彻底分家的 0 依赖 Zig 实战",
     "date": "2026-06-17",
