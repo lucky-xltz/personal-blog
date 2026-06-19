@@ -1149,6 +1149,27 @@
         </div>
 
         <div class="articles-grid" id="articlesGrid">
+        <article class="article-card" data-slug="flink-2-2-forrest-disaggregated-state-paimon-ai-streaming-2026">
+            <a href="article.html?slug=flink-2-2-forrest-disaggregated-state-paimon-ai-streaming-2026" class="card-link">
+                <div class="card-image">
+                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&h=400&fit=crop" alt="Apache Flink 2.2.0 深度拆解:从 2008 年柏林大学 Stratosphere 到 2026 年 AI 流处理平台" loading="lazy">
+                    <div class="card-category">技术</div>
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">Apache Flink 2.2.0 深度拆解:从 2008 年柏林大学 Stratosphere 到 2026 年 AI 流处理平台——9 年最大重构 2.0 的 5 个承重级改进(Forrest 分离式状态 + 物化表 + 自适应批处理 + AI 算子 + Paimon 流式湖仓)、4 个 Flink SQL 实战代码 + 5 步生产迁移 checklist + 6 条 6-12 月硬指标 + 5 套流计算引擎对比表 + 6 条 6-12 月未来信号</h3>
+                    <p class="card-excerpt">2026 年 6 月 14 日,Apache Flink 社区把 2.2.0 推到了 dlcdn.apache.org——这是 2025 年 3 月 Flink 2.0.0 发布(9 年来最大重构)之后的第 3 个 minor release(2.0.2 / 2.1.3 / 2.2.0),也是 Flink 第一次出现「2.x 三主线并行」(2.0 LTS / 2.1 feature / 2.2 latest)的发布节奏。9 年里 Flink 把「单 JobManager + 多 TaskManager + 本地 RocksDB 状态」推到「Forrest 分离式状态 + DFS 共享存储 + 物化表统一流批 + AI 算子 + Paimon 流式湖仓」,把 Kafka topic 当 log 看变成「把 table 当 stream 看」,把 checkpoint + savepoint 当容错看变成「把 snapshot 当做可查询的状态 API」,把 FlinkSQL 当 dashboard 用变成「把 Flink ML 当 model server 用」。本文把 2.0 / 2.1 / 2.2 三个版本的承重级改进按「运行时架构 / 状态管理层 / 编程模型层 / AI 集成层 / 湖仓融合层」五层架构完整拆开,每节给可运行的 Flink SQL / Java 示例 + 与 5 个对照流计算引擎(Spark Structured Streaming / Kafka Streams / Apache Beam / Materialize / RisingWave)的性能对比 + 5 步生产迁移 checklist,最后给 6 个 6-12 月内可验证的硬指标——给正在做实时数仓 / 流式湖仓 / AI 实时特征工程 / 跨云灾备 / 状态爆炸优化的架构师一份完整的实战手册。</p>
+                    <div class="card-meta">
+                        <span class="card-date">2026-06-19</span>
+                        <span class="card-readtime">26 分钟</span>
+                        <span class="card-views">👁 0</span>
+                    </div>
+                    <div class="card-tags">
+                        <span class="tag">Apache Flink</span><span class="tag">2.2.0</span><span class="tag">Forrest</span><span class="tag">分离式状态</span><span class="tag">物化表</span><span class="tag">Materialized Table</span><span class="tag">自适应批处理</span><span class="tag">AI算子</span><span class="tag">AI Model</span><span class="tag">Paimon 1.2</span><span class="tag">流式湖仓</span><span class="tag">Flink CDC 3.4</span><span class="tag">Flink SQL</span><span class="tag">Kafka 4.0</span><span class="tag">RocksDB</span><span class="tag">DFS</span><span class="tag">FLIP-355</span><span class="tag">FLIP-365</span><span class="tag">FLIP-318</span><span class="tag">FLIP-289</span><span class="tag">Queryable State v3</span><span class="tag">Universal Checkpoint</span><span class="tag">165 contributors</span><span class="tag">25 FLIPs</span>
+                    </div>
+                </div>
+            </a>
+        </article>
+
         <article class="article-card" data-slug="clickhouse-26-olap-lightweight-updates-iceberg-json-views-2026">
             <a href="article.html?slug=clickhouse-26-olap-lightweight-updates-iceberg-json-views-2026" class="card-link">
                 <div class="card-image">
@@ -1170,7 +1191,28 @@
             </a>
         </article>
 
-        <article class="article-card" data-slug="x86-emulator-binary-translation-loop-unroll-fix-2026">
+        <article class="article-card" data-slug="tigerbeetle-0-16-5-financial-database-deep-dive-2026">
+    <a href="article.html?slug=tigerbeetle-0-16-5-financial-database-deep-dive-2026" class="card-link">
+        <div class="card-image">
+            <img src="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=600&h=400&fit=crop" alt="TigerBeetle 0.16.5 深度拆解:从 0.16.0 VSR 双脉冲到 0.16.5 5 月小步快跑——单分区 1M+ transfers/sec 嵌入式余额金融数据库实战" loading="lazy">
+            <div class="card-category">技术</div>
+        </div>
+        <div class="card-content">
+            <h3 class="card-title">TigerBeetle 0.16.5 深度拆解:从 0.16.0 VSR 双脉冲到 0.16.5 5 月小步快跑——单分区 1M+ transfers/sec、延迟 200μs p99、Zig 0 依赖嵌入式余额金融数据库 + VSR 双脉冲 + VOPR 确定性模拟 + LSM/B-tree 混合 + 4 个 Python 代码示例 + 5 步生产部署 checklist + 6 条 6-12 月硬指标 + Postgres/CockroachDB/FoundationDB 性能对比</h3>
+            <p class="card-excerpt">2026 年 6 月 14 日,TigerBeetle 0.16.5 在 0.16.76 之后的小版本线落地——这是 2025 年底 0.16.0 把 VSR 升级到双脉冲 (prep+commit pulse) 协议、把 storage engine 切成 LSM + B-tree 混合之后的「5 月小步快跑」系列里最新的一颗。从 2024 年底到 2026 年 6 月,TigerBeetle 的 OLTP 性能从单分区 50K transfers/sec 推到 1M+ transfers/sec/partition,延迟从毫秒级压到 200 微秒 p99,内存 footprint 8MB/分区,4 个 Python 示例展示余额嵌入式账户模型 + 双脉冲 prepare/commit + 确定性 VOPR 模拟 + Postgres/CockroachDB/FoundationDB 性能对比 + 5 步生产部署 checklist + 6 条 6-12 月硬指标。</p>
+            <div class="card-meta">
+                <span class="card-date">2026-06-17</span>
+                <span class="card-readtime">22 分钟</span>
+                <span class="card-views">👁 0</span>
+            </div>
+            <div class="card-tags">
+                <span class="tag">TigerBeetle</span><span class="tag">0.16.5</span><span class="tag">VSR</span><span class="tag">Viewstamped Replication</span><span class="tag">VOPR</span><span class="tag">确定性模拟</span><span class="tag">分布式共识</span><span class="tag">OLTP</span><span class="tag">金融数据库</span><span class="tag">账本</span><span class="tag">转账原子性</span><span class="tag">Zig</span><span class="tag">LSM-tree</span><span class="tag">嵌入式余额</span><span class="tag">两阶段锁</span><span class="tag">性能基准</span><span class="tag">Postgres对比</span><span class="tag">CockroachDB</span><span class="tag">FoundationDB</span><span class="tag">Joran Dirk Greef</span>
+            </div>
+        </div>
+    </a>
+</article>
+
+<article class="article-card" data-slug="x86-emulator-binary-translation-loop-unroll-fix-2026">
             <a href="article.html?slug=x86-emulator-binary-translation-loop-unroll-fix-2026" class="card-link">
                 <div class="card-image">
                     <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&h=400&fit=crop" alt="244 颗星围观 Raymond Chen 6 月 15 日的 x86 模拟器在仿真过程中修复坏代码" loading="lazy">
@@ -1251,6 +1293,70 @@
         </div>
     </a>
 </article>
+
+<article class="article-card" data-slug="valkey-9-1-0-deep-dive-async-io-rdma-2000-nodes-2026">
+    <a href="article.html?slug=valkey-9-1-0-deep-dive-async-io-rdma-2000-nodes-2026" class="card-link">
+        <div class="card-image">
+            <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=600&h=400&fit=crop" alt="Valkey 9.1.0 深度拆解:从 Redis 7.2.4 fork 到 Linux 基金会接管后的 9 个大版本、BSD 双许可、异步 I/O 线程、RDMA、双通道复制、原子槽位迁移 75 秒、多 DB cluster 2000 节点实战" loading="lazy">
+            <div class="card-category">技术</div>
+        </div>
+        <div class="card-content">
+            <h3 class="card-title">Valkey 9.1.0 深度拆解:从 Redis 7.2.4 fork 到 Linux 基金会接管后的 9 个大版本、BSD 双许可、异步 I/O 线程、RDMA、双通道复制、原子槽位迁移 75 秒、多 DB cluster 2000 节点实战</h3>
+            <p class="card-excerpt">2026 年 5 月 19 日,Linux 基金会把 Valkey 9.1.0 和 8.1.8 同时放到了 Docker Hub 和 GitHub Release——这是 2025 年 12 月 7 日 Valkey 9.0 GA 之后的第一个小版本线,也是 BSD-2/3-Clause 双许可协议下「Redis 接班人」的第九个大版本。从 2024 年 3 月 28 日 Redis Inc. 把源码协议切换到 RSALv2/SSPLv1 的那一天起,Linux 基金会接管 Redis 7.2.4 fork 出 Valkey,18 个月走完了 8.0 → 8.1 → 9.0 → 9.1 四个版本——本文把 9.1.0 跟 9.0 / 8.1 / 8.0 / Redis 7.4 一起对比,讲清楚 BSD-2/3-Clause 双许可、异步 I/O 线程 (单节点 110W QPS 11 倍于 Redis OSS 7.4)、双通道复制、RDMA 加速、原子槽位迁移 75 秒、多 DB cluster 2000 节点、libvalkey 客户端库、哈希字段过期、drop-in replacement 兼容性,以及 5 步生产迁移 checklist + 6 条 6-12 月硬指标 + 5 套系统性能对比表。</p>
+            <div class="card-meta">
+                <span class="card-date">2026-06-18</span>
+                <span class="card-readtime">24 分钟</span>
+                <span class="card-views">👁 0</span>
+            </div>
+            <div class="card-tags">
+                <span class="tag">Valkey</span><span class="tag">Redis</span><span class="tag">BSD</span><span class="tag">Linux Foundation</span><span class="tag">异步IO</span><span class="tag">async I/O threads</span><span class="tag">RDMA</span><span class="tag">双通道复制</span><span class="tag">dual-channel replication</span><span class="tag">原子槽位迁移</span><span class="tag">atomic slot migration</span><span class="tag">哈希字段过期</span><span class="tag">hash field TTL</span><span class="tag">多数据库集群</span><span class="tag">multi-DB cluster</span><span class="tag">2000节点</span><span class="tag">libvalkey</span><span class="tag">Redis OSS</span><span class="tag">内存数据库</span><span class="tag">in-memory</span><span class="tag">drop-in replacement</span><span class="tag">腾讯云</span><span class="tag">AWS ElastiCache</span><span class="tag">性能对比</span><span class="tag">DragonflyDB</span>
+            </div>
+        </div>
+    </a>
+</article>
+
+<article class="article-card" data-slug="postgresql-19-beta-1-deep-dive-sql-pgq-temporal-worker-pool-2026">
+    <a href="article.html?slug=postgresql-19-beta-1-deep-dive-sql-pgq-temporal-worker-pool-2026" class="card-link">
+        <div class="card-image">
+            <img src="https://images.unsplash.com/photo-1544383835-bda2bc66a55d?w=600&h=400&fit=crop" alt="PostgreSQL 19 Beta 1 深度拆解:30 周年节点的 7 个承重级改进——SQL/PGQ 属性图查询、ON CONFLICT DO SELECT、时态表、Worker Pool 异步 I/O、VACUUM REORGANIZE 在线重组" loading="lazy">
+            <div class="card-category">技术</div>
+        </div>
+        <div class="card-content">
+            <h3 class="card-title">PostgreSQL 19 Beta 1 深度拆解:30 周年节点的 7 个承重级改进——SQL/PGQ 属性图查询、ON CONFLICT DO SELECT、时态表、Worker Pool 异步 I/O、VACUUM REORGANIZE 在线重组、pg_hint_plan 进 contrib、JSON_TABLE 收尾</h3>
+            <p class="card-excerpt">2026 年 6 月 4 日,PostgreSQL Global Development Group 在 postgresql.org/about/news 放出了 PostgreSQL 19 Beta 1——这是从 4 月 8 日 Feature Freeze 之后、5 月 6 日第一轮 RMT 投票结束之后的第一个公开测试版,共承载 212 项更新,正式版预计 9 月底 GA。从 1996 年加州大学伯克利分校 Michael Stonebraker 接续 POSTGRES 算起,PG 19 是第 30 个主版本——这次 30 周年节点上,核心团队把「运维 + 监控」和「SQL 标准合规」做了一次彻底盘点:SQL/PGQ (ISO/IEC 22602 属性图查询) 进 core、ON CONFLICT DO SELECT 进 core、时态表 (SQL:2011) 进 core、Worker Pool 异步 I/O 替代 io_method、VACUUM REORGANIZE 在线重组、pg_hint_plan 从外部插件进 contrib、JSON_TABLE 收尾 SQL/JSON 路径。本文把 PG 19 Beta 1 跟 PG 18 / PG 17 / MySQL 9 / SQL Server 2025 / Oracle 23ai 一起对比,讲清楚 7 个承重级改进 + 5 大数据库特性对比表 + 5 步生产升级 checklist + 6 条 6-12 月硬指标 + 6 条 6-12 月未来信号 + 6 条 6-12 月业务价值。</p>
+            <div class="card-meta">
+                <span class="card-date">2026-06-18</span>
+                <span class="card-readtime">24 分钟</span>
+                <span class="card-views">👁 0</span>
+            </div>
+            <div class="card-tags">
+                <span class="tag">PostgreSQL</span><span class="tag">PG19</span><span class="tag">Beta1</span><span class="tag">SQL/PGQ</span><span class="tag">属性图查询</span><span class="tag">ON CONFLICT DO SELECT</span><span class="tag">时态表</span><span class="tag">temporal tables</span><span class="tag">query hints</span><span class="tag">pg_hint_plan</span><span class="tag">Worker Pool</span><span class="tag">异步IO</span><span class="tag">io_method</span><span class="tag">online VACUUM FULL</span><span class="tag">在线重组</span><span class="tag">JSON_TABLE</span><span class="tag">SQL/JSON</span><span class="tag">MERGE</span><span class="tag">逻辑复制</span><span class="tag">pg_basebackup</span><span class="tag">pg_createsubscriber</span><span class="tag">性能基准</span><span class="tag">MySQL对比</span><span class="tag">SQL Server对比</span><span class="tag">Oracle对比</span>
+            </div>
+        </div>
+    </a>
+</article>
+
+<article class="article-card" data-slug="ai-news-2026-06-18">
+    <a href="article.html?slug=ai-news-2026-06-18" class="card-link">
+        <div class="card-image">
+            <img src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=600&h=400&fit=crop" alt="AI 日报:2026年06月18日 | Boykis 本地模型 1003 pts 余热未退 + Anthropic S-1 招股书估值 1.65 万亿 ARR 300 亿 + OpenAI Code Red 提前 GPT-6 + Tesla Optimus V3 工厂实装 5 万台" loading="lazy">
+            <div class="card-category">技术</div>
+        </div>
+        <div class="card-content">
+            <h3 class="card-title">AI 日报:2026年06月18日 | Boykis 本地模型 1003 pts 余热未退 + Anthropic 公开 S-1 招股书估值 1.65 万亿 ARR 300 亿毛利率 78% + OpenAI 内部 Code Red 提前 GPT-6 至 2027 Q1 启动 Agent of Agents 部门 + Tesla Optimus V3 工厂实装 5 万台 11 DoF 灵巧手 BOM $19,000</h3>
+            <p class="card-excerpt">6 月 18 日早间速览,AI 头条被一条主线贯穿——「本地化叙事」从 Boykis 一篇 1003 pts 长文正式升级为「OpenAI 内部 Code Red」+「Anthropic S-1 招股书披露 1.65 万亿估值」的双重压力测试:OpenAI 召开全体动员启动 GPT-6 研发以应对本地模型 + Anthropic 的双向挤压;Anthropic 借 S-1 把 ARR(年化营收)300 亿美元、Claude Code 周活 1.2M、毛利率 78% 全部写进公开文件;Tesla Optimus V3 在德州工厂实装 5 万台,成为物理 AI 第一个「真上生产线」的量级;OpenAI / Microsoft 重签算力合同把 GPT-7 训练算力前置到 2027 Q3。这 4 件事同框说明:2026 年中的 AI 战场已经从「比 benchmark」升级为「比 deployment + 商业 + 量产」的三线作战。</p>
+            <div class="card-meta">
+                <span class="card-date">2026-06-18</span>
+                <span class="card-readtime">10 分钟</span>
+                <span class="card-views">👁 0</span>
+            </div>
+            <div class="card-tags">
+                <span class="tag">AI日报</span><span class="tag">本地模型</span><span class="tag">Vicki Boykis</span><span class="tag">Gemma 4</span><span class="tag">Anthropic</span><span class="tag">S-1</span><span class="tag">估值</span><span class="tag">OpenAI</span><span class="tag">Code Red</span><span class="tag">GPT-6</span><span class="tag">Microsoft</span><span class="tag">算力合同</span><span class="tag">Tesla</span><span class="tag">Optimus</span><span class="tag">物理AI</span><span class="tag">工厂部署</span>
+            </div>
+        </div>
+    </a>
+</article>
+
 <article class="article-card" data-slug="ai-news-2026-06-17">
     <a href="article.html?slug=ai-news-2026-06-17" class="card-link">
         <div class="card-image">
