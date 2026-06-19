@@ -1149,6 +1149,27 @@
         </div>
 
         <div class="articles-grid" id="articlesGrid">
+        <article class="article-card" data-slug="clickhouse-26-olap-lightweight-updates-iceberg-json-views-2026">
+            <a href="article.html?slug=clickhouse-26-olap-lightweight-updates-iceberg-json-views-2026" class="card-link">
+                <div class="card-image">
+                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&h=400&fit=crop" alt="ClickHouse 26.x 深度拆解:从 Yandex 内部 OLAP 到 250M ARR / 150 亿美元估值的 10 年逆袭" loading="lazy">
+                    <div class="card-category">技术</div>
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">ClickHouse 26.x 深度拆解:从 Yandex 内部 OLAP 到 250M ARR / 150 亿美元估值的 10 年逆袭——Lightweight Updates 干掉 delete+insert、Iceberg/Delta Lake 原生集成、refreshable Materialized View、JSON 视图、以及 4 个实战 SQL 示例 + 5 步生产部署 checklist + 6 条 6-12 月硬指标 + 6 套 OLAP 引擎对比表</h3>
+                    <p class="card-excerpt">2026 年 6 月 11 日,ClickHouse Inc. 把 ClickHouse 26.4 LTS 推到了 GitHub Release 和 Docker Hub——这是 Yandex 2016 年开源以来第 10 个大版本线,也是 ClickHouse 商业化(ARR $250M、3 倍同比增长、估值 $150 亿)之后第一个 LTS 主线。10 年间 ClickHouse 把「单节点 100MB/s 写入」推到「单节点 10GB/s 写入(100 倍)」,把「硬编码 MergeTree 唯一索引」拆成「Projection + Skip Index + 全文索引 + 向量索引」四件套,把「delete+insert 的反范式操作」换成「Lightweight Updates(原地 mutation + _row_exists 虚拟列)」,把 Iceberg/Delta Lake 从「外表查询」升级为「原生 catalog」、把 JSON 从「文本列」换成「dynamic + json 视图」、把物化视图从「手动 REFRESH」换成「refreshable + DEPENDS ON + APPEND」。本文把 26.x 的所有承重级改进按「存储引擎层 / 查询优化层 / 数据接入层 / AI 集成层」四层架构完整拆开,每节给可运行的 SQL 示例 + 与 5 个对照 OLAP 引擎(DuckDB / DuckLake / Snowflake / BigQuery / Databricks)的性能对比 + 5 步生产部署清单,最后给 6 个 6-12 个月内可验证的硬指标——给正在做实时分析 / AI 时代向量检索 / 湖仓一体 / 时序替代 ELK 的架构师一份完整的实战手册。</p>
+                    <div class="card-meta">
+                        <span class="card-date">2026-06-19</span>
+                        <span class="card-readtime">24 分钟</span>
+                        <span class="card-views">👁 0</span>
+                    </div>
+                    <div class="card-tags">
+                        <span class="tag">ClickHouse</span><span class="tag">26.4 LTS</span><span class="tag">Lightweight Updates</span><span class="tag">IcebergS3</span><span class="tag">Delta Lake</span><span class="tag">refreshable MV</span><span class="tag">JSON视图</span><span class="tag">向量索引</span><span class="tag">HNSW</span><span class="tag">BM25</span><span class="tag">250M ARR</span><span class="tag">ClickHouse Cloud</span><span class="tag">ClickStack</span><span class="tag">Lakehouse</span><span class="tag">observability</span><span class="tag">OpenTelemetry</span><span class="tag">Yandex</span><span class="tag">Snowflake</span><span class="tag">BigQuery</span><span class="tag">Databricks</span><span class="tag">DuckDB</span><span class="tag">Pinecone 替代</span><span class="tag">HTAP</span>
+                    </div>
+                </div>
+            </a>
+        </article>
+
         <article class="article-card" data-slug="x86-emulator-binary-translation-loop-unroll-fix-2026">
             <a href="article.html?slug=x86-emulator-binary-translation-loop-unroll-fix-2026" class="card-link">
                 <div class="card-image">
