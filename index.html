@@ -1294,6 +1294,27 @@
     </a>
 </article>
 
+<article class="article-card" data-slug="io-uring-2026-linux-sqpold-percpu-bio-gpu-direct-storage-2026">
+    <a href="article.html?slug=io-uring-2026-linux-sqpold-percpu-bio-gpu-direct-storage-2026" class="card-link">
+        <div class="card-image">
+            <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&h=400&fit=crop" alt="Linux io_uring 2026 深度拆解:从 SQ/CQ 双环到 SQPOLD + Per-CPU BIO 缓存 + GPU Direct Storage 三角竞速 — 7 年从配角到基础设施的逆袭" loading="lazy">
+            <div class="card-category">技术</div>
+        </div>
+        <div class="card-content">
+            <h3 class="card-title">Linux io_uring 2026 深度拆解:从 SQ/CQ 双环到 SQPOLD + Per-CPU BIO 缓存 + GPU Direct Storage 三角竞速 — 7 年从配角到基础设施的逆袭</h3>
+            <p class="card-excerpt">io_uring 在 2026 年完成三级跳: Linux 6.19 默认启用 Per-CPU BIO 缓存文件系统性能 +2%、6.17 把 SQPOLD 单队列轮询做成通用基线、6.16 给 NAPI/IRQ 亲和让 100Gbps 网络 io_uring recv 一致性提升 38%。本文从 2019 年 Jens Axboe 在 Linux 5.1 提交 v1 的 1200 行补丁讲起,到 2026 年 Linux 6.19 把 io_uring 推到「数据库默认后端、SPDK 内核态替代品、AI 训练存储栈核心」三栖基础设施,完整拆解 SQ/CQ 双环、shared ring buffer、SQPOLL/SQPOLD、registered buffers、io_uring_cmd 网络直通、NVMe uring passthrough、buffer ring、multishot accept 7 层设计 + 4 段实战 C 代码 + 5 套 IO 栈性能对比表 + 6 条 6-12 月硬指标 + 6 条 6-12 月未来信号 + 5 步生产部署 checklist + 5 条 best practice。</p>
+            <div class="card-meta">
+                <span class="card-date">2026-06-20</span>
+                <span class="card-readtime">24 分钟</span>
+                <span class="card-views">👁 0</span>
+            </div>
+            <div class="card-tags">
+                <span class="tag">io_uring</span><span class="tag">Linux内核</span><span class="tag">SQPOLD</span><span class="tag">Per-CPU BIO 缓存</span><span class="tag">Linux 6.19</span><span class="tag">Linux 6.17</span><span class="tag">Linux 6.16</span><span class="tag">SPDK 对比</span><span class="tag">GPU Direct Storage</span><span class="tag">NVMe passthrough</span><span class="tag">uring_cmd</span><span class="tag">multishot accept</span><span class="tag">buffer ring</span><span class="tag">registered buffers</span><span class="tag">libaio 对比</span><span class="tag">epoll 对比</span><span class="tag">Jens Axboe</span><span class="tag">PostgreSQL</span><span class="tag">RocksDB</span><span class="tag">Cloudflare</span><span class="tag">Meta</span><span class="tag">NAPI/IRQ 亲和</span><span class="tag">Doorbell</span><span class="tag">SPSC 无锁</span><span class="tag">mmap 共享</span>
+            </div>
+        </div>
+    </a>
+</article>
+
 <article class="article-card" data-slug="ai-news-2026-06-20">
     <a href="article.html?slug=ai-news-2026-06-20" class="card-link">
         <div class="card-image">
