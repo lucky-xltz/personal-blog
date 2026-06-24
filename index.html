@@ -1314,6 +1314,26 @@
     </a>
 </article>
 
+<article class="article-card" data-slug="docker-engine-29-containerd-image-store-time-namespace-cve-2026-41567-deep-dive-2026">
+    <a href="article.html?slug=docker-engine-29-containerd-image-store-time-namespace-cve-2026-41567-deep-dive-2026" class="card-link">
+        <div class="card-image">
+            <img src="https://images.unsplash.com/photo-1605745341112-85968b19335b?w=600&h=400&fit=crop" alt="Docker Engine 29 深度拆解:containerd image store 默认化 + CVE-2026-41567 三重 RCE 修复 + SLSA Attestation API" loading="lazy">
+            <div class="card-category">技术</div>
+        </div>
+        <div class="card-content">
+            <h3 class="card-title">Docker Engine 29 深度拆解:containerd image store 默认化 + 时间命名空间 + gvisor-tap-vsock 默认化 + CVE-2026-41567/41568/42306 三重 docker cp RCE 修复 + SLSA Attestation API + 14 年容器运行时的 2026 年中承重墙</h3>
+            <p class="card-excerpt">Docker Engine 29(2026-05 GA,29.6.0 @ 06-18)是 14 年容器运行时历史上最大的一次「安全 + 默认化 + 供应链可观测」三栈层同时承重版本:**containerd image store 从 28.x 实验性首次默认启用** 与 K8s containerd runtime 存储路径完全统一;**private time namespace 默认启用** 容器内 CLOCK_MONOTONIC / CLOCK_BOOTTIME 与 host 隔离;**Rootless 默认网络驱动从 slirp4netns 切换到 gvisor-tap-vsock** 性能 +300% 不再需要 CAP_NET_ADMIN;**CVE-2026-41567/41568/42306 三重 docker cp RCE/TOCTOU/bind-mount 重定向严重漏洞** 攻击者构造恶意容器即可让 docker daemon 在 host 上执行任意二进制;CVE-2026-31431「Copy Fail」 AF_ALG socketcall seccomp 拦截 → AppArmor/LSM 精修回归;29.6.0 新增 GET /images/{name}/attestations API 让 SLSA provenance + SPDX SBOM 直接从 daemon 拉取。本文 8 章节 + 4 段实战代码 + 5 套容器运行时性能对比 + 6 条硬指标 + 6 条未来信号 + 5 步生产升级 checklist + 5 条 best practice。</p>
+            <div class="card-meta">
+                <span class="card-date">2026-06-24</span>
+                <span class="card-readtime">24 分钟</span>
+                <span class="card-views">👁 0</span>
+            </div>
+            <div class="card-tags">
+                <span class="tag">Docker</span><span class="tag">DockerEngine</span><span class="tag">DockerEngine29</span><span class="tag">Moby</span><span class="tag">containerd</span><span class="tag">containerdImageStore</span><span class="tag">gvisor-tap-vsock</span><span class="tag">TimeNamespace</span><span class="tag">CVE-2026-41567</span><span class="tag">CVE-2026-41568</span><span class="tag">CVE-2026-42306</span><span class="tag">CVE-2026-31431</span><span class="tag">CVE-2026-32288</span><span class="tag">dockerCp</span><span class="tag">RCE</span><span class="tag">TOCTOU</span><span class="tag">SLSA</span><span class="tag">in-toto</span><span class="tag">SPDX</span><span class="tag">SBOM</span><span class="tag">Attestation</span><span class="tag">BuildKit</span><span class="tag">rootless</span><span class="tag">AF_ALG</span><span class="tag">CopyFail</span><span class="tag">seccomp</span><span class="tag">AppArmor</span><span class="tag">SELinux</span><span class="tag">RootlessKit</span><span class="tag">Linux6.x</span><span class="tag">容器运行时</span><span class="tag">镜像存储</span><span class="tag">系统安全</span><span class="tag">供应链</span><span class="tag">2026</span><span class="tag">全栈日</span>
+            </div>
+        </div>
+    </a>
+</article>
 <article class="article-card" data-slug="ai-news-2026-06-24">
     <a href="article.html?slug=ai-news-2026-06-24" class="card-link">
         <div class="card-image">
