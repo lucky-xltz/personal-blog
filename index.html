@@ -1424,6 +1424,26 @@
         </div>
     </a>
 </article>
+<article class="article-card" data-slug="vllm-v1-sglang-hicache-tensorrt-llm-blackwell-inference-runtime-2026">
+    <a href="article.html?slug=vllm-v1-sglang-hicache-tensorrt-llm-blackwell-inference-runtime-2026" class="card-link">
+        <div class="card-image">
+            <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&h=400&fit=crop" alt="vLLM V1 + SGLang HiCache + TensorRT-LLM Blackwell 深度拆解:2026 年中 AI 推理运行时三件套" loading="lazy">
+            <div class="card-category">技术</div>
+        </div>
+        <div class="card-content">
+            <h3 class="card-title">vLLM V1 + SGLang HiCache + TensorRT-LLM Blackwell 深度拆解:2026 年中 AI 推理运行时三件套 + PagedAttention 1.7x + RadixAttention 多轮命中 3-5x + Blackwell 71% 出货 + 4 段实战 Python/CUDA 代码 + 5 套推理引擎性能对比</h3>
+            <p class="card-excerpt">2026 年 6 月 26 日,大模型推理运行时(LLM inference runtime)三大开源/半开源引擎 vLLM(0.17.1 + V1 alpha) + SGLang(0.5.6 + HiCache) + TensorRT-LLM(1.0/2.0 + Blackwell 适配)同时进入「大规模生产稳定期」。vLLM V1 alpha 重写调度器,官方基准 1.7x 提速(clean code + zero-overhead prefix caching + optimized execution loop);SGLang HiCache 三级缓存把 KV cache 命中率从 30-40% 提升到 75-85%(L1 GPU 显存 + L2 宿主机内存 + L3 分布式存储),30 轮连续对话首字延迟下降 64%;TensorRT-LLM 1.0/2.0 适配 Blackwell NVFP4 + 71% 出货占比(TrendForce 2026 预测),Llama 3.1-70B-FP8 单卡 H100 TTFT vLLM 123ms < TensorRT-LLM 194ms < SGLang 340ms(并发 32+ 场景 SGLang 反超)——三家在不同维度构成完整 AI 推理运行时版图。今天早间的 ai-news-2026-06-26 提到 DeepSeek V4 1.6T 参数 + OpenAI Jalapeño 自研芯片 + 高通 HBC + Meta MTIA 4 芯片——这是算力供应链层(芯片 + 模型 + 资本 + 人才);本文是算力 runtime 层——同样的 Blackwell GPU 同样的 DeepSeek V4 模型,在三家不同 runtime 上能跑出 1.5-3x 不同的吞吐量 + 30-60% 不同的首字延迟,选错 runtime = GPU 集群一半钱打水漂,选对 runtime = 同样的硬件产出 3-4 倍。本文完整拆解三件套的 7 层架构 + 4 段实战代码(vLLM V1 + EAGLE 投机解码 / SGLang HiCache 多轮对话 / TensorRT-LLM Blackwell NVFP4 / Triton FlashAttention 手写调优)+ 5 套推理引擎性能对比表(17 维度)+ 6 条 6-12 月硬指标 + 6 条未来信号 + 5 步生产部署 checklist + 5 条 best practice,给正在选型 LLM 推理引擎(自家服务 / RAG / Agent / 多模型调度)的 AI 工程师 / MLOps / 平台架构师一份完整的实战手册。</p>
+            <div class="card-meta">
+                <span class="card-date">2026-06-26</span>
+                <span class="card-readtime">26 分钟阅读</span>
+                <div class="card-tags">
+                    <span class="tag">vLLM</span><span class="tag">vLLM V1</span><span class="tag">SGLang</span><span class="tag">SGLang HiCache</span><span class="tag">TensorRT-LLM</span><span class="tag">TensorRT-LLM Blackwell</span><span class="tag">LLM推理引擎</span><span class="tag">AI推理运行时</span><span class="tag">PagedAttention</span><span class="tag">Continuous Batching</span><span class="tag">RadixAttention</span><span class="tag">HiRadixTree</span><span class="tag">Triton Kernel</span><span class="tag">FlashInfer</span><span class="tag">FP8推理</span><span class="tag">INT4量化</span><span class="tag">NVFP4</span><span class="tag">SmoothQuant</span><span class="tag">NVFP4 Blackwell</span><span class="tag">DeepSeek V4适配</span><span class="tag">Blackwell B200</span><span class="tag">Blackwell B300</span><span class="tag">Rubin NVL144</span><span class="tag">PyTorch Foundation</span><span class="tag">CUDA Graph</span><span class="tag">speculative decoding</span><span class="tag">EAGLE-2</span><span class="tag">chunked prefill</span><span class="tag">multi-step scheduling</span><span class="tag">算力利用率85%</span><span class="tag">v0.17.1</span><span class="tag">SGLang 0.5.6</span><span class="tag">TensorRT-LLM 2.0</span><span class="tag">TensorRT-LLM 1.0</span><span class="tag">2026</span><span class="tag">HN</span><span class="tag">推理性能对比</span><span class="tag">生产部署</span>
+                </div>
+            </div>
+        </div>
+    </a>
+</article>
+
 <article class="article-card" data-slug="ai-news-2026-06-26">
     <a href="article.html?slug=ai-news-2026-06-26" class="card-link">
         <div class="card-image">
