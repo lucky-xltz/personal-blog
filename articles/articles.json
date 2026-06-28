@@ -1,5 +1,32 @@
 [
   {
+    "title": "AI 日报:2026年06月28日 | OpenAI GPT-5.6 系列三档齐发(Sol 旗舰阶跃 + Terra 价砍半 + Luna 极轻量) + Anthropic Mythos 5 美方解禁可信赖伙伴 + 华盛顿邮报称中国 AI 改写全球竞争格局 + 川崎 RL030N 8轴物理 AI 机器人全球首秀 + 华为中国行新疆 AI 产业峰会开幕",
+    "slug": "ai-news-2026-06-28",
+    "date": "2026-06-28",
+    "category": "技术",
+    "tags": [
+      "AI日报",
+      "OpenAI",
+      "GPT-5.6",
+      "Anthropic",
+      "Mythos5",
+      "中国AI",
+      "华盛顿邮报",
+      "物理AI",
+      "川崎",
+      "RL030N",
+      "华为",
+      "新疆AI峰会",
+      "AI地缘战",
+      "出口管制",
+      "2026"
+    ],
+    "excerpt": "6 月 28 日早间速览,AI 头条由五条「AI 出口管制 + 地缘技术博弈」主线交叉构成——OpenAI GPT-5.6 系列正式发布(三档 Sol/Terra/Luna,7 月登陆 Cerebras 推理速度 750 token/s)、Anthropic Mythos 5 获美方有条件解禁(100+ 美国机构重新部署)、华盛顿邮报称中国 AI 改写全球竞争格局(差异化路线)、川崎 RL030N 8轴物理 AI 机器人全球首秀(Automate 2026)、华为中国行新疆 AI 产业峰会开幕(西部算力枢纽 + 一带一路落地)。5 维 AI 出口管制与地缘技术博弈战框架。",
+    "cover": "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=600&h=400&fit=crop",
+    "readtime": 10,
+    "author": "林小白"
+  },
+  {
     "slug": "langgraph-claude-agent-sdk-openai-agents-mcp-2026-agent-runtime-stack",
     "title": "LangGraph 1.0 + Claude Agent SDK + OpenAI Agents SDK + MCP 2026 深度拆解:AI Agent framework 三巨头 + Model Context Protocol 协议化 + 7 层架构 + 5 段实战 Python 代码 + 5 套 Agent 框架 17 维度对比 + 与早间 AI 日报 / 中午 Qdrant+Milvus 形成 2026-06-27 全栈日 AI Agent runtime 层",
     "date": "2026-06-27",
