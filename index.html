@@ -1079,6 +1079,534 @@
             background: rgba(255, 183, 77, 0.05);
         }
 
+        /* ===== ENGINEER KNOWLEDGE BASE REFRESH ===== */
+        :root {
+            --bg: #0b1117;
+            --bg-light: #101821;
+            --bg-raised: #121c26;
+            --surface: rgba(18, 28, 38, 0.86);
+            --surface-strong: #14202b;
+            --surface-soft: rgba(255, 255, 255, 0.035);
+            --border: rgba(148, 163, 184, 0.16);
+            --border-strong: rgba(148, 163, 184, 0.24);
+            --accent: #f59e0b;
+            --accent-soft: rgba(245, 158, 11, 0.14);
+            --accent-red: #ef6f5e;
+            --accent-amber: #f59e0b;
+            --accent-coral: #38bdf8;
+            --text: #e5edf5;
+            --text-dim: #9aa8b6;
+            --text-muted: #687789;
+            --radius-sm: 6px;
+            --radius-md: 8px;
+            --radius-lg: 8px;
+            --radius-xl: 10px;
+            --neu-raised: none;
+            --neu-raised-sm: none;
+            --neu-raised-lg: none;
+            --neu-inset: none;
+            --neu-inset-sm: none;
+            --transition: 0.18s ease;
+        }
+
+        body {
+            background:
+                radial-gradient(circle at 14% 0%, rgba(56, 189, 248, 0.07), transparent 32rem),
+                linear-gradient(180deg, #0a1016 0%, #0d141c 54%, #0a1016 100%);
+            color: var(--text);
+            letter-spacing: 0;
+        }
+
+        .spring-bg,
+        #leafCanvas,
+        .bg-shapes {
+            display: none !important;
+        }
+
+        .nav {
+            height: 64px;
+            padding: 0 28px;
+            background: rgba(9, 15, 22, 0.88);
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(18px);
+        }
+
+        .nav.scrolled {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.24);
+        }
+
+        .nav-logo {
+            color: var(--text);
+            font-size: 1.25rem;
+            letter-spacing: 0;
+        }
+
+        .nav-logo::after {
+            content: "";
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            margin-left: 8px;
+            border-radius: 50%;
+            background: var(--accent);
+            vertical-align: middle;
+        }
+
+        .nav-links {
+            gap: 24px;
+            margin-left: 24px;
+            margin-right: auto;
+        }
+
+        .nav-links a {
+            font-size: 0.9rem;
+        }
+
+        .nav-links a:hover,
+        .nav-links a:focus-visible {
+            color: var(--accent);
+        }
+
+        .nav-search {
+            margin-left: 0;
+        }
+
+        .search-input {
+            width: 260px;
+            padding: 9px 14px;
+            background: rgba(255, 255, 255, 0.045);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            box-shadow: none;
+        }
+
+        .search-input:focus {
+            width: 300px;
+            border-color: rgba(245, 158, 11, 0.62);
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.14);
+        }
+
+        .search-btn,
+        .back-to-top {
+            background: var(--surface-strong);
+            border: 1px solid var(--border);
+            box-shadow: none;
+        }
+
+        .section {
+            max-width: 1480px;
+            padding: 92px 28px 64px;
+        }
+
+        .blog-layout {
+            grid-template-columns: minmax(0, 1fr) 324px;
+            gap: 16px;
+        }
+
+        .blog-main,
+        .blog-sidebar {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            box-shadow: 0 24px 70px rgba(0, 0, 0, 0.22);
+        }
+
+        .blog-main {
+            padding: 18px;
+            min-width: 0;
+        }
+
+        .blog-sidebar {
+            top: 80px;
+            padding: 14px;
+            gap: 14px;
+        }
+
+        .articles-header {
+            align-items: center;
+            margin-bottom: 14px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .articles-header h2 {
+            font-size: 1.1rem;
+            letter-spacing: 0;
+        }
+
+        .article-count {
+            margin-top: 0;
+            background: var(--surface-soft);
+            border: 1px solid var(--border);
+            box-shadow: none;
+            color: var(--text-dim);
+        }
+
+        .category-filters {
+            justify-content: flex-start;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .filter-btn {
+            padding: 7px 16px;
+            background: rgba(255, 255, 255, 0.035);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            box-shadow: none;
+            color: var(--text-dim);
+        }
+
+        .filter-btn:hover {
+            border-color: var(--border-strong);
+            box-shadow: none;
+            color: var(--text);
+        }
+
+        .filter-btn.active {
+            background: var(--accent-soft);
+            border-color: rgba(245, 158, 11, 0.6);
+            color: var(--accent);
+            box-shadow: inset 0 -1px 0 rgba(245, 158, 11, 0.2);
+        }
+
+        .articles-grid {
+            display: block;
+        }
+
+        .article-card {
+            display: grid;
+            grid-template-columns: 164px minmax(0, 1fr);
+            gap: 16px;
+            margin: 0;
+            padding: 16px 0;
+            background: transparent;
+            border-bottom: 1px solid var(--border);
+            border-radius: 0;
+            box-shadow: none;
+            overflow: visible;
+            animation: none;
+        }
+
+        .article-card:first-child {
+            padding-top: 0;
+        }
+
+        .article-card:last-child {
+            border-bottom: 0;
+        }
+
+        .article-card::before {
+            display: none;
+        }
+
+        .article-card:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        .article-card:hover .article-title,
+        .article-card:hover .card-title {
+            color: var(--accent);
+        }
+
+        .card-link {
+            display: contents;
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .article-card .article-image,
+        .article-card .card-image {
+            position: relative;
+            width: 164px;
+            height: 104px;
+            margin: 0;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            background: #0f1720;
+        }
+
+        .article-card .article-image img,
+        .article-card .card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.78;
+            filter: saturate(0.9) contrast(1.05);
+            transition: transform var(--transition), opacity var(--transition);
+        }
+
+        .article-card:hover .article-image img,
+        .article-card:hover .card-image img {
+            transform: scale(1.03);
+            opacity: 0.92;
+        }
+
+        .card-category,
+        .article-category {
+            display: inline-flex;
+            align-items: center;
+            width: fit-content;
+            padding: 3px 8px;
+            margin-bottom: 8px;
+            background: rgba(56, 189, 248, 0.09);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            border-radius: var(--radius-sm);
+            color: #38bdf8;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0;
+        }
+
+        .card-image .card-category {
+            position: absolute;
+            left: 8px;
+            bottom: 8px;
+            margin: 0;
+            background: rgba(11, 17, 23, 0.78);
+            backdrop-filter: blur(10px);
+        }
+
+        .card-content {
+            min-width: 0;
+        }
+
+        .article-card .article-title,
+        .article-card .card-title {
+            margin: 0 0 8px;
+            color: var(--text);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 1.02rem;
+            font-weight: 650;
+            line-height: 1.48;
+            letter-spacing: 0;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            transition: color var(--transition);
+        }
+
+        .article-card .article-excerpt,
+        .article-card .card-excerpt {
+            margin: 0 0 10px;
+            color: var(--text-dim);
+            font-size: 0.88rem;
+            line-height: 1.65;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .article-card .article-meta,
+        .article-card .card-meta {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+
+        .card-views,
+        .article-views {
+            color: var(--accent);
+        }
+
+        .article-tags,
+        .card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin: 0;
+        }
+
+        .article-tag-pill,
+        .tag {
+            max-width: 148px;
+            padding: 3px 8px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            background: rgba(255, 255, 255, 0.045);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            box-shadow: none;
+            color: var(--text-dim);
+            font-size: 0.74rem;
+        }
+
+        .sidebar-card {
+            padding: 16px;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            box-shadow: none;
+            animation: none;
+        }
+
+        .sidebar-title {
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text);
+            letter-spacing: 0;
+        }
+
+        .sidebar-card > p,
+        .sidebar-latest a,
+        .sidebar-hot-list a,
+        .sidebar-archive-month {
+            color: var(--text-dim);
+        }
+
+        .sidebar-latest li,
+        .sidebar-hot-list li,
+        .sidebar-archive-list li {
+            border-bottom: 1px solid var(--border);
+        }
+
+        .sidebar-hot-rank {
+            background: rgba(255, 255, 255, 0.055);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            box-shadow: none;
+        }
+
+        .sidebar-hot-rank.top-1,
+        .sidebar-hot-rank.top-2,
+        .sidebar-hot-rank.top-3 {
+            background: var(--accent-soft);
+            color: var(--accent);
+            box-shadow: none;
+        }
+
+        .sidebar-tags a,
+        .sidebar-archive-count {
+            background: rgba(255, 255, 255, 0.045);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            box-shadow: none;
+        }
+
+        .load-more-btn,
+        .clear-search {
+            background: var(--surface-strong);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            box-shadow: none;
+            color: var(--text);
+        }
+
+        .load-more-btn:hover,
+        .clear-search:hover {
+            border-color: rgba(245, 158, 11, 0.5);
+            color: var(--accent);
+            transform: translateY(-1px);
+        }
+
+        .search-results-info,
+        .notification-content {
+            background: var(--surface-strong);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            box-shadow: 0 18px 50px rgba(0, 0, 0, 0.28);
+        }
+
+        .footer {
+            padding: 44px 28px 32px;
+            border-top: 1px solid var(--border);
+            background: rgba(9, 15, 22, 0.7);
+        }
+
+        .footer-content {
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+        }
+
+        @media (max-width: 1100px) {
+            .blog-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .blog-sidebar {
+                position: static;
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav {
+                height: 64px;
+                padding: 0 16px;
+                gap: 12px;
+            }
+
+            .nav-links {
+                top: 64px;
+                background: rgba(9, 15, 22, 0.96);
+                border-bottom: 1px solid var(--border);
+            }
+
+            .nav-search {
+                flex: 1;
+                min-width: 0;
+            }
+
+            .search-input,
+            .search-input:focus {
+                width: 100%;
+            }
+
+            .section {
+                padding: 84px 14px 48px;
+            }
+
+            .blog-main,
+            .blog-sidebar {
+                padding: 14px;
+            }
+
+            .article-card {
+                grid-template-columns: 112px minmax(0, 1fr);
+                gap: 12px;
+                padding: 14px 0;
+            }
+
+            .article-card .article-image,
+            .article-card .card-image {
+                width: 112px;
+                height: 82px;
+            }
+
+            .article-card .article-title,
+            .article-card .card-title {
+                font-size: 0.96rem;
+                -webkit-line-clamp: 3;
+            }
+
+            .article-card .article-excerpt,
+            .article-card .card-excerpt {
+                display: none;
+            }
+
+            .card-tags,
+            .article-tags {
+                display: none;
+            }
+
+            .blog-sidebar {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
     </style>
 </head>
 <body>
@@ -1584,6 +2112,39 @@
         </div>
     </a>
 </article>
+
+<article class="article-card" data-slug="ai-compliance-observability-runtime-layer-2026-eu-ai-act-nist-rmf-langfuse-arize-phoenix" data-date="2026-07-02">
+            <a href="article.html?slug=ai-compliance-observability-runtime-layer-2026-eu-ai-act-nist-rmf-langfuse-arize-phoenix" class="card-link">
+                <div class="card-image">
+                    <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&h=400&fit=crop" alt="AI 合规与可观测性运行时层 2026 深度拆解:Langfuse 3.140 + Arize Phoenix 3.0 + EU AI Act + NIST AI RMF 1.1 + ISO/IEC 42001 —— OpenTelemetry GenAI 协议化 + 5 大承重级架构革新 + 7 子层栈详解 + 5 段实战代码 + 5 套可观测性平台对比 + 与早间 AI 日报 5 维 Q3 启动日战 + 中午 x402 协议形成 2026-07-02 AI 商业化全栈日合规可观测性层">
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">AI 合规与可观测性运行时层 2026 深度拆解:Langfuse 3.140 + Arize Phoenix 3.0 + EU AI Act + NIST AI RMF 1.1 + ISO/IEC 42001 —— OpenTelemetry GenAI 协议化 + 5 大承重级架构革新 + 7 子层栈详解 + 5 段实战代码 + 5 套可观测性平台对比 + 与早间 AI 日报 5 维 Q3 启动日战 + 中午 x402 协议形成 2026-07-02 AI 商业化全栈日合规可观测性层</h3>
+                    <p class="card-excerpt">2026-07-01 EU AI Act 二阶段 GPAI 规则正式生效,首次强制要求所有通用 AI 模型披露训练数据 + 算力 + 安全测试 + 版权合规,未合规最高罚全球年营业额 7%(OpenAI 32 亿 / Anthropic 21 亿 / Google 2200 亿 / Meta 950 亿美元);5 月 30 日 NIST AI RMF 1.1 强制要求风险溯源字段结构化嵌入;3 月 Microsoft 365 Copilot 拿下 ISO/IEC 42001:2023 首个 LLM 商业产品认证,Anthropic / Google / OpenAI 全部 2026 H1 拿下;6 月 19 日 NIST AIRC 平台发布 ARIA 0.1 评估报告;OpenTelemetry GenAI semantic conventions 2025-09 Stable 全面稳定为 LLM 观测事实标准;2026 H1 五大生产级平台同步 v3 GA —— Langfuse 3.140(7,603 commits + Python SDK v3.1.2 + Agent tracing v3)+ Arize Phoenix 3.0(OpenInference v2 + Phoenix Evals 1.0)+ Helicone 3.5(2 千万行 LLM 日志)+ WhyLabs LangKit 0.7 + Fiddler AI 5.0,围绕「AI 时代的合规可观测性基础设施」首次完整浮出水面。5 大承重级架构革新:① OpenTelemetry GenAI semantic conventions 2026 全面稳定(OTel GenAI span 协议 2025-09 Stable),② EU AI Act GPAI 规则强制披露训练数据 + 算力 + 安全测试(7 月 1 日生效,首批合规截止 8 月 31 日,AI Office 200 名审计师),③ NIST AI RMF 1.1 + ISO/IEC 42001 双标合规工具链(风险溯源字段 traceability_context 4 个 JSON Schema 必填字段),④ Arize Phoenix 3.0 + Langfuse 3.140 双 v3 GA(OpenInference v2 全面接入 Claude 4 / GPT-5.6 / Gemini 3.2 / Llama 4),⑤ 企业级 MCP + AI Bridge + TSCP PKI 联邦化(AIDEFEND MCP 把 NIST AI RMF 反模式库本地化 + TSCP–AI Bridge 联邦 PKI)。7 子层栈:Layer 1 协议层(OTel GenAI / OpenInference)+ Layer 2 追踪层(Langfuse / Phoenix / Helicone)+ Layer 3 评估层(Phoenix Evals / DeepEval / Langfuse Evals)+ Layer 4 治理层(EU AI Act / NIST AI RMF / ISO 42001)+ Layer 5 审计层(Audit Log / Model Card / System Card)+ Layer 6 成本层(Token 成本追踪 / LLM 路由 / LLM Gateway)+ Layer 7 安全层(Guardrails / PII 脱敏 / Prompt 注入检测)。早间 ai-news-2026-07-02 5 维 Q3 启动日战(欧盟 GPAI + 美国 4000 亿 AI capex + xAI Colossus 2 + Meta Llama 4 + 苹果挖角)是 AI 商业层,中午 x402 是 AI 时代支付协议层,晚间本文是 AI 合规与可观测性运行时层 = 「AI 商业化全栈日」3-cron 完整落地 + 第 10 个独立栈层维度首发稳态(与数据基础设施 5 件套 / AI 驱动业务 6 层栈 / AI 算力供应商垂直整合运行时层 / K8s AI 基础设施运行时层 / 应用前端运行时层 / 服务端 JS/TS 运行时层 / 地缘技术博弈栈层穿透主题维度 / AI 长期记忆框架层 / AI 时代支付协议层 并列)。</p>
+                    <div class="card-meta">
+                        <span class="card-date">2026-07-02</span>
+                        <span class="card-readtime">26 分钟阅读</span>
+                        <span class="card-author">林小白</span>
+                    </div>
+                    <div class="card-tags">
+                        <span class="tag">EU AI Act GPAI 强制披露</span>
+                        <span class="tag">NIST AI RMF 1.1 风险溯源</span>
+                        <span class="tag">ISO/IEC 42001:2023 AIMS</span>
+                        <span class="tag">OpenTelemetry GenAI Stable</span>
+                        <span class="tag">OpenInference 2.0</span>
+                        <span class="tag">Langfuse 3.140 v3</span>
+                        <span class="tag">Arize Phoenix 3.0 v3</span>
+                        <span class="tag">Helicone 3.5</span>
+                        <span class="tag">WhyLabs LangKit 0.7</span>
+                        <span class="tag">Fiddler AI 5.0</span>
+                        <span class="tag">AI 合规可观测性运行时层</span>
+                        <span class="tag">第 10 个独立栈层维度</span>
+                        <span class="tag">5 维 Q3 启动日战</span>
+                        <span class="tag">AI 商业化全栈日</span>
+                    </div>
+                </div>
+            </a>
+        </article>
 
 <article class="article-card" data-slug="x402-protocol-cloudflare-monetization-gateway-google-ap2-ai-payment-2026" data-date="2026-07-02">
             <a href="article.html?slug=x402-protocol-cloudflare-monetization-gateway-google-ap2-ai-payment-2026" class="card-link">
@@ -6491,14 +7052,14 @@
 
             <!-- Hot Articles -->
             <div class="sidebar-card">
-                <h3 class="sidebar-title">🔥 热门文章</h3>
+                <h3 class="sidebar-title">热门文章</h3>
                 <ul class="sidebar-hot-list" id="sidebarHot">
                 </ul>
             </div>
 
             <!-- Archive -->
             <div class="sidebar-card">
-                <h3 class="sidebar-title">📁 归档</h3>
+                <h3 class="sidebar-title">归档</h3>
                 <ul class="sidebar-archive-list" id="sidebarArchive">
                 </ul>
             </div>
@@ -6787,24 +7348,37 @@
         function fuzzySearch(query) {
             const articles = document.querySelectorAll('.article-card');
             const queryLower = query.toLowerCase();
+            let matchCount = 0;
+
+            if (query === '') {
+                applyFilterAndPagination();
+                updateSearchResults('', getFilteredCards().length, articles.length);
+                return;
+            }
             
             articles.forEach(article => {
-                const title = article.querySelector('.article-title').textContent.toLowerCase();
-                const excerpt = article.querySelector('.article-excerpt').textContent.toLowerCase();
+                const titleEl = article.querySelector('.article-title, .card-title');
+                const excerptEl = article.querySelector('.article-excerpt, .card-excerpt');
+                const categoryEl = article.querySelector('.article-category, .card-category');
+                const title = titleEl ? titleEl.textContent.toLowerCase() : '';
+                const excerpt = excerptEl ? excerptEl.textContent.toLowerCase() : '';
                 const tags = article.getAttribute('data-tags') || '';
-                const category = article.querySelector('.article-category').textContent.toLowerCase();
+                const visibleTags = Array.from(article.querySelectorAll('.article-tag-pill, .tag')).map(tag => tag.textContent.toLowerCase()).join(' ');
+                const category = categoryEl ? categoryEl.textContent.toLowerCase() : '';
                 
                 // 检查是否匹配
                 const matches = title.includes(queryLower) || 
                                excerpt.includes(queryLower) || 
                                tags.toLowerCase().includes(queryLower) ||
+                               visibleTags.includes(queryLower) ||
                                category.includes(queryLower);
                 
                 // 显示或隐藏文章卡片
-                if (query === '' || matches) {
-                    article.style.display = 'block';
+                if (matches) {
+                    article.style.display = '';
                     article.style.opacity = '1';
                     article.style.transform = 'translateY(0)';
+                    matchCount++;
                 } else {
                     article.style.display = 'none';
                     article.style.opacity = '0';
@@ -6813,8 +7387,12 @@
             });
             
             // 显示搜索结果数量
-            const visibleArticles = document.querySelectorAll('.article-card[style*="display: block"]').length;
+            const visibleArticles = matchCount;
             const totalArticles = articles.length;
+            const countEl = document.getElementById('articleCount');
+            if (countEl) {
+                countEl.textContent = query === '' ? `共 ${totalArticles} 篇文章` : `找到 ${visibleArticles} 篇文章`;
+            }
             
             // 更新搜索结果提示
             updateSearchResults(query, visibleArticles, totalArticles);
@@ -6925,12 +7503,14 @@
         
         // 更新文章卡片的阅读量显示
         function updateCardViews(card, views) {
-            const viewsElement = card.querySelector('.article-views');
+            const viewsElement = card.querySelector('.article-views, .card-views');
             
             if (viewsElement) {
                 const countElement = viewsElement.querySelector('.views-count');
                 if (countElement) {
                     countElement.textContent = views;
+                } else {
+                    viewsElement.textContent = `${views} 阅读`;
                 }
             }
         }
@@ -6947,10 +7527,11 @@
         function getFilteredCards() {
             return Array.from(allArticleCards).filter(card => {
                 if (currentCategory === 'all') return true;
-                const cat = card.querySelector('.article-category');
+                const cat = card.querySelector('.article-category, .card-category');
                 if (!cat) return false;
                 const catClass = Array.from(cat.classList).find(c => ['tech', 'design', 'life'].includes(c));
-                return catClass === currentCategory;
+                const categoryMap = { tech: '技术', design: '设计', life: '随笔' };
+                return catClass === currentCategory || cat.textContent.trim() === categoryMap[currentCategory];
             });
         }
 
@@ -7042,12 +7623,12 @@
             cards.forEach(card => {
                 if (card.style.display === 'none') return;
                 const slug = card.dataset.slug;
-                const title = card.querySelector('.article-title');
-                const dateEl = card.querySelector('.article-meta span');
+                const title = card.querySelector('.article-title, .card-title');
+                const dateEl = card.querySelector('.article-meta span, .card-date');
                 if (!title || !dateEl) return;
                 const dateText = dateEl.textContent.trim();
-                const dateMatch = dateText.match(/(\d{4})年(\d{2})月(\d{2})日/);
-                const shortDate = dateMatch ? dateMatch[2] + '-' + dateMatch[3] : '';
+                const dateMatch = dateText.match(/(\d{4})年(\d{1,2})月(\d{1,2})日/) || dateText.match(/(\d{4})-(\d{1,2})-(\d{1,2})/);
+                const shortDate = dateMatch ? dateMatch[2].padStart(2, '0') + '-' + dateMatch[3].padStart(2, '0') : '';
                 items.push({ slug, title: title.textContent.trim(), date: shortDate });
             });
             container.innerHTML = items.slice(0, 6).map(item =>
@@ -7067,7 +7648,7 @@
             const articles = [];
             cards.forEach(card => {
                 const slug = card.dataset.slug;
-                const title = card.querySelector('.article-title');
+                const title = card.querySelector('.article-title, .card-title');
                 if (!slug || !title) return;
                 // Use views from API (data-views attribute) or default 0
                 const views = parseInt(card.dataset.views || '0', 10);
@@ -7103,14 +7684,14 @@
             const cards = document.querySelectorAll('.article-card[data-slug]');
             const monthMap = {};
             cards.forEach(card => {
-                const dateEl = card.querySelector('.article-meta span');
+                const dateEl = card.querySelector('.article-meta span, .card-date');
                 if (!dateEl) return;
                 const dateText = dateEl.textContent.trim();
-                const dateMatch = dateText.match(/(\d{4})年(\d{2})月(\d{2})日/);
+                const dateMatch = dateText.match(/(\d{4})年(\d{1,2})月(\d{1,2})日/) || dateText.match(/(\d{4})-(\d{1,2})-(\d{1,2})/);
                 if (!dateMatch) return;
-                const yearMonth = dateMatch[1] + '-' + dateMatch[2];
+                const yearMonth = dateMatch[1] + '-' + dateMatch[2].padStart(2, '0');
                 if (!monthMap[yearMonth]) {
-                    monthMap[yearMonth] = { year: dateMatch[1], month: dateMatch[2], count: 0 };
+                    monthMap[yearMonth] = { year: dateMatch[1], month: dateMatch[2].padStart(2, '0'), count: 0 };
                 }
                 monthMap[yearMonth].count++;
             });
@@ -7133,31 +7714,30 @@
             ).join('');
         }
 
+        function normalizeCardMetadata() {
+            document.querySelectorAll('.card-views').forEach(el => {
+                const match = el.textContent.match(/[\d.]+k?|\d+/i);
+                el.textContent = (match ? match[0] : '0') + ' 阅读';
+            });
+        }
+
+        function repairSidebarPlacement() {
+            const layout = document.querySelector('.blog-layout');
+            const sidebar = document.querySelector('.blog-sidebar');
+            if (layout && sidebar && sidebar.parentElement !== layout) {
+                layout.appendChild(sidebar);
+            }
+        }
+
         // 3D Tilt Effect for Article Cards
         function initTiltEffect() {
-            document.querySelectorAll('.article-card, .featured-card').forEach(card => {
-                card.addEventListener('mousemove', (e) => {
-                    const rect = card.getBoundingClientRect();
-                    const x = e.clientX - rect.left;
-                    const y = e.clientY - rect.top;
-                    const centerX = rect.width / 2;
-                    const centerY = rect.height / 2;
-                    const rotateX = ((y - centerY) / centerY) * -4;
-                    const rotateY = ((x - centerX) / centerX) * 4;
-                    card.style.transform = 'perspective(800px) rotateX(' + rotateX + 'deg) rotateY(' + rotateY + 'deg) translateY(-4px)';
-                });
-                card.addEventListener('mouseleave', () => {
-                    card.style.transform = 'perspective(800px) rotateX(0) rotateY(0) translateY(0)';
-                    card.style.transition = 'transform 0.4s ease';
-                });
-                card.addEventListener('mouseenter', () => {
-                    card.style.transition = 'transform 0.1s ease';
-                });
-            });
+            // The knowledge-base refresh favors stable rows over animated tilt.
         }
 
         // 页面加载完成后初始化
         document.addEventListener('DOMContentLoaded', () => {
+            repairSidebarPlacement();
+            normalizeCardMetadata();
             loadArticleViews();
             applyFilterAndPagination();
             animateStatNumbers();
