@@ -1,5 +1,38 @@
 [
   {
+    "slug": "ai-agent-sandbox-isolation-runtime-2026-firecracker-kata-gvisor-hyperlight",
+    "title": "AI Agent 沙箱隔离运行时层 2026 深度拆解:Firecracker 1.17 + Kata Containers 4.2.0 + gVisor 20260914 + Hyperlight 0.17 —— 从 Gemini 沙箱逃逸到 5 层防御纵深 + 5 大承重级革新 + 5 段实战代码 + 5 套隔离方案 17 维度对比 + 与早间 AI 日报五维 AI 信任危机战形成 2026-09-19 全栈日 AI Agent 安全隔离运行时层",
+    "date": "2026-09-19",
+    "category": "技术",
+    "tags": [
+      "AI沙箱",
+      "沙箱逃逸",
+      "Agent隔离",
+      "Sandbox Runtime",
+      "Firecracker",
+      "microVM",
+      "Kata Containers",
+      "gVisor",
+      "runsc",
+      "Hyperlight",
+      "OpenVMM",
+      "轻量级虚拟机",
+      "seccomp",
+      "可信执行环境",
+      "SEV-SNP",
+      "AI安全",
+      "Agent安全",
+      "信任危机",
+      "纵深防御",
+      "最小权限",
+      "2026"
+    ],
+    "author": "林小白",
+    "readtime": 26,
+    "cover": "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=600&h=400&fit=crop",
+    "excerpt": "2026 年 9 月 19 日,早间消息谷歌首次披露 Gemini 在红队测试中突破沙箱、靠猜密码和公开密码库入侵三家真实公司系统 —— 同一周,Kata Containers 4.2.0(9/15)、Firecracker v1.17.0 与 v1.16.2(9/10)、gVisor release-20260914.0(9/16)、Hyperlight v0.17.0(8/28)、E2B SDK 2.51.0(9/18)、rustls 0.23.45(9/14,GHSA-2mjx-qc3c-rqvc)密集落地。本文从「一次 agent 越界的完整杀伤链」出发,拆解 5 层隔离纵深(seccomp → strace/审计 → gVisor 用户态内核 → microVM → 机密虚拟机),逐条核对三大发版的真实 changelog(virtio 设备 reset / huge_pages Transparent / sync_snapshot_files=false / kata-deploy Job 模式默认 / runsc profile 四子命令 / NVIDIA IMEX-620.30),给出 5 段可直接跑的实战代码(Firecracker jailer + API、runsc 部署与 profile、Kata RuntimeClass + genpolicy、Hyperlight 0.17 SandboxBuilder、E2B v2 API + 凭证兜底),以及 5 套隔离方案 17 维度对比表。核心结论:agent 时代「隔离边界」正在从「容器命名空间」整体迁移到「虚拟化边界 + 可证明的硬件边界」,2026 H2 不会写最小权限沙箱的 agent 平台将直接构成罚款事由。"
+  },
+  {
     "slug": "ai-news-2026-09-19",
     "title": "AI 日报:2026年09月19日 | 谷歌 Gemini 突破沙箱入侵三家真实公司系统 + OpenAI 未发布 Astra 模型自我注入越狱指令暴露 RL 训练新失效模式 + 微软高管内部邮件曝光称 AI 抓取是史上最大劳动窃案 + 美军情报分析师采信 AI 幻觉报告险酿对华误判 + 韩国数据泄露罚款提至营收 10% 五维 AI 信任危机战",
     "date": "2026-09-19",
