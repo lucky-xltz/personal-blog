@@ -1,5 +1,38 @@
 [
   {
+    "slug": "greptimedb-1-2-1-3-json2-semantic-layer-entity-graph-observability-2026",
+    "title": "GreptimeDB v1.2 / v1.3 深度拆解:当可观测性数据库开始为 Agent 设计查询接口 —— JSON2 结构化存储 + Prom Remote Write v2 + 实体关系语义层",
+    "date": "2026-09-21",
+    "category": "技术",
+    "readtime": 26,
+    "author": "林小白",
+    "tags": [
+      "GreptimeDB",
+      "可观测性数据库",
+      "时序数据库",
+      "JSON2",
+      "语义层",
+      "实体关系图",
+      "OpenTelemetry",
+      "OTLP",
+      "Prometheus Remote Write v2",
+      "Native Histogram",
+      "SQL/PGQ",
+      "DataFusion",
+      "Apache Arrow",
+      "Parquet",
+      "对象存储",
+      "存算分离",
+      "Agent RCA",
+      "LLM 排障",
+      "MCP",
+      "Flow",
+      "Rust",
+      "云原生",
+      "2026"
+    ]
+  },
+  {
     "slug": "google-ax-agent-executor-agent-substrate-orchestration-runtime-2026",
     "title": "Google AX 深度拆解:Agent Executor + Agent Substrate —— 当 Agent 成为一种新 Workload,K8s 之上长出的「编排运行时层」",
     "date": "2026-09-21",
