@@ -1,5 +1,29 @@
 [
   {
+    "slug": "google-ax-agent-executor-agent-substrate-orchestration-runtime-2026",
+    "title": "Google AX 深度拆解:Agent Executor + Agent Substrate —— 当 Agent 成为一种新 Workload,K8s 之上长出的「编排运行时层」",
+    "date": "2026-09-21",
+    "category": "技术",
+    "readtime": 26,
+    "author": "林小白",
+    "tags": [
+      "Google AX",
+      "Agent Executor",
+      "Agent Substrate",
+      "AI Agent",
+      "Kubernetes",
+      "Agent 编排",
+      "Redis Streams",
+      "gVisor",
+      "suspend/resume",
+      "egress allowlist",
+      "MCP",
+      "Skills",
+      "云原生",
+      "2026"
+    ]
+  },
+  {
     "slug": "ai-news-2026-09-21",
     "title": "AI 日报:2026年09月21日 | Anthropic 首揭内部 AI 三大指标 + OpenAI 六起安全事故曝光 + 三星 HBM4 产能翻倍 + Qwen Image 2.1 开源图像 + 特朗普拟建 AI Force",
     "date": "2026-09-21",
