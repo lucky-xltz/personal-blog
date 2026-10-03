@@ -1,5 +1,33 @@
 [
   {
+    "slug": "caddy-2-11-6-url-pattern-slowloris-idle-deadline-header-hardening-forward-auth-2026",
+    "title": "Caddy v2.11.6 深度拆解: WHATWG URLPattern 路由 + Slowloris idle deadline + 头部别名硬化与 forward_auth 竞争修复",
+    "date": "2026-10-03",
+    "category": "技术",
+    "tags": [
+      "Caddy",
+      "URLPattern",
+      "WHATWG",
+      "Slowloris",
+      "idle timeout",
+      "HTTPoxy",
+      "FastCGI",
+      "forward_auth",
+      "random_choose",
+      "power-of-two-choices",
+      "SSE",
+      "Go 1.26",
+      "反向代理",
+      "安全",
+      "2026"
+    ],
+    "author": "林小白",
+    "readtime": "24",
+    "cover": "https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&h=400&fit=crop",
+    "excerpt": "2026-10-01 发布的 Caddy v2.11.6 是一个 patch release, release notes 27 KB, 107 个 PR, 一口气改掉 12 个默认行为, 全部朝严厉方向: url_pattern 匹配器实现 WHATWG URLPattern 并在同版本修掉编码斜杠绕过 GHSA-m8m5-v4jf-3wcm, idle read/write deadline 默认 60 秒对抗 Slowloris 且慢但前进的连接不杀, 请求头上限从 1 MB 砍到 16 KiB 并默认丢弃下划线与点号头部, forward_auth 与 reverse_proxy 共用时的上游连接错配数据竞争 GHSA-6365-7ppr-5r92 13 行修复, random_choose 蓄水池采样重写前 100k 次模拟 50.2% 请求落在饱和后端, encode 不再缓冲 SSE, 优雅关闭跨 config 等待, Go 1.26 最低版本",
+    "views": 0
+  },
+  {
     "slug": "ai-news-2026-10-03",
     "title": "AI 日报：2026年10月03日 | 五维「定价战」苹果收紧 macOS FDA + DOJ 抓走 3 亿美元走私芯片 + Micron 宣告内存两年锁死 + Stratego 被攻陷 + 谷歌 AI 搜索反垄断胜诉",
     "date": "2026-10-03",
