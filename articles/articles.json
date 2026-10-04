@@ -1,5 +1,13 @@
 [
   {
+    "slug": "agentgateway-1-6-0-messages-responses-model-catalog-mcp-pagination-cel-rate-limit-2026",
+    "title": "AgentGateway v1.6.0 深度拆解:Anthropic Messages 默认转 Responses + 内建模型目录把成本写进二进制 + MCP 分页游标 + CEL 每键限流 + Substrate 出站凭证注入",
+    "date": "2026-10-04",
+    "category": "技术",
+    "readtime": 26,
+    "excerpt": "AgentGateway v1.6.0 是把协议格式协商变成默认值的版本:Anthropic Messages 默认改走 OpenAI Responses 转换(代价是 extended-thinking 历史被丢弃),模型目录第一次 check 进仓库并 embed 进二进制,公共模型美元成本不再需要单独配 catalog 就进日志 trace metrics 和 CEL,USD 预算会在升级后突然开始扣费,standalone LLM 路径收紧成精确匹配,base URL 无路径一律补斜杠,MCP 补上分页游标 methodName 进 CEL 413 SSE keep-alive,第一次有 CEL 每键本地限流 65536 桶 LRU K8s 会话亲和 SIGTERM 优雅排空修了 min+max 双重等待被 SIGKILL 的 bug,JWT 强制 nbf API key 默认存哈希 guardrail 流式默认拒内容,5 大承重级革新 3 条与早间五维责任日同构的默认值收紧线 5 段可运行配置 5 套网关 17 维度对比 3 个长期判断"
+  },
+  {
     "slug": "ai-news-2026-10-04",
     "title": "AI 日报：2026年10月04日 | 五维「责任日」OpenAI 安全主笔辞职 + 短信 Agent 混战 + 德国 Kolibri 主权开源 + Palantir 排班撞上护士 + Cloudflare OHTTP Gateway",
     "date": "2026-10-04",
