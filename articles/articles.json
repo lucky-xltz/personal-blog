@@ -1,5 +1,12 @@
 [
   {
+    "slug": "keda-2-21-sa-token-audience-hpa-owns-scaling-streammetricspec-label-selector-sharding-2026",
+    "title": "KEDA v2.21.0 深度拆解:SA token audience 强制 + HPA 接管伸缩决策时停止轮询 + StreamMetricSpec 动态改 target + label selector 分片,事件驱动伸缩层从「默认信任」变成「显式授权」",
+    "date": "2026-10-08",
+    "category": "技术",
+    "readtime": 26
+  },
+  {
     "slug": "kueue-0-20-v1beta1-removed-afs-anchor-dra-feasibility-tas-node-level-quota-accounting-2026",
     "title": "Kueue v0.20.0 深度拆解:v1beta1 删除 + 配额记账锚点上移 + DRA 设备可行性 + TAS 节点级可行性,GPU 配额调度层从「尽力而为」变成「记账准确」",
     "date": "2026-10-08",
