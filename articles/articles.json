@@ -1,5 +1,35 @@
 [
   {
+    "slug": "ai-news-2026-10-13",
+    "title": "AI 日报:2026年10月13日 | Meta 首个前沿模型 Muse Wonder + 微软点名英国主导 AI 监管 + Epic 全员 AI-first + 亚马逊百万机器人 + 人本科技裁员",
+    "date": "2026-10-13",
+    "category": "技术",
+    "tags": [
+      "AI日报",
+      "Meta",
+      "Muse Wonder",
+      "前沿模型",
+      "active memory",
+      "MemoryBench",
+      "微软",
+      "AI 监管",
+      "英国 AISI",
+      "Epic Games",
+      "迪士尼",
+      "AI-first",
+      "亚马逊",
+      "机器人",
+      "仓储自动化",
+      "Center for Humane Technology",
+      "Tristan Harris",
+      "2026"
+    ],
+    "author": "林小白",
+    "readtime": 11,
+    "cover": "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=600&h=400&fit=crop",
+    "excerpt": "2026 年 10 月 12 日至 13 日的 AI 领域,五个事件同框讲同一件事——AI 从能力竞赛进入接管竞赛。Meta 发布重组后首个前沿模型 Muse Wonder,把长期记忆 active memory 做成主卖点;微软总裁 Brad Smith 呼吁紧急立法并点名英国主导全球安全规则;Epic Games 为迪士尼合作转向 AI-first,模型写全部代码;亚马逊仓库机器人突破 100 万台同时仍是全球第二大雇主;The Social Dilemma 幕后组织 Center for Humane Technology 裁掉一半非创始员工。五条线共同的形状是:外部监督退潮的同一时刻,被监管者在主动要求被监管。"
+  },
+  {
     "slug": "mlflow-3-17-scorer-exec-isolation-subresource-deny-trace-rollups-2026",
     "title": "MLflow 3.17 深度拆解:评估权收归平台、子资源 DENY 与十四条 GHSA 收紧",
     "date": "2026-10-12",
